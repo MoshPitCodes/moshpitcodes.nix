@@ -27,6 +27,12 @@
 
 <br/>
 
+> [!INFO]
+> This repository already contains potential fixes for the recent changes to Maple Mono.
+> [See this discussion](https://github.com/NixOS/nixpkgs/issues/392297#issuecomment-2775924141)
+
+<br/>
+
 # 🗃️ Overview
 
 Hi,
