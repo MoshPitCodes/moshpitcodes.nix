@@ -88,7 +88,6 @@ And now, let the fun begin!
 | **Terminal Emulator**       | [Ghostty][Ghostty]                                                                  |
 | **Shell**                   | [zsh][zsh] + [powerlevel10k][powerlevel10k]                                         |
 | **Text Editor**             | [VSCodium][VSCodium] + [VSCode][VSCode] + [Neovim][Neovim]                          |
-| **AI Editor**               | [CursorAI][CursorAI]                                                                |
 | **Network Management Tool** | [NetworkManager][NetworkManager] + [network-manager-applet][network-manager-applet] |
 | **System Resource Monitor** | [Btop][Btop]                                                                        |
 | **File Manager**            | [nemo][nemo] + [yazi][yazi]                                                         |
