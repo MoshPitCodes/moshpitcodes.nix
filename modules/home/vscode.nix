@@ -16,6 +16,15 @@ let
       hash = "sha256-l8pu348v2JUg/7+Qy5B41eyraPUj9WQ1WuW1aumgM9w=";
     };
   };
+  # Add Claude Code extension
+  anthropic.claude-code = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
+    mktplcRef = {
+      name = "claude-code";
+      publisher = "anthropic";
+      version = "1.0.31"; # You'll need to update this with the actual version
+      hash = "sha256-3brSSb6ERY0In5QRmv5F0FKPm7Ka/0wyiudLNRSKGBg="; # Replace with actual hash after running nix-prefetch
+    };
+  };
 
 in
 {
@@ -83,6 +92,9 @@ in
         # ---------------------------
         # 3rd party extensions
         # ---------------------------
+        # Claude Code
+        anthropic.claude-code
+
         # ESLint
         dbaeumer.vscode-eslint
 
@@ -140,12 +152,50 @@ in
         jonathanharty.gruvbox-material-icon-theme
       ];
       userSettings = {
-        "update.mode" = "none";
+        "update.mode" = "none"; # This stuff fixes VSCode freaking out when theres an update
+        "extensions.ignoreRecommendations" = true; # This stuff fixes VSCode freaking out when theres an update
         "extensions.autoUpdate" = true; # This stuff fixes VSCode freaking out when theres an update
         "window.titleBarStyle" = "custom"; # see https://github.com/NixOS/nixpkgs/issues/246509
 
         "breadcrumbs.enabled" = false;
 
+        # Enable GitHub Copilot
+        "github.copilot.enable" = true;
+        "github.copilot.chat.enable" = true;
+        "github.copilot.chat.enableExperimental" = true;
+        "github.copilot.chat.enableExperimentalUI" = true;
+
+        # Enable GitHub MCP Server
+        mcp = {
+          inputs = [
+            {
+              type = "promptString";
+              id = "github_token";
+              description = "GitHub Personal Access Token";
+              password = true;
+            }
+          ];
+          servers = {
+            github = {
+              command = "docker";
+              args = [
+                "-i"
+                "--rm"
+                "-e"
+                "GITHUB_PERSONAL_ACCESS_TOKEN"
+                "ghcr.io/github/github-mcp-server"
+              ];
+              env = {
+                GITHUB_PERSONAL_ACCESS_TOKEN = "\${input:github_token}";
+              };
+            };
+            fetch = {
+              type = "stdio";
+              command = "uvx";
+              args = [ "mcp-server-fetch" ];
+            };
+          };
+        };
         editor = {
           fontFamily = "'Maple Mono NF', 'SymbolsNerdFont', 'monospace', monospace";
           fontLigatures = true;
@@ -511,6 +561,10 @@ in
         {
           key = "ctrl+s";
           command = "workbench.action.files.saveFiles";
+        }
+        {
+          key = "ctrl+i";
+          command = "composerMode.agent";
         }
       ];
     };

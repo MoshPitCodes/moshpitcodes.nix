@@ -39,6 +39,7 @@ in
       nitch # systhem fetch util
       nixd # nix lsp
       nixfmt-rfc-style # nix formatter
+      openssh
       openssl # ssl utility
       onefetch # fetch utility for git repo
       pamixer # pulseaudio command line mixer
