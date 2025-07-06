@@ -50,3 +50,4 @@ proto/v1/*.pb.go
 # Local configuration
 .env
 .env.local
+secrets.nix

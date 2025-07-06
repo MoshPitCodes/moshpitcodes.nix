@@ -1,4 +1,4 @@
-{ pkgs, username, ... }:
+{ pkgs, username, customsecrets, ... }:
 {
   programs.nh = {
     enable = true;
@@ -6,7 +6,7 @@
       enable = true;
       extraArgs = "--keep-since 7d --keep 5";
     };
-    flake = "/home/${username}/moshpitcodes.nix/";
+    flake = "/home/${username}/${customsecrets.reponame}/";
   };
 
   environment.systemPackages = with pkgs; [

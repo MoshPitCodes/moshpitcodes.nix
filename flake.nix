@@ -36,13 +36,13 @@
   outputs =
     { nixpkgs, self, ... }@inputs:
     let
-      username = throw "<Enter your username in ./flake.nix>";
       system = "x86_64-linux";
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
       };
-      lib = nixpkgs.lib;
+      customsecrets = import ./secrets.nix;
+      username = customsecrets.username;
 
     in
     {
@@ -52,7 +52,7 @@
           modules = [ ./hosts/desktop ];
           specialArgs = {
             host = "desktop";
-            inherit self inputs username;
+            inherit self inputs username customsecrets;
           };
         };
         laptop = nixpkgs.lib.nixosSystem {
@@ -60,7 +60,7 @@
           modules = [ ./hosts/laptop ];
           specialArgs = {
             host = "laptop";
-            inherit self inputs username;
+            inherit self inputs username customsecrets;
           };
         };
         vm = nixpkgs.lib.nixosSystem {
@@ -68,7 +68,7 @@
           modules = [ ./hosts/vm ];
           specialArgs = {
             host = "vm";
-            inherit self inputs username;
+            inherit self inputs username customsecrets;
           };
         };
         vmware-guest = nixpkgs.lib.nixosSystem {
@@ -76,7 +76,7 @@
           modules = [ ./hosts/vmware-guest ];
           specialArgs = {
             host = "vmware";
-            inherit self inputs username;
+            inherit self inputs username customsecrets;
           };
         };
       };
