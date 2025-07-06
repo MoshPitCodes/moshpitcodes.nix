@@ -2,13 +2,34 @@
 {
   imports = [ inputs.nvf.homeManagerModules.default ];
 
+  home.file.".config/nvf/init.lua".text = ''
+    -- User nvf configuration
+    -- Add any custom Lua configuration here
+  '';
+
   programs.neovim = {
-    enable = true;
-    vimAlias = true;
+    enable = false;
+    # vimAlias = true;
+    # extraLuaPackages = ps: [ ps.jsregexp ];
+    # extraPackages = with pkgs; [
+    #   tree-sitter
+    #   cargo
+    #   rustc
+    # ];
+    # plugins = with pkgs.vimPlugins; [
+    #   nvim-treesitter.withAllGrammars
+    #   # or specific grammars:
+    #   # (nvim-treesitter.withPlugins (p: [ p.typescript p.javascript ]))
+    # ];
   };
 
   programs.nvf = {
     enable = true;
+    
+    settings.vim.extraPackages = with pkgs; [
+      nixd # Nix language server
+      nixfmt-rfc-style # Nix formatter
+    ];
 
     settings.vim = {
       vimAlias = true;
@@ -36,12 +57,10 @@
         trouble.enable = true;
         lspSignature.enable = true;
         otter-nvim.enable = false;
-        # lsplines.enable = false;
         nvim-docs-view.enable = false;
       };
 
       languages = {
-        # enableLSP = true;
         enableFormat = true;
         enableTreesitter = true;
         enableExtraDiagnostics = true;
@@ -62,7 +81,7 @@
       };
 
       visuals = {
-        # nvim-web-devicons.enable = true;
+        nvim-web-devicons.enable = true;
         nvim-cursorline.enable = true;
         cinnamon-nvim.enable = true;
         fidget-nvim.enable = true;
@@ -109,7 +128,16 @@
       };
 
       notify = {
-        nvim-notify.enable = true;
+        nvim-notify = {
+          enable = true;
+          setupOpts = {
+            background_colour = "#1d2021";
+            render = "compact";
+            timeout = 3000;
+            top_down = true;
+            stages = "fade_in_slide_out";
+          };
+        };
       };
 
       utility = {
@@ -131,7 +159,22 @@
 
       ui = {
         borders.enable = true;
-        noice.enable = true;
+        noice = {
+          enable = true;
+          setupOpts = {
+            lsp = {
+              signature = {
+                enabled = false;
+                auto_open = {
+                  enabled = true;
+                  trigger = true;
+                  luasnip = true;
+                  throttle = 50;
+                };
+              };
+            };
+          };
+        };
         colorizer.enable = true;
         illuminate.enable = true;
         breadcrumbs = {
