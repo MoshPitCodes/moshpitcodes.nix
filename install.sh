@@ -46,7 +46,7 @@ get_secrets_method() {
     echo -en "Enter your choice [${YELLOW}1${NORMAL}-2]: "
     read -n 1 -r
     echo
-    
+
     if [[ $REPLY =~ ^[1]$ ]]; then
         SECRETS_METHOD="file"
     elif [[ $REPLY =~ ^[2]$ ]]; then
@@ -63,13 +63,13 @@ get_user_info() {
     echo -en "$NORMAL"
     echo -en "Use ${YELLOW}\"$username\"${NORMAL} as ${GREEN}username${NORMAL}? "
     confirm
-    
+
     echo -en "Enter your ${GREEN}Git username${NORMAL}: $YELLOW"
     read git_username
     echo -en "$NORMAL"
     echo -en "Use ${YELLOW}\"$git_username\"${NORMAL} as ${GREEN}Git username${NORMAL}? "
     confirm
-    
+
     echo -en "Enter your ${GREEN}Git email${NORMAL}: $YELLOW"
     read git_email
     echo -en "$NORMAL"
@@ -85,12 +85,12 @@ get_wifi_info() {
         echo -en "Enter WiFi ${GREEN}SSID${NORMAL}: $YELLOW"
         read wifi_ssid
         echo -en "$NORMAL"
-        
+
         echo -en "Enter WiFi ${GREEN}password${NORMAL}: $YELLOW"
         read -s wifi_password
         echo -en "$NORMAL"
         echo # newline after hidden input
-        
+
         CONFIGURE_WIFI=true
     else
         CONFIGURE_WIFI=false
@@ -99,32 +99,32 @@ get_wifi_info() {
 
 setup_secrets_file() {
     echo -e "\n${GREEN}Setting up secrets.nix file...${NORMAL}"
-    
+
     # Copy template if secrets.nix doesn't exist or is empty
     if [[ ! -f ./secrets.nix ]] || [[ ! -s ./secrets.nix ]]; then
         echo -e "Copying secrets.nix.example to secrets.nix"
         cp ./secrets.nix.example ./secrets.nix
     fi
-    
+
     # Update username
     sed -i "s/username = \".*\";/username = \"${username}\";/" ./secrets.nix
-    
+
     # Update git configuration
     sed -i "s/userName = \".*\";/userName = \"${git_username}\";/" ./secrets.nix
     sed -i "s/userEmail = \".*\";/userEmail = \"${git_email}\";/" ./secrets.nix
-    
+
     # Update WiFi configuration if provided
     if [[ $CONFIGURE_WIFI == true ]]; then
         sed -i "s/wifiSSID = \".*\";/wifiSSID = \"${wifi_ssid}\";/" ./secrets.nix
         sed -i "s/wifiPassword = \".*\";/wifiPassword = \"${wifi_password}\";/" ./secrets.nix
     fi
-    
+
     echo -e "${GREEN}✓${NORMAL} secrets.nix configured successfully"
 }
 
 setup_environment_variables() {
     echo -e "\n${GREEN}Setting up environment variables...${NORMAL}"
-    
+
     # Create .env file
     cat > .env << EOF
 # NixOS Configuration Environment Variables
@@ -133,14 +133,14 @@ GIT_USERNAME=${git_username}
 GIT_EMAIL=${git_email}
 NIXOS_REPO_NAME=moshpitcodes.nix
 EOF
-    
+
     if [[ $CONFIGURE_WIFI == true ]]; then
         cat >> .env << EOF
 WIFI_SSID=${wifi_ssid}
 WIFI_PASSWORD=${wifi_password}
 EOF
     fi
-    
+
     echo -e "${GREEN}✓${NORMAL} .env file created"
     echo -e "${YELLOW}Important:${NORMAL} Run ${GREEN}source .env${NORMAL} before building the system"
 }
@@ -225,7 +225,7 @@ install() {
 
 print_post_install() {
     echo -e "\n${GREEN}Installation completed!${NORMAL}\n"
-    
+
     if [[ $SECRETS_METHOD == "file" ]]; then
         echo -e "${YELLOW}Important security notes:${NORMAL}"
         echo -e "- Your credentials are stored in ${MAGENTA}secrets.nix${NORMAL}"
@@ -237,7 +237,7 @@ print_post_install() {
         echo -e "- This file is git-ignored for security"
         echo -e "- Remember to ${GREEN}source .env${NORMAL} in future sessions"
     fi
-    
+
     echo -e "\n${GREEN}Next steps:${NORMAL}"
     echo -e "1. Reboot your system"
     echo -e "2. Configure your browser and other personal preferences"
@@ -249,16 +249,16 @@ main() {
     init
 
     print_header
-    
+
     get_secrets_method
     get_user_info
     get_wifi_info
     configure_secrets
-    
+
     get_host
     aseprite
     install
-    
+
     print_post_install
 }
 
