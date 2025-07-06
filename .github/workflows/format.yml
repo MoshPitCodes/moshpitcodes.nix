@@ -9,13 +9,13 @@ on:
 jobs:
   format:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        
+
     - name: Install Nix
       uses: cachix/install-nix-action@v24
       with:
@@ -23,11 +23,11 @@ jobs:
         extra_nix_config: |
           experimental-features = nix-command flakes
           access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-          
+
     - name: Format code
       run: |
         nix develop --command treefmt
-        
+
     - name: Check for changes
       id: verify-changed-files
       run: |
@@ -36,7 +36,7 @@ jobs:
         else
           echo "changed=false" >> $GITHUB_OUTPUT
         fi
-        
+
     - name: Commit changes
       if: steps.verify-changed-files.outputs.changed == 'true'
       run: |
@@ -44,7 +44,7 @@ jobs:
         git config --local user.name "GitHub Action"
         git add .
         git commit -m "style: auto-format code" || exit 0
-        
+
     - name: Push changes
       if: steps.verify-changed-files.outputs.changed == 'true'
       uses: ad-m/github-push-action@master
