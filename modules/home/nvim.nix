@@ -8,7 +8,7 @@
   };
 
   programs.nvf = {
-    enable = false;
+    enable = true;
 
     settings.vim = {
       vimAlias = true;
@@ -28,6 +28,7 @@
       };
 
       lsp = {
+        enable = true;
         formatOnSave = true;
         lspkind.enable = false;
         lightbulb.enable = true;
@@ -35,20 +36,29 @@
         trouble.enable = true;
         lspSignature.enable = true;
         otter-nvim.enable = false;
-        lsplines.enable = false;
+        # lsplines.enable = false;
         nvim-docs-view.enable = false;
       };
 
       languages = {
-        enableLSP = true;
+        # enableLSP = true;
         enableFormat = true;
         enableTreesitter = true;
         enableExtraDiagnostics = true;
 
-        nix.enable = true;
         clang.enable = true;
-        zig.enable = true;
+        css.enable = true;
+        go.enable = true;
+        html.enable = true;
+        java.enable = true;
+        lua.enable = true;
+        nix.enable = true;
         python.enable = true;
+        rust.enable = true;
+        ts.enable = true;
+        yaml.enable = true;
+        zig.enable = true;
+
       };
 
       visuals = {
