@@ -52,7 +52,12 @@
           modules = [ ./hosts/desktop ];
           specialArgs = {
             host = "desktop";
-            inherit self inputs username customsecrets;
+            inherit
+              self
+              inputs
+              username
+              customsecrets
+              ;
           };
         };
         laptop = nixpkgs.lib.nixosSystem {
@@ -60,7 +65,12 @@
           modules = [ ./hosts/laptop ];
           specialArgs = {
             host = "laptop";
-            inherit self inputs username customsecrets;
+            inherit
+              self
+              inputs
+              username
+              customsecrets
+              ;
           };
         };
         vm = nixpkgs.lib.nixosSystem {
@@ -68,7 +78,12 @@
           modules = [ ./hosts/vm ];
           specialArgs = {
             host = "vm";
-            inherit self inputs username customsecrets;
+            inherit
+              self
+              inputs
+              username
+              customsecrets
+              ;
           };
         };
         vmware-guest = nixpkgs.lib.nixosSystem {
@@ -76,7 +91,12 @@
           modules = [ ./hosts/vmware-guest ];
           specialArgs = {
             host = "vmware";
-            inherit self inputs username customsecrets;
+            inherit
+              self
+              inputs
+              username
+              customsecrets
+              ;
           };
         };
       };

@@ -1,13 +1,15 @@
 { pkgs, ... }:
 let
-  jonathanharty.gruvbox-material-icon-theme = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
-    mktplcRef = {
-      name = "gruvbox-material-icon-theme";
-      publisher = "JonathanHarty";
-      version = "1.1.5";
-      hash = "sha256-86UWUuWKT6adx4hw4OJw3cSZxWZKLH4uLTO+Ssg75gY=";
-    };
-  };
+  jonathanharty.gruvbox-material-icon-theme =
+    pkgs.vscode-utils.buildVscodeMarketplaceExtension
+      {
+        mktplcRef = {
+          name = "gruvbox-material-icon-theme";
+          publisher = "JonathanHarty";
+          version = "1.1.5";
+          hash = "sha256-86UWUuWKT6adx4hw4OJw3cSZxWZKLH4uLTO+Ssg75gY=";
+        };
+      };
   ziglang_vscode-zig = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
     mktplcRef = {
       name = "vscode-zig";
@@ -49,7 +51,8 @@ in
         "window.titleBarStyle" = "custom"; # needed otherwise vscode crashes, see https://github.com/NixOS/nixpkgs/issues/246509
 
         "window.menuBarVisibility" = "toggle";
-        "editor.fontFamily" = "'Maple Mono NF', 'SymbolsNerdFont', 'monospace', monospace";
+        "editor.fontFamily" =
+          "'Maple Mono NF', 'SymbolsNerdFont', 'monospace', monospace";
         "terminal.integrated.fontFamily" = "'Maple Mono NF', 'SymbolsNerdFont'";
         "editor.fontSize" = 16;
         "workbench.colorTheme" = "Gruvbox Dark Hard";
@@ -113,13 +116,9 @@ in
         "yaml.validate" = true;
         "yaml.schemas" = {
           "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/github-workflow.json" =
-            [
-              ".github/workflows/*"
-            ];
+            [ ".github/workflows/*" ];
           "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/pre-commit-config.json" =
-            [
-              ".pre-commit-config.yaml"
-            ];
+            [ ".pre-commit-config.yaml" ];
         };
 
         # Zig
