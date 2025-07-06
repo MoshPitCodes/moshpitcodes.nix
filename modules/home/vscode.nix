@@ -129,6 +129,11 @@ in
         # ---------------------------
         # 3rd party extensions
         # ---------------------------
+
+        # Markdown support
+        bierner.markdown-mermaid
+        # bierner.markdown-preview-github-styles
+
         # Claude Code
         anthropic.claude-code
 
@@ -531,17 +536,7 @@ in
 
         # Nix
         nix = {
-          formatterPath = [
-            "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt"
-            "${pkgs.nixfmt-rfc-style}/bin/nixfmt-rfc-style"
-            "${pkgs.treefmt}/bin/treefmt"
-            "--stdin"
-            "{file}"
-            "nix"
-            "fmt"
-            "--"
-            "-"
-          ];
+          formatterPath = "${pkgs.nixfmt-rfc-style}/bin/nixfmt-rfc-style";
           enableLanguageServer = true;
           enableNixShellIntegration = {
             enable = true;
@@ -552,7 +547,7 @@ in
           serverSettings = {
             nixd = {
               formatting = {
-                command = [ "nixfmt" ];
+                command = [ "nixfmt-rfc-style" ];
               };
               options = {
                 nixos = {
@@ -569,7 +564,7 @@ in
             documentLink = true;
             documentSymbol = true;
             formatting = true;
-            goToDefinition = false;
+            goToDefinition = true;
             hover = true;
             references = true;
             rename = true;

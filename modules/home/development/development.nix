@@ -51,6 +51,9 @@
       # Go
       go # Go programming language
       go-migrate # database migration tool
+      gopls # Go language server
+      golangci-lint # Go linter
+      gofumpt # Go code formatter
 
       # IDE
       # jetbrains.android-studio # Android Studio
@@ -133,8 +136,11 @@
 
       # Rust
       # rust-analyzer # Rust language server
-      # rustfmt # Rust code formatter
-      rustup # Rust toolchain installer
+      # rustup # Rust toolchain installer
+      rustc # Rust compiler
+      cargo # Rust package manager
+      rustfmt # Rust code formatter
+      clippy # Rust linter
 
       # Zig
       # zig # Zig programming language
@@ -154,14 +160,14 @@
     ]
   );
 
-  # Create configuration directories
+  # Create configuration directories for AI Coding Agents
   home.file.".config/opencode/.gitkeep".text = "";
   home.file.".config/claude-code/.gitkeep".text = "";
 
   # Claude Code configuration for Claude Pro
   home.file.".config/claude-code/config.json".text = builtins.toJSON {
     # Use Claude Pro subscription model
-    model = "claude-4-opus-20250514";
+    model = "claude-4-sonnet-20250514";
     # Claude Pro doesn't require API key - uses web authentication
     auth_method = "web";
 
@@ -181,10 +187,10 @@
   # You'll need to add your API keys here
   home.file.".config/opencode/config.json".text = builtins.toJSON {
     agents = {
-      # Primary agent using Claude Opus 4
+      # Primary agent using Claude Sonnet 4
       primary = {
         provider = "anthropic";
-        model = "claude-4-opus-20250514";
+        model = "claude-4-sonnet-20250514";
         # You'll need to set your API key as an environment variable
         # or update this after deployment
         apiKey = "$ANTHROPIC_API_KEY";
@@ -222,7 +228,7 @@
       echo "Setting up OpenCode with Doppler..."
       echo "Fetching API keys from Doppler..."
       export ANTHROPIC_API_KEY=$(doppler secrets get ANTHROPIC_API_KEY --plain)
-      echo "API keys loaded from Doppler"
+      echo "Claude API keys loaded from Doppler"
     '';
 
     # Alternative: Run opencode with Doppler directly
