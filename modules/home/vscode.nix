@@ -1,14 +1,16 @@
 { pkgs, ... }:
 let
   # Custom VSCode extensions
-  jonathanharty.gruvbox-material-icon-theme = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
-    mktplcRef = {
-      name = "gruvbox-material-icon-theme";
-      publisher = "JonathanHarty";
-      version = "1.1.5";
-      hash = "sha256-86UWUuWKT6adx4hw4OJw3cSZxWZKLH4uLTO+Ssg75gY=";
-    };
-  };
+  jonathanharty.gruvbox-material-icon-theme =
+    pkgs.vscode-utils.buildVscodeMarketplaceExtension
+      {
+        mktplcRef = {
+          name = "gruvbox-material-icon-theme";
+          publisher = "JonathanHarty";
+          version = "1.1.5";
+          hash = "sha256-86UWUuWKT6adx4hw4OJw3cSZxWZKLH4uLTO+Ssg75gY=";
+        };
+      };
 
   # Zig language support
   ziglang.vscode-zig = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
@@ -31,14 +33,16 @@ let
   };
 
   # Add Copilot Mermaid Diagram extension
-  ms-vscode.copilot-mermaid-diagram = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
-    mktplcRef = {
-      name = "copilot-mermaid-diagram";
-      publisher = "ms-vscode";
-      version = "0.0.2025062601";
-      hash = "sha256-zG/RLtc+jN/okWD+H3FGYNsDRy4VUwSkNgZI/NFYLj8=";
-    };
-  };
+  ms-vscode.copilot-mermaid-diagram =
+    pkgs.vscode-utils.buildVscodeMarketplaceExtension
+      {
+        mktplcRef = {
+          name = "copilot-mermaid-diagram";
+          publisher = "ms-vscode";
+          version = "0.0.2025062601";
+          hash = "sha256-zG/RLtc+jN/okWD+H3FGYNsDRy4VUwSkNgZI/NFYLj8=";
+        };
+      };
 
   # Add Makefile extension
   ms-vscode.makefile-tools = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
@@ -465,13 +469,9 @@ in
           validate = true;
           schemas = {
             "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/github-workflow.json" =
-              [
-                ".github/workflows/*"
-              ];
+              [ ".github/workflows/*" ];
             "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/pre-commit-config.json" =
-              [
-                ".pre-commit-config.yaml"
-              ];
+              [ ".pre-commit-config.yaml" ];
           };
         };
 
