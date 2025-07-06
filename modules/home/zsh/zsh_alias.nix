@@ -1,6 +1,6 @@
 {
   hostname,
-  config,
+  customsecrets,
   pkgs,
   host,
   ...
@@ -32,7 +32,7 @@
       tree = "eza --icons --tree --group-directories-first";
 
       # Nixos
-      cdnix = "cd ~/moshpitcodes.nix && codium ~/moshpitcodes.nix";
+      cdnix = "cd ~/${customsecrets.reponame} && codium ~/${customsecrets.reponame}";
       ns = "nom-shell --run zsh";
       nd = "nom develop --command zsh";
       nb = "nom build";

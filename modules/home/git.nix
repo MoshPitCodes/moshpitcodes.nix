@@ -1,10 +1,10 @@
-{ pkgs, ... }:
+{ pkgs, customsecrets, ... }:
 {
   programs.git = {
     enable = true;
 
-    userName = throw "<Enter your Git userName in ../modules/home/git.nix>";
-    userEmail = throw "<Enter your Git userEmail in ../modules/home/git.nix>";
+    userName = customsecrets.git.userName;
+    userEmail = customsecrets.git.userEmail;
 
     extraConfig = {
       init.defaultBranch = "main";

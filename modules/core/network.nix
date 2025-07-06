@@ -1,4 +1,4 @@
-{ pkgs, host, ... }:
+{ pkgs, host, customsecrets, ... }:
 {
   networking = {
     hostName = "${host}";
@@ -8,12 +8,12 @@
       "8.8.4.4"
       "1.1.1.1"
     ];
-    wireless.networks = {
-      # replace with actual SSID
-      "<SSID>" = {
-        psk = throw "<Enter your Wi-Fi password in ./modules/core/network.nix>"; # replace with actual password
-      };
-    };
+    wireless.networks =
+      if customsecrets.network.wifiSSID != "" then {
+        "${customsecrets.network.wifiSSID}" = {
+          psk = customsecrets.network.wifiPassword;
+        };
+      } else {};
     firewall = {
       enable = true;
       allowedTCPPorts = [
