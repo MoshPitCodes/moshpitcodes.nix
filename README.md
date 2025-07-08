@@ -24,8 +24,8 @@
       <br>
    </div>
    <div>
-      <a href="https://github.com/MoshPitCodes/moshpitcodes.nix/actions/workflows/ci.yml">
-         <img src="https://img.shields.io/github/actions/workflow/status/MoshPitCodes/moshpitcodes.nix/ci.yml?branch=main&style=for-the-badge&labelColor=282828&logo=github&logoColor=D79921&color=D79921&label=CI">
+      <a href="https://github.com/MoshPitCodes/moshpitcodes.nix/actions/workflows/ci-simple.yml">
+         <img src="https://img.shields.io/github/actions/workflow/status/MoshPitCodes/moshpitcodes.nix/ci-simple.yml?branch=main&style=for-the-badge&labelColor=282828&logo=github&logoColor=D79921&color=D79921&label=CI">
       </a>
       <a href="https://github.com/MoshPitCodes/moshpitcodes.nix/actions/workflows/format.yml">
          <img src="https://img.shields.io/github/actions/workflow/status/MoshPitCodes/moshpitcodes.nix/format.yml?branch=main&style=for-the-badge&labelColor=282828&logo=github&logoColor=FB4934&color=FB4934&label=Format">

@@ -26,13 +26,11 @@ jobs:
           access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
           
     - name: Setup Cachix
-      if: env.CACHIX_AUTH_TOKEN
+      if: ${{ secrets.CACHIX_AUTH_TOKEN != '' }}
       uses: cachix/cachix-action@v13
-      env:
-        CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
       with:
         name: nix-community
-        authToken: '${{ env.CACHIX_AUTH_TOKEN }}'
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         skipPush: true
         
     - name: Check flake syntax
