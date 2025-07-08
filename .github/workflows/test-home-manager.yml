@@ -35,42 +35,31 @@ jobs:
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         skipPush: true
         
-    - name: Create test secrets.nix
+    - name: Test home-manager integration in desktop system
       run: |
-        echo "🔐 Creating test secrets.nix..."
-        cat > secrets.nix << 'EOF'
-        {
-          username = "testuser";
-          reponame = "moshpitcodes.nix";
-          git = {
-            userName = "Test User";
-            userEmail = "test@example.com";
-            user.signingkey = "testkey";
-          };
-          network = {
-            wifiSSID = "";
-            wifiPassword = "";
-          };
-          apiKeys = {
-            anthropic = "";
-            openai = "";
-          };
-        }
-        EOF
+        echo "🏠 Testing home-manager integration in desktop system..."
+        nix build --show-trace --no-link .#nixosConfigurations.desktop.config.system.build.toplevel
+        echo "✅ Desktop system with home-manager builds successfully"
         
-    - name: Test home-manager configuration build
+    - name: Test home-manager integration in laptop system
       run: |
-        echo "🏠 Testing home-manager configuration build..."
-        nix build --show-trace --no-link .#homeConfigurations.testuser.activationPackage
-        echo "✅ Home-manager configuration builds successfully"
+        echo "💻 Testing home-manager integration in laptop system..."
+        nix build --show-trace --no-link .#nixosConfigurations.laptop.config.system.build.toplevel
+        echo "✅ Laptop system with home-manager builds successfully"
         
-    - name: Test home-manager modules
+    - name: Test home-manager user configuration
       run: |
-        echo "🧩 Testing home-manager modules..."
-        nix eval --show-trace .#homeConfigurations.testuser.config.home.packages --apply length
-        echo "✅ Home-manager modules are valid"
+        echo "👤 Testing home-manager user configuration..."
+        nix eval --show-trace .#nixosConfigurations.desktop.config.home-manager.users.testuser.home.packages --apply length
+        echo "✅ Home-manager user configuration is valid"
+        
+    - name: Test home-manager modules exist
+      run: |
+        echo "🧩 Testing home-manager modules exist..."
+        nix eval --show-trace .#nixosConfigurations.desktop.config.home-manager.users.testuser.programs.git.enable
+        echo "✅ Home-manager modules are accessible"
         
     - name: Check for home-manager warnings
       run: |
         echo "⚠️  Checking for home-manager warnings..."
-        nix build --show-trace --no-link .#homeConfigurations.testuser.activationPackage 2>&1 | grep -i warning || echo "✅ No warnings found"
+        nix build --show-trace --no-link .#nixosConfigurations.desktop.config.system.build.toplevel 2>&1 | grep -i warning || echo "✅ No warnings found"
