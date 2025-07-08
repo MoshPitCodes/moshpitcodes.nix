@@ -8,10 +8,12 @@
 
     extraConfig = {
       init.defaultBranch = "main";
-      credential.helper = "manager";
-      credential.credentialStore = "cache";
+      credential.helper = "${pkgs.git}/lib/git-core/git-credential-libsecret";
       merge.conflictstyle = "diff3";
       diff.colorMoved = "default";
+      commit.gpgsign = true;
+      user.signingkey = customsecrets.git.user.signingkey;
+      gpg.format = "openpgp";
     };
 
     delta = {
@@ -23,28 +25,24 @@
         navigate = true;
       };
     };
-    includes = [
-      # {
-      #     contents = {
-      #       user = {
-      #         # Your work email
-      #         email = "";
-      #       };
-
-      #       core = {
-      #         sshCommand = "ssh -i ~/.ssh/id_ed25519";
-      #       };
-      #     };
-      #     condition = "hasconfig:remote.*.url:";
-      #   }
-    ];
+    includes = [];
   };
 
   home.packages = with pkgs; [
     gh
     git-secrets
-    git-credential-manager
+    libsecret
+    gnupg
+    pinentry-gnome3
   ]; # pkgs.git-lfs
+
+  services.gpg-agent = {
+    enable = true;
+    pinentry.package = pkgs.pinentry-gnome3;
+    enableSshSupport = false; # Use GNOME keyring for SSH
+    defaultCacheTtl = 1800;
+    maxCacheTtl = 7200;
+  };
 
   programs.zsh.shellAliases = {
     g = "lazygit";

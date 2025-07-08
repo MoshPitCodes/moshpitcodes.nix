@@ -54,6 +54,7 @@
       gopls # Go language server
       golangci-lint # Go linter
       gofumpt # Go code formatter
+      sqlc
 
       # IDE
       # jetbrains.android-studio # Android Studio

@@ -7,7 +7,9 @@
 
 {
   # Ensure hyprpaper is installed
-  home.packages = with pkgs; [ hyprpaper ];
+  home.packages = with pkgs; [
+    hyprpaper
+  ];
 
   xdg.configFile."hypr/hyprpaper.conf".text = ''
     # Preload all your wallpapers for better performance

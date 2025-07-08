@@ -1,4 +1,6 @@
 { ... }:
 {
-  imports = [ ./development.nix ];
+  imports = [
+    ./development.nix
+  ];
 }
