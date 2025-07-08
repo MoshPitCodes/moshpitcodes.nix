@@ -41,7 +41,9 @@
         inherit system;
         config.allowUnfree = true;
       };
-      customsecrets = import ./secrets.nix;
+      customsecrets = if builtins.pathExists ./secrets.nix 
+        then import ./secrets.nix 
+        else import ./secrets.nix.example;
       username = customsecrets.username;
 
     in
