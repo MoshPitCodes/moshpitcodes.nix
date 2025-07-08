@@ -1,0 +1,76 @@
+name: Test home-manager
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  test-home-manager:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Install Nix
+      uses: cachix/install-nix-action@v24
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
+        extra_nix_config: |
+          experimental-features = nix-command flakes
+          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+          
+    - name: Setup Cachix
+      env:
+        CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      if: env.CACHIX_AUTH_TOKEN != ''
+      uses: cachix/cachix-action@v13
+      with:
+        name: nix-community
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+        skipPush: true
+        
+    - name: Create test secrets.nix
+      run: |
+        echo "🔐 Creating test secrets.nix..."
+        cat > secrets.nix << 'EOF'
+        {
+          username = "testuser";
+          reponame = "moshpitcodes.nix";
+          git = {
+            userName = "Test User";
+            userEmail = "test@example.com";
+            user.signingkey = "testkey";
+          };
+          network = {
+            wifiSSID = "";
+            wifiPassword = "";
+          };
+          apiKeys = {
+            anthropic = "";
+            openai = "";
+          };
+        }
+        EOF
+        
+    - name: Test home-manager configuration build
+      run: |
+        echo "🏠 Testing home-manager configuration build..."
+        nix build --show-trace --no-link .#homeConfigurations.testuser.activationPackage
+        echo "✅ Home-manager configuration builds successfully"
+        
+    - name: Test home-manager modules
+      run: |
+        echo "🧩 Testing home-manager modules..."
+        nix eval --show-trace .#homeConfigurations.testuser.config.home.packages --apply length
+        echo "✅ Home-manager modules are valid"
+        
+    - name: Check for home-manager warnings
+      run: |
+        echo "⚠️  Checking for home-manager warnings..."
+        nix build --show-trace --no-link .#homeConfigurations.testuser.activationPackage 2>&1 | grep -i warning || echo "✅ No warnings found"
