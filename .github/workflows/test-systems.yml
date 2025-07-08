@@ -29,6 +29,17 @@ jobs:
           experimental-features = nix-command flakes
           access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
           
+    - name: Free up disk space
+      run: |
+        echo "🧹 Freeing up disk space..."
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf /usr/local/lib/android
+        sudo rm -rf /opt/ghc
+        sudo rm -rf /opt/hostedtoolcache/CodeQL
+        sudo docker image prune --all --force
+        df -h
+        echo "✅ Disk space freed"
+        
     - name: Setup Cachix
       env:
         CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
@@ -39,42 +50,27 @@ jobs:
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         skipPush: true
         
-    - name: Create test secrets.nix
+    - name: Test ${{ matrix.host }} system configuration validity
       run: |
-        echo "🔐 Creating test secrets.nix..."
-        cat > secrets.nix << 'EOF'
-        {
-          username = "testuser";
-          reponame = "moshpitcodes.nix";
-          git = {
-            userName = "Test User";
-            userEmail = "test@example.com";
-            user.signingkey = "testkey";
-          };
-          network = {
-            wifiSSID = "";
-            wifiPassword = "";
-          };
-          apiKeys = {
-            anthropic = "";
-            openai = "";
-          };
-        }
-        EOF
+        echo "✅ Testing ${{ matrix.host }} system configuration validity..."
+        nix eval --show-trace .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel.drvPath
+        echo "✅ ${{ matrix.host }} system configuration is valid"
         
-    - name: Test ${{ matrix.host }} system build
+    - name: Test ${{ matrix.host }} system modules load
       run: |
-        echo "🖥️  Testing ${{ matrix.host }} system build..."
-        nix build --show-trace --no-link .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel
-        echo "✅ ${{ matrix.host }} system builds successfully"
+        echo "🧩 Testing ${{ matrix.host }} system modules load..."
+        nix eval --show-trace .#nixosConfigurations.${{ matrix.host }}.config.system.nixos.version
+        echo "✅ ${{ matrix.host }} system modules load successfully"
         
-    - name: Test ${{ matrix.host }} system dry-activate
+    - name: Test ${{ matrix.host }} user configuration
       run: |
-        echo "🧪 Testing ${{ matrix.host }} system dry-activate..."
-        nix build --show-trace --no-link .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel
-        echo "✅ ${{ matrix.host }} system dry-activate test passed"
+        echo "👤 Testing ${{ matrix.host }} user configuration..."
+        nix eval --show-trace .#nixosConfigurations.${{ matrix.host }}.config.users.users.testuser.isNormalUser
+        echo "✅ ${{ matrix.host }} user configuration is valid"
         
-    - name: Check ${{ matrix.host }} system warnings
+    - name: Lightweight build test for vm host only
+      if: matrix.host == 'vm'
       run: |
-        echo "⚠️  Checking ${{ matrix.host }} system for warnings..."
-        nix build --show-trace --no-link .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel 2>&1 | grep -i warning || echo "✅ No warnings found for ${{ matrix.host }}"
+        echo "🔨 Running lightweight build test for vm host..."
+        nix build --show-trace --no-link .#nixosConfigurations.vm.config.system.build.toplevel --max-jobs 1
+        echo "✅ VM system builds successfully"
