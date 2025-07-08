@@ -26,7 +26,9 @@ jobs:
           access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
           
     - name: Setup Cachix
-      if: secrets.CACHIX_AUTH_TOKEN != ''
+      env:
+        CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      if: env.CACHIX_AUTH_TOKEN != ''
       uses: cachix/cachix-action@v13
       with:
         name: nix-community
