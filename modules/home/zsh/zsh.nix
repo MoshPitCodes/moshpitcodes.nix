@@ -1,8 +1,5 @@
 {
-  hostname,
-  config,
   pkgs,
-  host,
   lib,
   ...
 }:
@@ -127,6 +124,36 @@
       setopt hist_verify
 
       source ~/.p10k.zsh
+
+      # SSH Agent auto-start
+      ssh_env_file="$XDG_RUNTIME_DIR/ssh-agent.env"
+      
+      # Function to start SSH agent
+      start_ssh_agent() {
+        ssh-agent -s > "$ssh_env_file"
+        chmod 600 "$ssh_env_file"
+        source "$ssh_env_file" >/dev/null
+      }
+      
+      # Check if SSH agent is running and env file exists
+      if [[ -f "$ssh_env_file" ]]; then
+        source "$ssh_env_file" >/dev/null
+        if ! ps -p "$SSH_AGENT_PID" >/dev/null 2>&1; then
+          start_ssh_agent
+        fi
+      else
+        start_ssh_agent
+      fi
+      
+      # Auto-add SSH keys if not already loaded
+      for key in id_ed25519 id_rsa id_ecdsa; do
+        keyfile="$HOME/.ssh/$key"
+        if [[ -f "$keyfile" ]]; then
+          if ! ssh-add -l 2>/dev/null | grep -q "$(ssh-keygen -lf "$keyfile" 2>/dev/null | awk '{print $2}')"; then
+            ssh-add "$keyfile" 2>/dev/null || true
+          fi
+        fi
+      done
 
       # Use fd (https://github.com/sharkdp/fd) for listing path candidates.
       # - The first argument to the function ($1) is the base path to start traversal

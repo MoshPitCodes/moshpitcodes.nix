@@ -6,8 +6,15 @@
       evince # pdf
       file-roller # archive
       gnome-text-editor # gedit
+      gnome-keyring # keyring for credentials
+      ssh-askpass-fullscreen # GUI SSH password prompt
     ]
   );
+
+  services.gnome-keyring = {
+    enable = true;
+    components = [ "secrets" "pkcs11" ]; # Remove SSH component, use SSH agent instead
+  };
 
   dconf.settings = {
     "org/gnome/TextEditor" = {

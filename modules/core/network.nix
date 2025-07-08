@@ -1,9 +1,4 @@
-{
-  pkgs,
-  host,
-  customsecrets,
-  ...
-}:
+{ pkgs, host, customsecrets, ... }:
 {
   networking = {
     hostName = "${host}";
@@ -14,14 +9,11 @@
       "1.1.1.1"
     ];
     wireless.networks =
-      if customsecrets.network.wifiSSID != "" then
-        {
-          "${customsecrets.network.wifiSSID}" = {
-            psk = customsecrets.network.wifiPassword;
-          };
-        }
-      else
-        { };
+      if customsecrets.network.wifiSSID != "" then {
+        "${customsecrets.network.wifiSSID}" = {
+          psk = customsecrets.network.wifiPassword;
+        };
+      } else {};
     firewall = {
       enable = true;
       allowedTCPPorts = [

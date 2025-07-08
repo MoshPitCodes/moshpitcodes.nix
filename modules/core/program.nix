@@ -5,7 +5,7 @@
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
-    # pinentryFlavor = "";
+    pinentryPackage = pkgs.pinentry-gnome3;
   };
   programs.nix-ld.enable = true;
   programs.nix-ld.libraries = with pkgs; [ ];

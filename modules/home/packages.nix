@@ -57,6 +57,7 @@ in
       ttyper # cli typing test
       unzip # zip utility
       valgrind # c memory analyzer
+      watchman
       wavemon # monitoring for wireless network devices
       wl-clipboard # clipboard utils for wayland (wl-copy, wl-paste)
       wget # download utility
@@ -65,6 +66,7 @@ in
       xdg-utils # xdg utils
       xxd # hex viewer
       zip # zip utility
+
 
       ## Media support packages
       libva # Video acceleration

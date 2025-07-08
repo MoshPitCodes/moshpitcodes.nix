@@ -1,9 +1,4 @@
-{
-  pkgs,
-  username,
-  customsecrets,
-  ...
-}:
+{ pkgs, username, customsecrets, ... }:
 {
   programs.nh = {
     enable = true;

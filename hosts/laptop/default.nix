@@ -28,7 +28,9 @@
       theme = "circle_flow";
       themePackages = with pkgs; [
         # By default we would install all themes
-        (adi1090x-plymouth-themes.override { selected_themes = [ "circle_flow" ]; })
+        (adi1090x-plymouth-themes.override {
+          selected_themes = [ "circle_flow" ];
+        })
       ];
     };
 
@@ -61,7 +63,10 @@
     ];
     extraModulePackages =
       with config.boot.kernelPackages;
-      [ cpupower ] ++ [ pkgs.cpupower-gui ];
+      [
+        cpupower
+      ]
+      ++ [ pkgs.cpupower-gui ];
     kernelParams = [
       "i915.force_probe=a7a0"
       "intel_pstate=active" # Performance mode for Intel CPUs
