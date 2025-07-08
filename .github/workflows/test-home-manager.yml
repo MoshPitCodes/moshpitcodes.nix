@@ -61,7 +61,7 @@ jobs:
     - name: Test home-manager user configuration
       run: |
         echo "👤 Testing home-manager user configuration..."
-        nix eval --show-trace .#nixosConfigurations.desktop.config.home-manager.users.testuser.home.packages --apply length
+        nix eval --show-trace .#nixosConfigurations.desktop.config.home-manager.users.testuser.home.packages --apply "builtins.length"
         echo "✅ Home-manager user configuration is valid"
         
     - name: Test home-manager modules exist
