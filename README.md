@@ -24,11 +24,14 @@
       <br>
    </div>
    <div>
-      <a href="https://github.com/MoshPitCodes/moshpitcodes.nix/actions/workflows/ci-simple.yml">
-         <img src="https://img.shields.io/github/actions/workflow/status/MoshPitCodes/moshpitcodes.nix/ci-simple.yml?branch=main&style=for-the-badge&labelColor=282828&logo=github&logoColor=D79921&color=D79921&label=CI">
+      <a href="https://github.com/MoshPitCodes/moshpitcodes.nix/actions/workflows/test-flake.yml">
+         <img src="https://img.shields.io/github/actions/workflow/status/MoshPitCodes/moshpitcodes.nix/test-flake.yml?branch=main&style=for-the-badge&labelColor=282828&logo=github&logoColor=D79921&color=D79921&label=Flake">
       </a>
-      <a href="https://github.com/MoshPitCodes/moshpitcodes.nix/actions/workflows/format.yml">
-         <img src="https://img.shields.io/github/actions/workflow/status/MoshPitCodes/moshpitcodes.nix/format.yml?branch=main&style=for-the-badge&labelColor=282828&logo=github&logoColor=FB4934&color=FB4934&label=Format">
+      <a href="https://github.com/MoshPitCodes/moshpitcodes.nix/actions/workflows/test-systems.yml">
+         <img src="https://img.shields.io/github/actions/workflow/status/MoshPitCodes/moshpitcodes.nix/test-systems.yml?branch=main&style=for-the-badge&labelColor=282828&logo=github&logoColor=FB4934&color=FB4934&label=Systems">
+      </a>
+      <a href="https://github.com/MoshPitCodes/moshpitcodes.nix/actions/workflows/test-home-manager.yml">
+         <img src="https://img.shields.io/github/actions/workflow/status/MoshPitCodes/moshpitcodes.nix/test-home-manager.yml?branch=main&style=for-the-badge&labelColor=282828&logo=github&logoColor=83A598&color=83A598&label=Home">
       </a>
    </div>
 </h1>
