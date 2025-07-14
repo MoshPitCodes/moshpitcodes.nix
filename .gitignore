@@ -32,7 +32,6 @@ go.work.sum
 .vscode/
 *.swp
 *.swo
-.cursor
 
 # Mac OS
 .DS_Store

@@ -11,7 +11,7 @@ in
       ## CLI utility
       # ani-cli # cli tool for anime
       aoc-cli # Advent of Code command-line tool
-      binsider # binary analysis tool
+      # binsider # binary analysis tool
       # bitwise # cli tool for bit / hex manipulation
       caligula # User-friendly, lightweight TUI for disk imaging
       chatterino7
@@ -26,9 +26,9 @@ in
       ffsend # file sharing
       file # Show file information
       # gtt # google translate TUI
-      gifsicle # gif utility
+      # gifsicle # gif utility
       gtrash # rm replacement, put deleted files in system trash
-      hexdump # hex viewer
+      # hexdump # hex viewer
       # htop # system monitor
       imv # image viewer
       killall # kill processes by name
