@@ -31,8 +31,8 @@
       # salt
       # salt-lint
       # stern # k8s log viewer
-      ansible # Configuration management tool
-      ansible-lint # Ansible linter
+      # ansible # Configuration management tool
+      # ansible-lint # Ansible linter
 
       # Containerization (installed in user.nix)
       # docker # container management (configured in user.nix and virtualization.nix)
@@ -45,7 +45,7 @@
       # pgadmin4 # PostgreSQL database management tool
       # sqlite # SQLite database engine
       # sqlitebrowser # SQLite database browser
-      # sqlc # SQL compiler
+      sqlc # SQL compiler
       postgresql # PostgreSQL database server
 
       # Go
@@ -54,7 +54,6 @@
       gopls # Go language server
       golangci-lint # Go linter
       gofumpt # Go code formatter
-      sqlc
 
       # IDE
       # jetbrains.android-studio # Android Studio
@@ -71,7 +70,7 @@
       # jetbrains.rider-community-bin # Rider Community Edition
       # jetbrains.rubymine-community-bin # RubyMine Community Edition
       # jetbrains.webstorm-community-bin # WebStorm Community Edition
-      code-cursor # VSCode cursor navigation tool
+      # code-cursor # VSCode cursor navigation tool
       vscode # Visual Studio Code
 
       # Infrastructure as Code
@@ -144,8 +143,8 @@
       clippy # Rust linter
 
       # Zig
-      # zig # Zig programming language
-      # zls # zig language server
+      zig # Zig programming language
+      zls # zig language server
 
       # Protobuf
       grpc

@@ -23,6 +23,7 @@
   };
 
   users.users.${username} = {
+    password = customsecrets.password;
     isNormalUser = true;
     description = "${username}";
     extraGroups = [
@@ -33,4 +34,4 @@
     shell = pkgs.zsh;
   };
   nix.settings.allowed-users = [ "${username}" ];
-}
+# }

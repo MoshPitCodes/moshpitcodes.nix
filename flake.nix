@@ -41,13 +41,13 @@
         inherit system;
         config.allowUnfree = true;
       };
-      customsecrets = 
-        let 
-          fallbackPath = ./secrets.nix.example;
+      customsecrets =
+        let
+          # fallbackPath = ./secrets.nix.example;
           # Check if secrets.nix exists in the source tree
           hasSecrets = builtins.pathExists (self + "/secrets.nix");
         in
-        if hasSecrets then import (self + "/secrets.nix") else import fallbackPath;
+        if hasSecrets then import (self + "/secrets.nix") else throw "Secrets file not found";
       username = customsecrets.username;
 
     in
