@@ -35,6 +35,12 @@ jobs:
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         skipPush: true
         
+    - name: Create secrets.nix for CI
+      run: |
+        echo "📝 Creating secrets.nix for CI environment..."
+        cp secrets.nix.example secrets.nix
+        echo "✅ Secrets file created"
+        
     - name: Check flake syntax
       run: |
         echo "🔍 Checking flake syntax..."

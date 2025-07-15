@@ -46,6 +46,12 @@ jobs:
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         skipPush: true
         
+    - name: Create secrets.nix for CI
+      run: |
+        echo "📝 Creating secrets.nix for CI environment..."
+        cp secrets.nix.example secrets.nix
+        echo "✅ Secrets file created"
+        
     - name: Test home-manager configuration validity in desktop
       run: |
         echo "🏠 Testing home-manager configuration validity in desktop..."
