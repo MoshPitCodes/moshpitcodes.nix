@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
   # Custom VSCode extensions
   jonathanharty.gruvbox-material-icon-theme = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
@@ -31,14 +31,14 @@ let
   };
 
   # Add Copilot Mermaid Diagram extension
-  ms-vscode.copilot-mermaid-diagram = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
-    mktplcRef = {
-      name = "copilot-mermaid-diagram";
-      publisher = "ms-vscode";
-      version = "0.0.2025062601";
-      hash = "sha256-zG/RLtc+jN/okWD+H3FGYNsDRy4VUwSkNgZI/NFYLj8=";
-    };
-  };
+  # ms-vscode.copilot-mermaid-diagram = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
+  #   mktplcRef = {
+  #     name = "copilot-mermaid-diagram";
+  #     publisher = "ms-vscode";
+  #     version = "0.0.2025062601";
+  #     hash = "sha256-zG/RLtc+jN/okWD+H3FGYNsDRy4VUwSkNgZI/NFYLj8=";
+  #   };
+  # };
 
   # Add Makefile extension
   ms-vscode.makefile-tools = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
@@ -60,8 +60,61 @@ let
     };
   };
 
+  # Add MermaidChart extension
+  mermaidchart.vscode-mermaid-chart = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
+    mktplcRef = {
+      name = "vscode-mermaid-chart";
+      publisher = "MermaidChart";
+      version = "2.5.3";
+      hash = "sha256-JqHVqMGeE1FYY9Q5U4Q01H8K7C2gXs+YAV08ZzABgZM=";
+    };
+  };
+
+  # MCP configuration content
+  mcpConfigContent = builtins.toJSON {
+    inputs = [
+      {
+        type = "promptString";
+        id = "github_token";
+        description = "GitHub Personal Access Token";
+        password = true;
+      }
+    ];
+    servers = {
+      github = {
+        type = "stdio";
+        command = "docker";
+        args = [
+          "-i"
+          "--rm"
+          "-e"
+          "GITHUB_PERSONAL_ACCESS_TOKEN"
+          "ghcr.io/github/github-mcp-server"
+        ];
+        env = {
+          GITHUB_PERSONAL_ACCESS_TOKEN = "\${input:github_token}";
+        };
+      };
+      fetch = {
+        type = "stdio";
+        command = "uvx";
+        args = [ "mcp-server-fetch" ];
+      };
+    };
+  };
 in
 {
+  # Create MCP configuration file as a writable file (not a symlink)
+  home.activation.createMcpConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    $DRY_RUN_CMD mkdir -p $HOME/.config/Code/User
+    if [ ! -f $HOME/.config/Code/User/mcp.json ]; then
+      $DRY_RUN_CMD cat > $HOME/.config/Code/User/mcp.json << 'EOF'
+${mcpConfigContent}
+EOF
+      $DRY_RUN_CMD chmod u+w $HOME/.config/Code/User/mcp.json
+    fi
+  '';
+
   programs.vscode = {
     enable = true;
     package = pkgs.vscode;
@@ -88,7 +141,7 @@ in
         ms-vscode.makefile-tools
 
         # Mermaid support
-        ms-vscode.copilot-mermaid-diagram
+        # ms-vscode.copilot-mermaid-diagram
 
         # MS Azure
         # ms-azure-devops.azure-pipelines
@@ -131,7 +184,7 @@ in
         # ---------------------------
 
         # Markdown support
-        bierner.markdown-mermaid
+        # bierner.markdown-mermaid
         # bierner.markdown-preview-github-styles
 
         # Claude Code
@@ -163,6 +216,7 @@ in
 
         # Mermaid Diagrams
         bierner.markdown-mermaid
+        mermaidchart.vscode-mermaid-chart
 
         # nix language
         jnoortheen.nix-ide
@@ -211,37 +265,6 @@ in
         "github.copilot.chat.enableExperimental" = true;
         "github.copilot.chat.enableExperimentalUI" = true;
 
-        # Enable GitHub MCP Server
-        mcp = {
-          inputs = [
-            {
-              type = "promptString";
-              id = "github_token";
-              description = "GitHub Personal Access Token";
-              password = true;
-            }
-          ];
-          servers = {
-            github = {
-              command = "docker";
-              args = [
-                "-i"
-                "--rm"
-                "-e"
-                "GITHUB_PERSONAL_ACCESS_TOKEN"
-                "ghcr.io/github/github-mcp-server"
-              ];
-              env = {
-                GITHUB_PERSONAL_ACCESS_TOKEN = "\${input:github_token}";
-              };
-            };
-            fetch = {
-              type = "stdio";
-              command = "uvx";
-              args = [ "mcp-server-fetch" ];
-            };
-          };
-        };
         editor = {
           fontFamily = "'Maple Mono NF', 'SymbolsNerdFont', 'monospace', monospace";
           fontLigatures = true;
@@ -409,7 +432,9 @@ in
 
         "C_Cpp.autocompleteAddParentheses" = true;
         "C_Cpp.clang_format_sortIncludes" = true;
-        "C_Cpp.default.browse.path" = [ ''''${workspaceFolder}/**'' ];
+        "C_Cpp.default.browse.path" = [''
+          ''${workspaceFolder}/**
+        ''];
         "C_Cpp.default.cStandard" = "gnu11";
         "C_Cpp.doxygen.generatedStyle" = "/**";
         "C_Cpp.formatting" = "clangFormat";
