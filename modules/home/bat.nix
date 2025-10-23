@@ -9,7 +9,7 @@
     extraPackages = with pkgs.bat-extras; [
       batman
       batpipe
-      batgrep
+      # batgrep  # Moved to environment.systemPackages to avoid test failures
       # batdiff
     ];
   };

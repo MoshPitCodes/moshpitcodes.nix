@@ -16,19 +16,21 @@
     ];
   };
   services.envfs.enable = true;
-  services.logind.extraConfig = ''
-    # don’t shutdown when power button is short-pressed
-    HandlePowerKey=ignore
+  services.logind.settings = {
+    Login = {
+      # don't shutdown when power button is short-pressed
+      HandlePowerKey = "ignore";
 
-    # suspend when power button is long-pressed
-    HandleLidSwitch=suspend
+      # suspend when power button is long-pressed
+      HandleLidSwitch = "suspend";
 
-    # ignore closing the lid when docked
-    HandleLidSwitchExternalPower=ignore
+      # ignore closing the lid when docked
+      HandleLidSwitchExternalPower = "ignore";
 
-    # lidSwitch = ignore
-    # lidSwitchDocked = ignore
-    # lidSwitchExternalPower = ignore
-  '';
+      # lidSwitch = ignore
+      # lidSwitchDocked = ignore
+      # lidSwitchExternalPower = ignore
+    };
+  };
 
 }

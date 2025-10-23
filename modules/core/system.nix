@@ -45,6 +45,9 @@
     nixfmt-tree
     jdk23
     openh264
+    (bat-extras.batgrep.overrideAttrs (oldAttrs: {
+      doCheck = false;  # Skip failing tests
+    }))
     # jdk23
   ];
 

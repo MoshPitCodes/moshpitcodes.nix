@@ -43,11 +43,11 @@
       };
       customsecrets =
         let
-          # fallbackPath = ./secrets.nix.example;
-          # Check if secrets.nix exists in the source tree
-          hasSecrets = builtins.pathExists (self + "/secrets.nix");
+          fallbackPath = ./secrets.nix.example;
+          # Check if secrets.nix exists in the working directory (not git-tracked)
+          hasSecrets = builtins.pathExists ./secrets.nix;
         in
-        if hasSecrets then import (self + "/secrets.nix") else throw "Secrets file not found";
+        if hasSecrets then import ./secrets.nix else import fallbackPath;
       username = customsecrets.username;
 
     in
