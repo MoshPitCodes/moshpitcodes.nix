@@ -1,5 +1,6 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 let
+  # VSCode configuration with MCP support
   # Custom VSCode extensions
   jonathanharty.gruvbox-material-icon-theme = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
     mktplcRef = {
@@ -104,16 +105,19 @@ let
   };
 in
 {
-  # Create MCP configuration file as a writable file (not a symlink)
-  home.activation.createMcpConfig = lib.hm.dag.entryAfter ["writeBoundary"] ''
-    $DRY_RUN_CMD mkdir -p $HOME/.config/Code/User
-    if [ ! -f $HOME/.config/Code/User/mcp.json ]; then
-      $DRY_RUN_CMD cat > $HOME/.config/Code/User/mcp.json << 'EOF'
-${mcpConfigContent}
-EOF
-      $DRY_RUN_CMD chmod u+w $HOME/.config/Code/User/mcp.json
-    fi
-  '';
+  # Create MCP configuration file as a writable file
+  xdg.configFile."Code/User/mcp.json" = {
+    text = mcpConfigContent;
+    onChange = ''
+      # Copy the file to make it writable (not a symlink)
+      if [ -L "$HOME/.config/Code/User/mcp.json" ]; then
+        cp -f "$HOME/.config/Code/User/mcp.json" "$HOME/.config/Code/User/mcp.json.tmp"
+        rm -f "$HOME/.config/Code/User/mcp.json"
+        mv "$HOME/.config/Code/User/mcp.json.tmp" "$HOME/.config/Code/User/mcp.json"
+        chmod u+w "$HOME/.config/Code/User/mcp.json"
+      fi
+    '';
+  };
 
   programs.vscode = {
     enable = true;
