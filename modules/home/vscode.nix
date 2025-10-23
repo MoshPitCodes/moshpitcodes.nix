@@ -626,6 +626,11 @@ in
           key = "ctrl+i";
           command = "composerMode.agent";
         }
+        {
+          key = "shift+enter";
+          command = "claude-code.submitMessage";
+          when = "inputFocus && claudeCodeInputFocused";
+        }
       ];
     };
   };
