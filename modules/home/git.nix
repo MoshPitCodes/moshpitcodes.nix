@@ -3,29 +3,37 @@
   programs.git = {
     enable = true;
 
-    userName = customsecrets.git.userName;
-    userEmail = customsecrets.git.userEmail;
-
-    extraConfig = {
+    settings = {
+      user = {
+        name = customsecrets.git.userName;
+        email = customsecrets.git.userEmail;
+        signingkey = customsecrets.git.user.signingkey;
+      };
       init.defaultBranch = "main";
       credential.helper = "${pkgs.git}/lib/git-core/git-credential-libsecret";
       merge.conflictstyle = "diff3";
       diff.colorMoved = "default";
       commit.gpgsign = true;
-      user.signingkey = customsecrets.git.user.signingkey;
       gpg.format = "openpgp";
-    };
-
-    delta = {
-      enable = true;
-      options = {
-        line-numbers = true;
-        side-by-side = true;
-        diff-so-fancy = true;
-        navigate = true;
+      alias = {
+        lg = "log --oneline --decorate --graph";
+        lol = "log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset'";
+        lola = "log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --all";
+        lols = "log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --stat";
       };
     };
-    includes = [];
+
+  };
+
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+    options = {
+      line-numbers = true;
+      side-by-side = true;
+      diff-so-fancy = true;
+      navigate = true;
+    };
   };
 
   home.packages = with pkgs; [

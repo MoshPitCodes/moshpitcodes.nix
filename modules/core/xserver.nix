@@ -1,4 +1,4 @@
-{ pkgs, username, ... }:
+{ username, ... }:
 {
   services = {
     xserver = {
@@ -16,5 +16,9 @@
     };
   };
   # To prevent getting stuck at shutdown
-  systemd.extraConfig = "DefaultTimeoutStopSec=10s";
+  systemd.settings = {
+    Manager = {
+      DefaultTimeoutStopSec = "10s";
+    };
+  };
 }

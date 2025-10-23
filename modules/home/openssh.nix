@@ -2,16 +2,13 @@
 {
   programs.ssh = {
     enable = true;
-    addKeysToAgent = "yes";
-    extraConfig = ''
-      IdentitiesOnly yes
-      AddKeysToAgent yes
-    '';
+    enableDefaultConfig = false; # Explicitly disable to avoid future warnings
     matchBlocks = {
       "github.com" = {
         hostname = "github.com";
         user = "git";
         identityFile = "/home/${username}/.ssh/id_ed25519";
+        addKeysToAgent = "yes";
       };
       "*" = {
         identityFile = [
@@ -19,6 +16,8 @@
           "/home/${username}/.ssh/id_rsa"
           "/home/${username}/.ssh/id_ecdsa"
         ];
+        addKeysToAgent = "yes";
+        identitiesOnly = true;
       };
     };
   };
