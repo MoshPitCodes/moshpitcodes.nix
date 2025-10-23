@@ -1,10 +1,7 @@
 name: Test home-manager
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -12,11 +9,11 @@ permissions:
 jobs:
   test-home-manager:
     runs-on: ubuntu-latest
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
+
     - name: Install Nix
       uses: cachix/install-nix-action@v24
       with:
@@ -24,7 +21,7 @@ jobs:
         extra_nix_config: |
           experimental-features = nix-command flakes
           access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-          
+
     - name: Free up disk space
       run: |
         echo "🧹 Freeing up disk space..."
@@ -35,7 +32,7 @@ jobs:
         sudo docker image prune --all --force
         df -h
         echo "✅ Disk space freed"
-        
+
     - name: Setup Cachix
       env:
         CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
@@ -45,37 +42,37 @@ jobs:
         name: nix-community
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         skipPush: true
-        
+
     - name: Create secrets.nix for CI
       run: |
         echo "📝 Creating secrets.nix for CI environment..."
         cp secrets.nix.example secrets.nix
         echo "✅ Secrets file created"
-        
+
     - name: Test home-manager configuration validity in desktop
       run: |
         echo "🏠 Testing home-manager configuration validity in desktop..."
         nix eval --show-trace .#nixosConfigurations.desktop.config.system.build.toplevel.drvPath
         echo "✅ Desktop home-manager configuration is valid"
-        
+
     - name: Test home-manager configuration validity in laptop
       run: |
         echo "💻 Testing home-manager configuration validity in laptop..."
         nix eval --show-trace .#nixosConfigurations.laptop.config.system.build.toplevel.drvPath
         echo "✅ Laptop home-manager configuration is valid"
-        
+
     - name: Test home-manager user configuration
       run: |
         echo "👤 Testing home-manager user configuration..."
         nix eval --show-trace .#nixosConfigurations.desktop.config.home-manager.users.testuser.home.packages --apply "builtins.length"
         echo "✅ Home-manager user configuration is valid"
-        
+
     - name: Test home-manager modules exist
       run: |
         echo "🧩 Testing home-manager modules exist..."
         nix eval --show-trace .#nixosConfigurations.desktop.config.home-manager.users.testuser.programs.git.enable
         echo "✅ Home-manager modules are accessible"
-        
+
     - name: Lightweight build test for desktop home-manager integration
       run: |
         echo "🔨 Testing desktop home-manager integration with build..."

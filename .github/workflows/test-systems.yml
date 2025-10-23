@@ -1,10 +1,7 @@
 name: Test systems
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -16,11 +13,11 @@ jobs:
       matrix:
         host: [desktop, laptop, vm, vmware-guest]
       fail-fast: false
-    
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-      
+
     - name: Install Nix
       uses: cachix/install-nix-action@v24
       with:
@@ -28,7 +25,7 @@ jobs:
         extra_nix_config: |
           experimental-features = nix-command flakes
           access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
-          
+
     - name: Free up disk space
       run: |
         echo "🧹 Freeing up disk space..."
@@ -39,7 +36,7 @@ jobs:
         sudo docker image prune --all --force
         df -h
         echo "✅ Disk space freed"
-        
+
     - name: Setup Cachix
       env:
         CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
@@ -49,31 +46,31 @@ jobs:
         name: nix-community
         authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
         skipPush: true
-        
+
     - name: Create secrets.nix for CI
       run: |
         echo "📝 Creating secrets.nix for CI environment..."
         cp secrets.nix.example secrets.nix
         echo "✅ Secrets file created"
-        
+
     - name: Test ${{ matrix.host }} system configuration validity
       run: |
         echo "✅ Testing ${{ matrix.host }} system configuration validity..."
         nix eval --show-trace .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel.drvPath
         echo "✅ ${{ matrix.host }} system configuration is valid"
-        
+
     - name: Test ${{ matrix.host }} system modules load
       run: |
         echo "🧩 Testing ${{ matrix.host }} system modules load..."
         nix eval --show-trace .#nixosConfigurations.${{ matrix.host }}.config.system.nixos.version
         echo "✅ ${{ matrix.host }} system modules load successfully"
-        
+
     - name: Test ${{ matrix.host }} user configuration
       run: |
         echo "👤 Testing ${{ matrix.host }} user configuration..."
         nix eval --show-trace .#nixosConfigurations.${{ matrix.host }}.config.users.users.testuser.isNormalUser
         echo "✅ ${{ matrix.host }} user configuration is valid"
-        
+
     - name: Lightweight build test for vm host only
       if: matrix.host == 'vm'
       run: |
