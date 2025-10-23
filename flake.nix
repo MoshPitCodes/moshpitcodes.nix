@@ -41,20 +41,7 @@
         inherit system;
         config.allowUnfree = true;
       };
-      customsecrets =
-        let
-          # Use absolute path from FLAKE_ROOT or default to relative path
-          flakeRoot = builtins.getEnv "PWD";
-          secretsPath = flakeRoot + "/secrets.nix";
-          fallbackPath = ./secrets.nix.example;
-          # Check if the absolute path exists (works with --impure)
-          hasSecrets = builtins.pathExists secretsPath;
-        in
-        if hasSecrets then
-          import (builtins.toPath secretsPath)
-        else
-          builtins.trace "WARNING: secrets.nix not found at ${secretsPath}, using secrets.nix.example"
-            (import fallbackPath);
+      customsecrets = import ./secrets.nix;
       username = customsecrets.username;
 
     in
