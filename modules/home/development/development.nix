@@ -97,9 +97,10 @@
       tflint # terraform linter
 
       # Java
-      corretto21 # Amazon Corretto 21 (OpenJDK 21)
+      # corretto21 # Amazon Corretto 21 (OpenJDK 21)
       gradle # Gradle build tool for Java
       maven # Maven build tool for Java
+      openjdk25
 
       # JavaScript
       # deno # Deno runtime for JavaScript and TypeScript
