@@ -1,13 +1,13 @@
 { config, lib, pkgs, modulesPath, ... }:
 
 {
-  imports = [ 
-    (modulesPath + "/profiles/qemu-guest.nix")
-  ];
+  # No QEMU profile - this is VMware!
+  imports = [ ];
 
-  boot.initrd.availableKernelModules = [ "ata_piix" "mptspi" "uhci_hcd" "ehci_pci" "sd_mod" "sr_mod" ];
-  boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ ];
+  # VMware-specific kernel modules
+  boot.initrd.availableKernelModules = [ "ata_piix" "mptspi" "uhci_hcd" "ehci_pci" "sd_mod" "sr_mod" "ahci" "nvme" ];
+  boot.initrd.kernelModules = [ "vmw_pvscsi" ];
+  boot.kernelModules = [ "vmw_vsock_vmci_transport" "vmw_balloon" "vmwgfx" ];
   boot.extraModulePackages = [ ];
 
   # Adjust these values based on your actual VM configuration

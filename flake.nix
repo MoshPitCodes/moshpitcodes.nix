@@ -75,7 +75,7 @@
           inherit system;
           modules = [ ./hosts/vmware-guest ];
           specialArgs = {
-            host = "vmware";
+            host = "nixos-vmware";
             inherit self inputs username customsecrets;
           };
         };
