@@ -10,17 +10,15 @@
   # Override Intel graphics packages with empty list for VMs
   hardware.graphics.extraPackages = lib.mkForce [ ];
 
-  # Disable laptop-specific logind settings
-  services.logind.lidSwitch = lib.mkForce "ignore";
-  services.logind.lidSwitchDocked = lib.mkForce "ignore";
-  services.logind.lidSwitchExternalPower = lib.mkForce "ignore";
-
-  # Allow power button to work normally in VM (useful for clean shutdown)
-  services.logind.extraConfig = ''
-    HandlePowerKey=poweroff
-    HandleLidSwitch=ignore
-    HandleLidSwitchExternalPower=ignore
-  '';
+  # Override laptop-specific logind settings for VMs
+  services.logind.extraConfig = lib.mkForce "";
+  services.logind.settings = {
+    Login = {
+      HandlePowerKey = lib.mkForce "poweroff";
+      HandleLidSwitch = lib.mkForce "ignore";
+      HandleLidSwitchExternalPower = lib.mkForce "ignore";
+    };
+  };
 
   # Disable TLP if it exists (power management not needed in VMs)
   services.tlp.enable = lib.mkForce false;

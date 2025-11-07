@@ -13,7 +13,13 @@
     useGlobalPkgs = true;
     extraSpecialArgs = { inherit inputs username host customsecrets; };
     users.${username} = {
-      imports = if (host == "desktop") then [ ./../home/default.desktop.nix ] else [ ./../home ];
+      imports =
+        if (host == "desktop") then
+          [ ./../home/default.desktop.nix ]
+        else if (host == "vm" || host == "nixos-vmware") then
+          [ ./../home/default.vm.nix ]
+        else
+          [ ./../home ];
       home.username = "${username}";
       home.homeDirectory = "/home/${username}";
       home.stateVersion = "25.05";
