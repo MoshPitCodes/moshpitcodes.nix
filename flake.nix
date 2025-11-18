@@ -79,7 +79,29 @@
             inherit self inputs username customsecrets;
           };
         };
+        wsl = nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            ./hosts/wsl
+            ({ pkgs, ... }: {
+              nixpkgs.overlays = [
+                (final: prev: {
+                  wsl-distro =
+                    (pkgs.wsl-distro.override {
+                      nixosConfiguration = self.nixosConfigurations.wsl;
+                    });
+                })
+              ];
+            })
+          ];
+          specialArgs = {
+            host = "nixos-wsl";
+            inherit self inputs username customsecrets;
+          };
+        };
       };
+
+      packages.${system}.wsl-distro = self.nixosConfigurations.wsl.pkgs.wsl-distro;
 
       devShells.${system}.default = pkgs.mkShell {
         buildInputs = with pkgs; [
