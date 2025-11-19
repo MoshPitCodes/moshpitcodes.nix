@@ -30,8 +30,8 @@
     # Development tools (includes kubectl, terraform, helm, etc.)
     ./development
 
-    # VSCode for WSL development (works well with WSL integration)
-    ./vscode.nix
+    # NOTE: VSCode not installed in WSL - use Windows VSCode with Remote-WSL extension
+    # ./vscode.nix
   ];
 
   # WSL-specific packages that don't require their own module
