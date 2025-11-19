@@ -150,12 +150,16 @@
       fi
       
       # Auto-add SSH keys if not already loaded
-      for key in id_ed25519 id_rsa id_ecdsa; do
-        keyfile="$HOME/.ssh/$key"
-        if [[ -f "$keyfile" ]]; then
-          if ! ssh-add -l 2>/dev/null | grep -q "$(ssh-keygen -lf "$keyfile" 2>/dev/null | awk '{print $2}')"; then
-            ssh-add "$keyfile" 2>/dev/null || true
-          fi
+      # Note: The systemd service ssh-add-keys in openssh.nix handles this dynamically
+      # based on secrets.nix. This is a fallback for non-systemd shells.
+      # To add custom keys, update the keys list in secrets.nix
+      for key in ~/.ssh/id_*; do
+        # Skip public keys, directories, and non-existent files
+        [[ -f "$key" ]] || continue
+        [[ "$key" == *.pub ]] && continue
+
+        if ! ssh-add -l 2>/dev/null | grep -q "$(ssh-keygen -lf "$key" 2>/dev/null | awk '{print $2}')"; then
+          ssh-add "$key" 2>/dev/null || true
         fi
       done
 
