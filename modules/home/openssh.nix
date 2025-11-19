@@ -75,12 +75,16 @@ in
         hostname = "github.com";
         user = "git";
         identityFile = lib.head identityFiles; # Use first key as default
-        addKeysToAgent = "yes";
+        extraOptions = {
+          AddKeysToAgent = "yes";
+        };
       };
       "*" = {
         identityFile = identityFiles;
-        addKeysToAgent = "yes";
         identitiesOnly = true;
+        extraOptions = {
+          AddKeysToAgent = "yes";
+        };
       };
     };
   };
