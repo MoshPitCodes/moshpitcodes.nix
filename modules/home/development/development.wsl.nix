@@ -71,7 +71,7 @@
       # jetbrains.rubymine-community-bin # RubyMine Community Edition
       # jetbrains.webstorm-community-bin # WebStorm Community Edition
       # code-cursor # VSCode cursor navigation tool
-      vscode # Visual Studio Code
+      # vscode # Visual Studio Code
 
       # Infrastructure as Code
       ansible # Configuration management
@@ -101,7 +101,7 @@
       # corretto21 # Amazon Corretto 21 (OpenJDK 21)
       gradle # Gradle build tool for Java
       maven # Maven build tool for Java
-      openjdk25
+      openjdk25 # OpenJDK 25
 
       # JavaScript
       # deno # Deno runtime for JavaScript and TypeScript

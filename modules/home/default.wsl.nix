@@ -38,10 +38,7 @@
   home.packages = (
     with inputs.nixpkgs.legacyPackages.x86_64-linux;
     [
-      # Additional DevOps tools for WSL
-      # kubectl is provided by k3s package (included in development.nix)
-      talosctl # Talos Linux CLI
-      ansible # Configuration management
+
 
       # CLI improvements
       eza # Modern replacement for ls (required by ll alias)
