@@ -31,6 +31,9 @@
   # PulseAudio is mutually exclusive with PipeWire, disabling PipeWire is enough
   # hardware.pulseaudio.enable is handled by the audio module
 
+  # Disable ALSA persistence - WSL doesn't have sound cards
+  hardware.alsa.enablePersistence = lib.mkForce false;
+
   # Disable Steam and gaming-related packages
   programs.steam.enable = lib.mkForce false;
 

@@ -51,4 +51,4 @@ proto/v1/*.pb.go
 .env.local
 secrets.nix
 docs/
-CLAUDE.md
+# CLAUDE.md

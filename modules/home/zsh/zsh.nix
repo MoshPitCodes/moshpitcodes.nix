@@ -153,15 +153,17 @@
       # Note: The systemd service ssh-add-keys in openssh.nix handles this dynamically
       # based on secrets.nix. This is a fallback for non-systemd shells.
       # To add custom keys, update the keys list in secrets.nix
-      for key in ~/.ssh/id_*; do
-        # Skip public keys, directories, and non-existent files
-        [[ -f "$key" ]] || continue
-        [[ "$key" == *.pub ]] && continue
+      if compgen -G "$HOME/.ssh/id_*" > /dev/null 2>&1; then
+        for key in ~/.ssh/id_*; do
+          # Skip public keys, directories, and non-existent files
+          [[ -f "$key" ]] || continue
+          [[ "$key" == *.pub ]] && continue
 
-        if ! ssh-add -l 2>/dev/null | grep -q "$(ssh-keygen -lf "$key" 2>/dev/null | awk '{print $2}')"; then
-          ssh-add "$key" 2>/dev/null || true
-        fi
-      done
+          if ! ssh-add -l 2>/dev/null | grep -q "$(ssh-keygen -lf "$key" 2>/dev/null | awk '{print $2}')"; then
+            ssh-add "$key" 2>/dev/null || true
+          fi
+        done
+      fi
 
       # Use fd (https://github.com/sharkdp/fd) for listing path candidates.
       # - The first argument to the function ($1) is the base path to start traversal
