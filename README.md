@@ -72,6 +72,7 @@ And now, let the fun begin!
     - [../laptop/](hosts/laptop/) 💻 Specific configuration for laptops
     - [../vm/](hosts/vm/) 🗄️ QEMU/KVM specific configuration (WIP)
     - [../vmware-guest/](hosts/vmware-guest/) 🗄️ VMWare Workstation/Player specific configuration (WIP)
+    - [../wsl/](hosts/wsl/) 🪟 WSL2 specific configuration for Windows development
 -   [./modules/](modules) 🍱 Modularized NixOS configurations
     -   [../core/](modules/core/) ⚙️ Core NixOS configuration
     -   [../home/](modules/home/) 🏠 my [Home Manager](https://github.com/nix-community/home-manager) config
@@ -286,6 +287,85 @@ Even though this configuration uses Home Manager, there is still a little bit of
 - Configure the browser (e.g. extensions, account sync, etc.)
 - Create or import SSH Keys (I hope to automate this in the future)
 - Some other personal preferences, just dig around and see what you can find
+
+<br/>
+
+## 6. **WSL2 Installation** 🪟
+
+This configuration includes a WSL2-specific setup optimized for development and DevOps work on Windows.
+
+> [!NOTE]
+> The WSL2 configuration is CLI-focused and includes development tools like kubectl, terraform, ansible, Docker/Podman, and more. It does NOT include the desktop environment (Hyprland, Waybar, etc.).
+
+### Prerequisites
+
+1. **Enable WSL2 on Windows** (PowerShell as Administrator):
+   ```powershell
+   wsl --install
+   ```
+
+2. **Update WSL** (if already installed):
+   ```powershell
+   wsl --update
+   ```
+
+### Installation Steps
+
+1. **Build the WSL2 tarball**:
+   ```bash
+   # On your NixOS machine or in a Nix environment
+   nix build .#packages.x86_64-linux.wsl-distro
+   ```
+
+2. **Copy the tarball to Windows**:
+   The tarball will be located at `./result/tarball/nixos-wsl-installer.tar.gz`
+
+3. **Import into WSL2** (PowerShell on Windows):
+   ```powershell
+   # Create installation directory
+   mkdir C:\WSL\NixOS
+
+   # Import the distribution
+   wsl --import NixOS C:\WSL\NixOS .\nixos-wsl-installer.tar.gz
+   ```
+
+4. **Start NixOS in WSL2**:
+   ```powershell
+   wsl -d NixOS
+   ```
+
+5. **Set as default** (optional):
+   ```powershell
+   wsl --set-default NixOS
+   ```
+
+### Features Included
+
+- **CLI Tools**: zsh, neovim, git, tmux, yazi, fzf, and more
+- **DevOps Tools**: kubectl, terraform, ansible, helm, k9s, talosctl
+- **Cloud Tools**: awscli2, azure-cli
+- **Container Tools**: podman with Docker compatibility
+- **Development**: Go, Rust, Node.js, Python, Java, TypeScript, Zig
+- **SSH Server**: Enabled for remote access
+- **VSCode**: Integrated with WSL for development
+- **Windows Interop**: Seamless Windows/Linux integration
+
+### Updating WSL Configuration
+
+After making changes to the WSL configuration:
+
+```bash
+# Rebuild from within WSL
+sudo nixos-rebuild switch --flake /path/to/repo#wsl
+
+# Or rebuild the tarball and reimport (clean install)
+```
+
+### Troubleshooting
+
+- **Systemd not working**: Ensure `wsl.nativeSystemd = true` is set (already configured)
+- **Networking issues**: Check `/etc/wsl.conf` settings
+- **Windows PATH integration**: Modify `wsl.interop.appendWindowsPath` in config if needed
 
 <br/>
 
@@ -649,6 +729,7 @@ And now, let the fun begin!
     - [../laptop/](hosts/laptop/) 💻 Specific configuration for laptops
     - [../vm/](hosts/vm/) 🗄️ QEMU/KVM specific configuration (WIP)
     - [../vmware-guest/](hosts/vmware-guest/) 🗄️ VMWare Workstation/Player specific configuration (WIP)
+    - [../wsl/](hosts/wsl/) 🪟 WSL2 specific configuration for Windows development
 -   [./modules/](modules) 🍱 Modularized NixOS configurations
     -   [../core/](modules/core/) ⚙️ Core NixOS configuration
     -   [../home/](modules/home/) 🏠 my [Home Manager](https://github.com/nix-community/home-manager) config
@@ -863,6 +944,85 @@ Even though this configuration uses Home Manager, there is still a little bit of
 - Configure the browser (e.g. extensions, account sync, etc.)
 - Create or import SSH Keys (I hope to automate this in the future)
 - Some other personal preferences, just dig around and see what you can find
+
+<br/>
+
+## 6. **WSL2 Installation** 🪟
+
+This configuration includes a WSL2-specific setup optimized for development and DevOps work on Windows.
+
+> [!NOTE]
+> The WSL2 configuration is CLI-focused and includes development tools like kubectl, terraform, ansible, Docker/Podman, and more. It does NOT include the desktop environment (Hyprland, Waybar, etc.).
+
+### Prerequisites
+
+1. **Enable WSL2 on Windows** (PowerShell as Administrator):
+   ```powershell
+   wsl --install
+   ```
+
+2. **Update WSL** (if already installed):
+   ```powershell
+   wsl --update
+   ```
+
+### Installation Steps
+
+1. **Build the WSL2 tarball**:
+   ```bash
+   # On your NixOS machine or in a Nix environment
+   nix build .#packages.x86_64-linux.wsl-distro
+   ```
+
+2. **Copy the tarball to Windows**:
+   The tarball will be located at `./result/tarball/nixos-wsl-installer.tar.gz`
+
+3. **Import into WSL2** (PowerShell on Windows):
+   ```powershell
+   # Create installation directory
+   mkdir C:\WSL\NixOS
+
+   # Import the distribution
+   wsl --import NixOS C:\WSL\NixOS .\nixos-wsl-installer.tar.gz
+   ```
+
+4. **Start NixOS in WSL2**:
+   ```powershell
+   wsl -d NixOS
+   ```
+
+5. **Set as default** (optional):
+   ```powershell
+   wsl --set-default NixOS
+   ```
+
+### Features Included
+
+- **CLI Tools**: zsh, neovim, git, tmux, yazi, fzf, and more
+- **DevOps Tools**: kubectl, terraform, ansible, helm, k9s, talosctl
+- **Cloud Tools**: awscli2, azure-cli
+- **Container Tools**: podman with Docker compatibility
+- **Development**: Go, Rust, Node.js, Python, Java, TypeScript, Zig
+- **SSH Server**: Enabled for remote access
+- **VSCode**: Integrated with WSL for development
+- **Windows Interop**: Seamless Windows/Linux integration
+
+### Updating WSL Configuration
+
+After making changes to the WSL configuration:
+
+```bash
+# Rebuild from within WSL
+sudo nixos-rebuild switch --flake /path/to/repo#wsl
+
+# Or rebuild the tarball and reimport (clean install)
+```
+
+### Troubleshooting
+
+- **Systemd not working**: Ensure `wsl.nativeSystemd = true` is set (already configured)
+- **Networking issues**: Check `/etc/wsl.conf` settings
+- **Windows PATH integration**: Modify `wsl.interop.appendWindowsPath` in config if needed
 
 <br/>
 

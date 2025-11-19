@@ -114,6 +114,10 @@
       DISABLE_MAGIC_FUNCTIONS=true
       export "MICRO_TRUECOLOR=1"
 
+      # Fix helm ALSA issues in WSL
+      export ALSA_CARD=0
+      export SDL_AUDIODRIVER=dummy
+
       setopt sharehistory
       setopt hist_ignore_space
       setopt hist_ignore_all_dups

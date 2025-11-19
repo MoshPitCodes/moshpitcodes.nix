@@ -43,12 +43,11 @@
   environment.systemPackages = with pkgs; [
     git
     nixfmt-tree
-    jdk23
+    openjdk25
     openh264
     (bat-extras.batgrep.overrideAttrs (oldAttrs: {
       doCheck = false;  # Skip failing tests
     }))
-    # jdk23
   ];
 
   time.timeZone = "Europe/Berlin";
