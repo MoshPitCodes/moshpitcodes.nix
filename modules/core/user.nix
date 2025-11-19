@@ -18,6 +18,8 @@
           [ ./../home/default.desktop.nix ]
         else if (host == "vm" || host == "nixos-vmware") then
           [ ./../home/default.vm.nix ]
+        else if (host == "nixos-wsl") then
+          [ ./../home/default.wsl.nix ]
         else
           [ ./../home ];
       home.username = "${username}";

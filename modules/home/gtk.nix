@@ -13,7 +13,7 @@ in
     nerd-fonts.caskaydia-cove
     nerd-fonts.symbols-only
     twemoji-color-font
-    noto-fonts-emoji
+    noto-fonts-color-emoji
     fantasque-sans-mono
     # monolisa
     # monolisa-nerd

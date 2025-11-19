@@ -1,0 +1,83 @@
+{
+  inputs,
+  username,
+  host,
+  ...
+}:
+{
+  # WSL-specific home-manager configuration
+  # This configuration is CLI-focused for DevOps and development work
+  # No desktop environment (Hyprland, Waybar, etc.)
+
+  imports = [
+    # Core CLI tools
+    ./bat.nix # better cat command
+    ./btop.nix # resources monitor
+    ./fastfetch.nix # fetch tool
+    ./fzf.nix # fuzzy finder
+    ./git.nix # version control
+    ./lazygit.nix # terminal git client
+    ./openssh.nix # ssh client
+    ./micro.nix # nano replacement
+    ./nvim.nix # neovim editor
+    ./p10k/p10k.nix # zsh theme
+    ./scripts/scripts.nix # personal scripts
+    ./starship.nix # shell prompt
+    ./tmux # terminal multiplexer
+    ./yazi.nix # terminal file manager
+    ./zsh # shell
+
+    # Development tools (includes kubectl, terraform, helm, etc.)
+    ./development
+
+    # VSCode for WSL development (works well with WSL integration)
+    ./vscode.nix
+  ];
+
+  # WSL-specific packages that don't require their own module
+  home.packages = (
+    with inputs.nixpkgs.legacyPackages.x86_64-linux;
+    [
+      # Additional DevOps tools for WSL
+      # kubectl is provided by k3s package (included in development.nix)
+      talosctl # Talos Linux CLI
+      ansible # Configuration management
+
+      # Common WSL utilities
+      wget
+      curl
+      htop
+      iftop
+      iotop
+      tree
+      unzip
+      zip
+      file
+      which
+
+      # Network tools
+      netcat
+      nmap
+      tcpdump
+      traceroute
+      bind # includes dig, nslookup
+
+      # Text processing
+      gnused
+      gawk
+      gnugrep
+
+      # Container tools (useful in WSL)
+      podman
+      podman-compose
+      docker-compose
+
+      # Monitoring and observability
+      # prometheus conflicts with go-migrate (both have 'migrate' binary)
+      # grafana is typically run as a service, not needed in CLI
+
+      # Additional cloud tools
+      awscli2
+    ]
+  );
+}

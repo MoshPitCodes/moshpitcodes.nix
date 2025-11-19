@@ -50,3 +50,5 @@ proto/v1/*.pb.go
 .env
 .env.local
 secrets.nix
+docs/
+CLAUDE.md

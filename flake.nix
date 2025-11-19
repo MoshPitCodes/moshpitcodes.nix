@@ -31,6 +31,10 @@
     };
     zig.url = "github:mitchellh/zig-overlay";
     nvf.url = "github:notashelf/nvf";
+    nixos-wsl = {
+      url = "github:nix-community/NixOS-WSL";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -79,7 +83,19 @@
             inherit self inputs username customsecrets;
           };
         };
+        wsl = nixpkgs.lib.nixosSystem {
+          inherit system;
+          modules = [
+            ./hosts/wsl
+          ];
+          specialArgs = {
+            host = "nixos-wsl";
+            inherit self inputs username customsecrets;
+          };
+        };
       };
+
+      packages.${system}.wsl-distro = self.nixosConfigurations.wsl.config.system.build.tarballBuilder;
 
       devShells.${system}.default = pkgs.mkShell {
         buildInputs = with pkgs; [
