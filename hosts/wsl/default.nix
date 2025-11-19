@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, ... }:
+{ config, pkgs, inputs, username, ... }:
 
 {
   imports = [
@@ -15,7 +15,7 @@
   # WSL-specific configuration
   wsl = {
     enable = true;
-    defaultUser = "moshpitcodes";
+    defaultUser = username;
 
     # Windows interoperability
     interop = {
@@ -32,8 +32,8 @@
 
       automount = {
         root = "/mnt";
-        # Add uid/gid for proper permissions and metadata support
-        options = "metadata,uid=1000,gid=100,umask=022,fmask=011";
+        # Enable metadata support for proper permissions
+        options = "metadata,umask=022,fmask=011";
       };
 
       network = {
@@ -44,6 +44,10 @@
       interop = {
         enabled = true;
         appendWindowsPath = true;
+      };
+
+      gpu = {
+        enabled = true;
       };
     };
 
@@ -77,11 +81,7 @@
   networking.hostName = "nixos-wsl";
   system.stateVersion = "25.05";
 
-  # Ensure proper user setup
-  users.users.moshpitcodes = {
-    isNormalUser = true;
-    home = "/home/moshpitcodes";
-  };
+  # User setup is handled by modules/core/user.nix
 
   # WSL-specific environment variables
   environment.sessionVariables = {

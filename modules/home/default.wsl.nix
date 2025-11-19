@@ -43,6 +43,9 @@
       talosctl # Talos Linux CLI
       ansible # Configuration management
 
+      # CLI improvements
+      eza # Modern replacement for ls (required by ll alias)
+
       # Common WSL utilities
       wget
       curl
