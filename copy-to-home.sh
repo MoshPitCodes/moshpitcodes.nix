@@ -28,5 +28,13 @@ rsync -av \
   "$SOURCE_DIR/" "$DEST_DIR/"
 
 echo ""
+echo "Fixing line endings in shell config files..."
+# Fix CRLF line endings in shell configuration files
+for file in "$DEST_DIR/.zshrc" "$DEST_DIR"/**/*.sh "$DEST_DIR"/**/*.nix; do
+  if [ -f "$file" ]; then
+    sed -i 's/\r$//' "$file" 2>/dev/null || true
+  fi
+done
+
 echo "✓ Copy complete!"
 echo "Project contents copied to: $DEST_DIR"
