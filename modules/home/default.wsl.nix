@@ -30,6 +30,10 @@
     # Development tools (includes kubectl, terraform, helm, etc.)
     ./development
 
+    # VSCode Remote-WSL extension management
+    # Generates extensions.json and helper scripts for Windows VSCode
+    ./vscode-remote.nix
+
     # NOTE: VSCode not installed in WSL - use Windows VSCode with Remote-WSL extension
     # ./vscode.nix
   ];

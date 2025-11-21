@@ -14,11 +14,6 @@ let
   identityFiles = map (key: "/home/${username}/.ssh/${key}") sshKeys;
 in
 {
-  # Activation script to copy SSH keys from source directory
-  # Note: Disabled due to bash string interpolation issues with Nix concatMapStringsSep
-  # SSH keys should be manually copied to ~/.ssh/ before running home-manager
-  # Or use a simple script like: cp -r /path/to/ssh/keys/* ~/.ssh/ && chmod 600 ~/.ssh/id_*
-
   programs.ssh = {
     enable = true;
     enableDefaultConfig = false; # Explicitly disable to avoid future warnings
@@ -40,9 +35,4 @@ in
       };
     };
   };
-
-  # Systemd service to auto-add SSH keys
-  # Note: Disabled due to bash string interpolation issues
-  # Keys will be added automatically via AddKeysToAgent in SSH config
-  # Or via the zsh init script in zsh.nix
 }

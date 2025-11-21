@@ -314,7 +314,11 @@ This configuration includes a WSL2-specific setup optimized for development and 
 1. **Build the WSL2 tarball**:
    ```bash
    # On your NixOS machine or in a Nix environment
+   # Step 1a: Build the tarball builder
    nix build .#packages.x86_64-linux.wsl-distro
+
+   # Step 1b: Run the builder to generate the tarball
+   ./result/bin/nixos-wsl-tarball-builder
    ```
 
 2. **Copy the tarball to Windows**:
@@ -971,7 +975,11 @@ This configuration includes a WSL2-specific setup optimized for development and 
 1. **Build the WSL2 tarball**:
    ```bash
    # On your NixOS machine or in a Nix environment
+   # Step 1a: Build the tarball builder
    nix build .#packages.x86_64-linux.wsl-distro
+
+   # Step 1b: Run the builder to generate the tarball
+   ./result/bin/nixos-wsl-tarball-builder
    ```
 
 2. **Copy the tarball to Windows**:

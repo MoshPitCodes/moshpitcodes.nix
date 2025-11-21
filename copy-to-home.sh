@@ -28,13 +28,9 @@ rsync -av \
   "$SOURCE_DIR/" "$DEST_DIR/"
 
 echo ""
-echo "Fixing line endings in shell config files..."
-# Fix CRLF line endings in shell configuration files
-for file in "$DEST_DIR/.zshrc" "$DEST_DIR"/**/*.sh "$DEST_DIR"/**/*.nix; do
-  if [ -f "$file" ]; then
-    sed -i 's/\r$//' "$file" 2>/dev/null || true
-  fi
-done
+echo "Fixing line endings (safety check)..."
+# Convert any remaining CRLF to LF (.gitattributes should handle most cases)
+find "$DEST_DIR" -type f \( -name "*.sh" -o -name "*.nix" -o -name ".zshrc" \) -exec sed -i 's/\r$//' {} + 2>/dev/null || true
 
 echo "✓ Copy complete!"
 echo "Project contents copied to: $DEST_DIR"

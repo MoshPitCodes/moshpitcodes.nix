@@ -1,4 +1,4 @@
-{ pkgs, config, ... }:
+{ pkgs, config, username, ... }:
 {
   imports = [
     ./hardware-configuration.nix
@@ -18,7 +18,7 @@
     ports = [ 22 ];
     settings = {
       PasswordAuthentication = false;
-      AllowUsers = null;
+      AllowUsers = username;
       PermitRootLogin = "no";
     };
   };
