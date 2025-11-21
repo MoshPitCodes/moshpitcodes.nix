@@ -94,10 +94,8 @@
     XDG_RUNTIME_DIR = "/run/user/$UID";
     # Disable Claude Code telemetry to avoid OTEL errors
     CLAUDE_CODE_ENABLE_TELEMETRY = "false";
-    # Explicitly disable all OpenTelemetry exporters
-    OTEL_METRICS_EXPORTER = "none";
-    OTEL_LOGS_EXPORTER = "none";
-    OTEL_TRACES_EXPORTER = "none";
+    # Set OTEL protocol to work around Claude Code enterprise metrics bug
+    OTEL_EXPORTER_OTLP_PROTOCOL = "http/protobuf";
   };
 
   # Additional packages useful in WSL
