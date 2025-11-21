@@ -77,6 +77,9 @@
     };
   };
 
+  # Enable dbus - required for systemd user sessions
+  services.dbus.enable = true;
+
   # Basic system settings
   networking.hostName = "nixos-wsl";
   system.stateVersion = "25.05";
@@ -104,4 +107,20 @@
     "nix-command"
     "flakes"
   ];
+
+  # Enable lingering for the default user so systemd user session starts automatically
+  # This ensures home-manager services and user systemd units work properly
+  systemd.tmpfiles.rules = [
+    "f /var/lib/systemd/linger/${username} 0644 root root - -"
+  ];
+
+  # Start systemd user session on boot using systemd system service
+  # This is necessary because WSL doesn't automatically start user sessions
+  systemd.services."user@" = {
+    overrideStrategy = "asDropin";
+  };
+
+  # Ensure PAM is configured to start systemd user sessions
+  security.pam.services.login.startSession = true;
+  security.pam.services.sshd.startSession = true;
 }
