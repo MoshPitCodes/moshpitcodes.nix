@@ -51,4 +51,20 @@ proto/v1/*.pb.go
 .env.local
 secrets.nix
 docs/
+.claude
 # CLAUDE.md
+
+# Claude Flow / AI Agent data directories
+.swarm/
+.claude-flow/
+.claude-plugin/
+.hive-mind/
+.ruv-swarm/
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
