@@ -55,7 +55,7 @@
     ports = [ 22 ];
     settings = {
       PasswordAuthentication = false;
-      AllowUsers = username;
+      AllowUsers = [ username ];
       PermitRootLogin = "no";
     };
   };
