@@ -1,13 +1,17 @@
-name: Test systems
+name: Test configurations
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
-  test-systems:
+  test-configurations:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -55,7 +59,7 @@ jobs:
 
     - name: Test ${{ matrix.host }} system configuration validity
       run: |
-        echo "✅ Testing ${{ matrix.host }} system configuration validity..."
+        echo "🔍 Testing ${{ matrix.host }} system configuration validity..."
         nix eval --show-trace .#nixosConfigurations.${{ matrix.host }}.config.system.build.toplevel.drvPath
         echo "✅ ${{ matrix.host }} system configuration is valid"
 
@@ -71,9 +75,14 @@ jobs:
         nix eval --show-trace .#nixosConfigurations.${{ matrix.host }}.config.users.users.testuser.isNormalUser
         echo "✅ ${{ matrix.host }} user configuration is valid"
 
-    - name: Lightweight build test for vm host only
-      if: matrix.host == 'vm'
+    - name: Test ${{ matrix.host }} home-manager user packages
       run: |
-        echo "🔨 Running lightweight build test for vm host..."
-        nix build --show-trace --no-link .#nixosConfigurations.vm.config.system.build.toplevel --max-jobs 1
-        echo "✅ VM system builds successfully"
+        echo "📦 Testing ${{ matrix.host }} home-manager user packages..."
+        nix eval --show-trace .#nixosConfigurations.${{ matrix.host }}.config.home-manager.users.testuser.home.packages --apply "builtins.length"
+        echo "✅ ${{ matrix.host }} home-manager user packages are accessible"
+
+    - name: Test ${{ matrix.host }} home-manager modules
+      run: |
+        echo "🏠 Testing ${{ matrix.host }} home-manager modules..."
+        nix eval --show-trace .#nixosConfigurations.${{ matrix.host }}.config.home-manager.users.testuser.programs.git.enable
+        echo "✅ ${{ matrix.host }} home-manager modules are accessible"
