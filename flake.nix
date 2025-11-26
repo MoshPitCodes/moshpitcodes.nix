@@ -45,7 +45,41 @@
         inherit system;
         config.allowUnfree = true;
       };
-      customsecrets = import ./secrets.nix;
+
+      # Load secrets with fallback defaults for CI/testing environments
+      defaultSecrets = {
+        username = "testuser";
+        password = "testpassword";
+        reponame = "moshpitcodes.nix";
+        git = {
+          userName = "Test User";
+          userEmail = "test@example.com";
+          user.signingkey = "testkey";
+        };
+        network = {
+          wifiSSID = "";
+          wifiPassword = "";
+        };
+        apiKeys = {
+          anthropic = "";
+          openai = "";
+        };
+        sshKeys = {
+          sourceDir = "";
+          keys = [
+            "id_ed25519"
+            "id_rsa"
+            "id_ecdsa"
+          ];
+        };
+      };
+
+      customsecrets =
+        if builtins.pathExists ./secrets.nix then
+          import ./secrets.nix
+        else
+          defaultSecrets;
+
       username = customsecrets.username;
 
     in
