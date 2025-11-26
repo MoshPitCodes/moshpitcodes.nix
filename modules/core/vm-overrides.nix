@@ -11,7 +11,6 @@
   hardware.graphics.extraPackages = lib.mkForce [ ];
 
   # Override laptop-specific logind settings for VMs
-  services.logind.extraConfig = lib.mkForce "";
   services.logind.settings = {
     Login = {
       HandlePowerKey = lib.mkForce "poweroff";
