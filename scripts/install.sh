@@ -3,6 +3,10 @@
 # Exit on error, undefined variables, and pipe failures
 set -euo pipefail
 
+# Change to repository root (parent of scripts/ directory)
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$REPO_ROOT"
+
 init() {
     # Colors
     NORMAL=$(tput sgr0)
