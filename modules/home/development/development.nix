@@ -1,8 +1,4 @@
 { pkgs, ... }:
-let
-  # Import package overrides
-  overrides = import ./overrides.nix { inherit pkgs; };
-in
 {
   home.packages = (
     with pkgs;
@@ -96,7 +92,7 @@ in
       # tfswitch # terraform version manager
       # tfupdate # update terraform modules
       # tfwatch # watch terraform plan
-      overrides.terraform-latest # Infrastructure as Code (version 1.14.0)
+      terraform # Infrastructure as Code (version 1.14.0 via overlay)
       terraform-docs # generate documentation from Terraform modules
       terraform-ls # Terraform Language Server
       tflint # terraform linter
@@ -120,7 +116,7 @@ in
       # velero # backup and restore for k8s
       helm # Helm package manager for Kubernetes
       # k3d # k3s in docker
-      k3s # lightweight k8s
+      #k3s # lightweight k8s
       k9s # k8s terminal UI
       # kubectl is provided by k3s package (included in development.nix)
       talosctl # Talos Linux CLI

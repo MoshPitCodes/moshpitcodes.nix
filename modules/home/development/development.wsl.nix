@@ -1,8 +1,4 @@
 { pkgs, ... }:
-let
-  # Import package overrides
-  overrides = import ./overrides.nix { inherit pkgs; };
-in
 {
   home.packages = (
     with pkgs;
@@ -96,7 +92,7 @@ in
       # tfswitch # terraform version manager
       # tfupdate # update terraform modules
       # tfwatch # watch terraform plan
-      overrides.terraform-latest # Infrastructure as Code (version 1.14.0)
+      terraform # Infrastructure as Code (version 1.14.0 via overlay)
       terraform-docs # generate documentation from Terraform modules
       terraform-ls # Terraform Language Server
       tflint # terraform linter

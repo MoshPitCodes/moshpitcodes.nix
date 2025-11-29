@@ -41,8 +41,12 @@
     { nixpkgs, self, ... }@inputs:
     let
       system = "x86_64-linux";
+
+      # Import custom overlays for package version overrides
+      overlays = import ./overlays { inherit inputs; };
+
       pkgs = import nixpkgs {
-        inherit system;
+        inherit system overlays;
         config.allowUnfree = true;
       };
 
@@ -87,7 +91,11 @@
       nixosConfigurations = {
         desktop = nixpkgs.lib.nixosSystem {
           inherit system;
-          modules = [ ./hosts/desktop ];
+          modules = [
+            ./hosts/desktop
+            # Apply overlays to nixpkgs for this configuration
+            { nixpkgs.overlays = overlays; }
+          ];
           specialArgs = {
             host = "desktop";
             inherit self inputs username customsecrets;
@@ -95,7 +103,11 @@
         };
         laptop = nixpkgs.lib.nixosSystem {
           inherit system;
-          modules = [ ./hosts/laptop ];
+          modules = [
+            ./hosts/laptop
+            # Apply overlays to nixpkgs for this configuration
+            { nixpkgs.overlays = overlays; }
+          ];
           specialArgs = {
             host = "laptop";
             inherit self inputs username customsecrets;
@@ -103,7 +115,11 @@
         };
         vm = nixpkgs.lib.nixosSystem {
           inherit system;
-          modules = [ ./hosts/vm ];
+          modules = [
+            ./hosts/vm
+            # Apply overlays to nixpkgs for this configuration
+            { nixpkgs.overlays = overlays; }
+          ];
           specialArgs = {
             host = "vm";
             inherit self inputs username customsecrets;
@@ -111,7 +127,11 @@
         };
         vmware-guest = nixpkgs.lib.nixosSystem {
           inherit system;
-          modules = [ ./hosts/vmware-guest ];
+          modules = [
+            ./hosts/vmware-guest
+            # Apply overlays to nixpkgs for this configuration
+            { nixpkgs.overlays = overlays; }
+          ];
           specialArgs = {
             host = "nixos-vmware";
             inherit self inputs username customsecrets;
@@ -121,6 +141,8 @@
           inherit system;
           modules = [
             ./hosts/wsl
+            # Apply overlays to nixpkgs for this configuration
+            { nixpkgs.overlays = overlays; }
           ];
           specialArgs = {
             host = "nixos-wsl";
