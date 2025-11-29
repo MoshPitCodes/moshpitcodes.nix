@@ -42,8 +42,6 @@
   home.packages = (
     with inputs.nixpkgs.legacyPackages.x86_64-linux;
     [
-
-
       # CLI improvements
       eza # Modern replacement for ls (required by ll alias)
 
