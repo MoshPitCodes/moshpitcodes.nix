@@ -1,4 +1,4 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, lib, ... }:
 
 {
   # No QEMU profile - this is VMware!

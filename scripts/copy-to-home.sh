@@ -19,6 +19,9 @@ mkdir -p "$DEST_DIR"
 
 # Use rsync to copy contents, excluding git and vscode files
 rsync -av \
+  --exclude='docs/' \
+  --exclude='.claude/' \
+  --exclude='.claude-plugin/' \
   --exclude='.git/' \
   --exclude='.gitignore' \
   --exclude='.gitmodules' \
