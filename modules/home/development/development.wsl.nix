@@ -1,16 +1,7 @@
 { pkgs, ... }:
 let
-  # Override Terraform to version 1.14.0
-  terraform-latest = pkgs.terraform.overrideAttrs (oldAttrs: rec {
-    version = "1.14.0";
-    src = pkgs.fetchFromGitHub {
-      owner = "hashicorp";
-      repo = "terraform";
-      rev = "v${version}";
-      hash = "sha256-nYFw8HWhFCQRVe3ckvwzlO0BUjdkn8rSTCOcqJqCgAI=";
-    };
-    vendorHash = "sha256-o6To1pZHxcMnKRxJCq+D+L0VkOxdqzKFPfwwVWz2A7E=";
-  });
+  # Import package overrides
+  overrides = import ./overrides.nix { inherit pkgs; };
 in
 {
   home.packages = (
@@ -105,7 +96,7 @@ in
       # tfswitch # terraform version manager
       # tfupdate # update terraform modules
       # tfwatch # watch terraform plan
-      terraform-latest # Infrastructure as Code (version 1.14.0)
+      overrides.terraform-latest # Infrastructure as Code (version 1.14.0)
       terraform-docs # generate documentation from Terraform modules
       terraform-ls # Terraform Language Server
       tflint # terraform linter
