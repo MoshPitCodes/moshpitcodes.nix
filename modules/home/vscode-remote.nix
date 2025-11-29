@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, ... }:
 let
   # For WSL remote, we only need extension IDs, not the actual packages
   # This avoids building VSCode and extensions which are not used in WSL

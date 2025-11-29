@@ -1,4 +1,4 @@
-{ pkgs, lib, username, customsecrets, ... }:
+{ lib, username, customsecrets, ... }:
 let
   # Get SSH key list from secrets or use defaults
   sshKeys = customsecrets.sshKeys.keys or [
@@ -8,7 +8,6 @@ let
   ];
 
   # Source directory for SSH keys (may not exist on all systems)
-  sshSourceDir = customsecrets.sshKeys.sourceDir or "";
 
   # Generate full paths for identity files
   identityFiles = map (key: "/home/${username}/.ssh/${key}") sshKeys;

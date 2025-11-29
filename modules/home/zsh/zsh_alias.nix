@@ -1,8 +1,5 @@
 {
-  hostname,
   customsecrets,
-  pkgs,
-  host,
   ...
 }:
 {

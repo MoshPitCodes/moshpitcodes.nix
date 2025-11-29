@@ -45,7 +45,7 @@
     nixfmt-tree
     openjdk25
     openh264
-    (bat-extras.batgrep.overrideAttrs (oldAttrs: {
+    (bat-extras.batgrep.overrideAttrs (_oldAttrs: {
       doCheck = false;  # Skip failing tests
     }))
   ];
