@@ -21,6 +21,8 @@ go.work.sum
 
 # Environment variables
 .env*
+.env
+.env.local
 !.env.example
 
 # Build output
@@ -47,17 +49,17 @@ temp/
 proto/v1/*.pb.go
 
 # Local configuration
-.env
-.env.local
 secrets.nix
 docs/
+
+# Claude Code
+.claude-plugin/
 .claude
 # CLAUDE.md
 
 # Claude Flow / AI Agent data directories
 .swarm/
 .claude-flow/
-.claude-plugin/
 .hive-mind/
 .ruv-swarm/
 node_modules/
