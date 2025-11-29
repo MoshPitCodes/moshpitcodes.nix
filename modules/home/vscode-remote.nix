@@ -1,11 +1,44 @@
 { pkgs, lib, config, ... }:
 let
-  # Import shared extension definitions
-  vscodeExtensions = import ./vscode-extensions.nix { inherit pkgs; };
+  # For WSL remote, we only need extension IDs, not the actual packages
+  # This avoids building VSCode and extensions which are not used in WSL
+  extensionIds = [
+    # Custom extensions
+    "ms-vscode.makefile-tools"
+    "anthropic.claude-code"
+    "Google.geminicodeassist"
+    "MermaidChart.vscode-mermaid-chart"
+    "ziglang.vscode-zig"
+    "JonathanHarty.gruvbox-material-icon-theme"
+
+    # Official Microsoft extensions
+    "ms-azuretools.vscode-docker"
+    "ms-kubernetes-tools.vscode-kubernetes-tools"
+    "ms-python.python"
+
+    # 3rd party extensions
+    "dbaeumer.vscode-eslint"
+    "github.copilot"
+    "github.copilot-chat"
+    "github.vscode-pull-request-github"
+    "golang.go"
+    "hashicorp.hcl"
+    "hashicorp.terraform"
+    "bierner.markdown-mermaid"
+    "jnoortheen.nix-ide"
+    "ocamllabs.ocaml-platform"
+    "esbenp.prettier-vscode"
+    "jgclark.vscode-todo-highlight"
+    "redhat.ansible"
+    "redhat.java"
+    "redhat.vscode-yaml"
+    "yzhang.markdown-all-in-one"
+    "jdinhlife.gruvbox"
+  ];
 
   # Generate extensions.json content for VSCode workspace recommendations
   extensionsJson = builtins.toJSON {
-    recommendations = vscodeExtensions.vscodeExtensions.ids;
+    recommendations = extensionIds;
     unwantedRecommendations = [ ];
   };
 
@@ -36,7 +69,7 @@ let
 
     # List of extension IDs to install
     extensions=(
-      ${lib.concatMapStringsSep "\n      " (id: ''"${id}"'') vscodeExtensions.vscodeExtensions.ids}
+      ${lib.concatMapStringsSep "\n      " (id: ''"${id}"'') extensionIds}
     )
 
     installed=0
