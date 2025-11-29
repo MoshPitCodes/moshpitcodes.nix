@@ -4,6 +4,47 @@ This directory contains Nix development shell configurations for various project
 
 ## Available Shells
 
+### devshell (General Development)
+
+General-purpose development environment for NixOS configuration management and system administration.
+
+**Features:**
+- Complete Nix toolchain (nixd, nixfmt-rfc-style, deadnix, statix)
+- Version control (git, gh)
+- Text processing utilities (jq, yq, ripgrep)
+- Build tools (make, cmake, pkg-config)
+- Shell tools and formatters
+- Common development utilities
+
+**Usage:**
+
+```bash
+# Enter the development shell
+nix develop .#devshell
+
+# Run common commands
+nix-fmt                  # Format all Nix files
+nix-check                # Validate flake configuration
+rebuild wsl              # Rebuild WSL configuration
+build-wsl                # Build WSL tarball
+```
+
+**What's Included:**
+- Nix development tools (LSP, formatters, linters)
+- Git and GitHub CLI
+- Text processing (jq, yq, ripgrep)
+- Build toolchain (make, cmake, pkg-config)
+- Compression utilities
+- Network tools (curl, wget)
+- Shell utilities (direnv, tree, htop)
+
+**Helpful Aliases:**
+- `nix-fmt` - Format all Nix files recursively
+- `nix-check` - Run flake check with trace
+- `nix-update` - Update flake inputs
+- `rebuild [host]` - Rebuild system configuration
+- `build-wsl` - Build WSL tarball
+
 ### claude-flow
 
 Enterprise AI agent orchestration platform development environment.
