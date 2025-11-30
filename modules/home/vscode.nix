@@ -83,10 +83,12 @@ in
           minimap.enabled = false;
           mouseWheelZoom = true;
           renderControlCharacters = false;
-          scrollbar.horizontal = "hidden";
-          scrollbar.horizontalScrollbarSize = 2;
-          scrollbar.vertical = "hidden";
-          scrollbar.verticalScrollbarSize = 2;
+          scrollbar = {
+            horizontal = "hidden";
+            horizontalScrollbarSize = 2;
+            vertical = "hidden";
+            verticalScrollbarSize = 2;
+          };
         };
 
         explorer = {
@@ -171,13 +173,17 @@ in
             ignoreEmptyLines = false;
             ignoreEmptyComments = false;
           };
-          format.enable = true;
-          format.insertSpaces = true;
-          format.tabSize = 4;
+          format = {
+            enable = true;
+            insertSpaces = true;
+            tabSize = 4;
+          };
           hover.enabled = true;
-          preview.autoShow = true;
-          preview.scrollPreviewWithEditor = true;
-          preview.scrollEditorWithPreview = true;
+          preview = {
+            autoShow = true;
+            scrollPreviewWithEditor = true;
+            scrollEditorWithPreview = true;
+          };
         };
 
         material-icon-theme = {
@@ -193,9 +199,11 @@ in
             fontSize = 16;
             lineHeight = 1.2;
             scrollback = 10000;
-            shellIntegration.enabled = true;
-            shellIntegration.autoDetect = true;
-            shellIntegration.autoDetectNixShell = true;
+            shellIntegration = {
+              enabled = true;
+              autoDetect = true;
+              autoDetectNixShell = true;
+            };
           };
         };
 
@@ -210,13 +218,19 @@ in
         workbench = {
           activityBar.location = "default";
           colorTheme = "Gruvbox Dark Hard";
-          editor.limit.enabled = true;
-          editor.limit.perEditorGroup = true;
-          editor.limit.value = 10;
-          editor.showTabs = "multiple";
+          editor = {
+            limit = {
+              enabled = true;
+              perEditorGroup = true;
+              value = 10;
+            };
+            showTabs = "multiple";
+          };
           iconTheme = "gruvbox-material-icon-theme";
-          layoutControl.enabled = false;
-          layoutControl.type = "menu";
+          layoutControl = {
+            enabled = false;
+            type = "menu";
+          };
           startupEditor = "none";
           statusBar.visible = true;
         };

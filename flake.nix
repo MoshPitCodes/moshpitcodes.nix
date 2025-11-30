@@ -104,7 +104,7 @@
         else
           defaultSecrets;
 
-      username = customsecrets.username;
+      inherit (customsecrets) username;
 
     in
     {

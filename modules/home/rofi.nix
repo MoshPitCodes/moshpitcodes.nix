@@ -1,6 +1,6 @@
 { pkgs, ... }:
 {
-  home.packages = (with pkgs; [ rofi ]); # rofi-wayland has been merged into rofi
+  home.packages = with pkgs; [ rofi ]; # rofi-wayland has been merged into rofi
 
   xdg.configFile."rofi/theme.rasi".text = ''
     * {

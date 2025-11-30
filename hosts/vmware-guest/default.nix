@@ -1,8 +1,5 @@
 {
-  inputs,
   lib,
-  config,
-  pkgs,
   username,
   ...
 }:
@@ -13,15 +10,24 @@
     ./../../modules/core/vm-overrides.nix
   ];
 
-  # Use the systemd-boot EFI boot loader
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot = {
+    # Use the systemd-boot EFI boot loader
+    loader = {
+      systemd-boot.enable = true;
+      efi.canTouchEfiVariables = true;
+    };
+
+    # Override Intel graphics modules from core config
+    kernelModules = lib.mkForce [ "vmw_vsock_vmci_transport" "vmw_balloon" "vmwgfx" ];
+    blacklistedKernelModules = [ "i915" "intel_agp" ];
+  };
 
   # Enable VMware guest additions
-  virtualisation.vmware.guest.enable = true;
-
-  # Since we're using Wayland/Hyprland, set headless to false
-  virtualisation.vmware.guest.headless = false;
+  virtualisation.vmware.guest = {
+    enable = true;
+    # Since we're using Wayland/Hyprland, set headless to false
+    headless = false;
+  };
 
   # VMware-specific graphics configuration
   services.xserver.videoDrivers = [ "vmware" ];
@@ -31,10 +37,6 @@
     enable = true;
     enable32Bit = true;
   };
-
-  # Override Intel graphics modules from core config
-  boot.kernelModules = lib.mkForce [ "vmw_vsock_vmci_transport" "vmw_balloon" "vmwgfx" ];
-  boot.blacklistedKernelModules = [ "i915" "intel_agp" ];
 
   # Hyprland environment variables for VM compatibility
   environment.sessionVariables = {

@@ -1,9 +1,4 @@
 {
-  inputs,
-  nixpkgs,
-  self,
-  username,
-  host,
   ...
 }:
 {

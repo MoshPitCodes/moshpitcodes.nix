@@ -1,7 +1,5 @@
 {
   inputs,
-  username,
-  host,
   ...
 }:
 {
@@ -36,7 +34,7 @@
   ];
 
   # WSL-specific packages that don't require their own module
-  home.packages = (
+  home.packages =
     with inputs.nixpkgs.legacyPackages.x86_64-linux;
     [
       # CLI improvements
@@ -77,6 +75,5 @@
 
       # Additional cloud tools
       awscli2
-    ]
-  );
+    ];
 }

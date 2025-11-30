@@ -1,4 +1,4 @@
-{ ... }:
+_:
 let
   custom = {
     font = "Maple Mono NF";

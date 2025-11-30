@@ -1,6 +1,5 @@
 {
   stdenv,
-  requireFile,
   nerd-font-patcher,
   python3Packages,
   monolisa,

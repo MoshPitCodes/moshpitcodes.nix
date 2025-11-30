@@ -1,6 +1,6 @@
-{ inputs, pkgs, ... }:
+{ pkgs, ... }:
 {
-  home.packages = (with pkgs; [ lazygit ]);
+  home.packages = with pkgs; [ lazygit ];
 
   xdg.configFile."lazygit/config.yml".text = ''
     gui:

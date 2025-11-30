@@ -1,12 +1,16 @@
-{ pkgs, lib, ... }:
+{ pkgs, ... }:
 {
-  programs.dconf.enable = true;
-  programs.zsh.enable = true;
-  programs.gnupg.agent = {
-    enable = true;
-    enableSSHSupport = true;
-    pinentryPackage = pkgs.pinentry-gnome3;
+  programs = {
+    dconf.enable = true;
+    zsh.enable = true;
+    gnupg.agent = {
+      enable = true;
+      enableSSHSupport = true;
+      pinentryPackage = pkgs.pinentry-gnome3;
+    };
+    nix-ld = {
+      enable = true;
+      libraries = with pkgs; [ ];
+    };
   };
-  programs.nix-ld.enable = true;
-  programs.nix-ld.libraries = with pkgs; [ ];
 }

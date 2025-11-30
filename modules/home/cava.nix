@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+_:
 {
   programs.cava = {
     enable = true;

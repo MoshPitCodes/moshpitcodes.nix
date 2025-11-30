@@ -3,7 +3,7 @@ let
   _2048 = pkgs.callPackage ../../pkgs/2048/default.nix { };
 in
 {
-  home.packages = (
+  home.packages =
     with pkgs;
     [
       _2048 # 2048 game
@@ -120,6 +120,5 @@ in
       # bitwarden # bitwarden
 
       inputs.alejandra.defaultPackage.${pkgs.system}
-    ]
-  );
+    ];
 }

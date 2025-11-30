@@ -1,6 +1,6 @@
 { pkgs, ... }:
 {
-  home.packages = (
+  home.packages =
     with pkgs;
     [
       # (retroarch.override {
@@ -11,6 +11,5 @@
       #     snes9x
       #   ];
       # })
-    ]
-  );
+    ];
 }

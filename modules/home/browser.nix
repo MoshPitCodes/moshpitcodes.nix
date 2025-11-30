@@ -4,7 +4,7 @@
   ...
 }:
 {
-  home.packages = (
+  home.packages =
     with pkgs;
     [
       # inputs.zen-browser.packages."${pkgs.system}".default
@@ -19,8 +19,7 @@
       gst_all_1.gst-plugins-bad
       gst_all_1.gst-plugins-ugly
       gst_all_1.gst-libav
-    ]
-  );
+    ];
 
   # Firefox/Zen Browser configuration
   programs.firefox = {
