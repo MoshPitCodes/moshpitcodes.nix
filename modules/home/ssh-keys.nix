@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   customsecrets,
   ...
 }:
@@ -11,45 +12,54 @@ let
 in
 {
   config = lib.mkIf hasSourceDir {
-    home.activation.copySshKeys = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      # Wait for WSL mounts to be ready before attempting to copy
-      # This prevents errors during boot when /mnt/c might not be mounted yet
-      max_wait=30
-      wait_count=0
-      while [ ! -d "${cfg.sourceDir}" ] && [ $wait_count -lt $max_wait ]; do
-        $DRY_RUN_CMD echo "Waiting for ${cfg.sourceDir} to be available... ($wait_count/$max_wait)"
-        sleep 1
-        wait_count=$((wait_count + 1))
-      done
+    # SSH key copying via shell initialization instead of home-manager activation
+    # This ensures mounts are ready before attempting to access Windows filesystem
+    programs.zsh.initExtra = ''
+      # Copy SSH keys from Windows on first interactive shell
+      # Only runs once per boot to avoid unnecessary overhead
+      _copy_ssh_keys_once() {
+        local marker_file="$HOME/.ssh/.keys-copied-$$"
+        local source_dir="${cfg.sourceDir}"
 
-      if [ ! -d "${cfg.sourceDir}" ]; then
-        $DRY_RUN_CMD echo "Warning: SSH key source directory ${cfg.sourceDir} not found after waiting. Skipping SSH key copy."
-      else
+        # Skip if already copied this session or source doesn't exist
+        if [ -f "$marker_file" ] || [ ! -d "$source_dir" ]; then
+          return 0
+        fi
+
         # Create .ssh directory if it doesn't exist
-        run mkdir -p ${config.home.homeDirectory}/.ssh
+        mkdir -p "$HOME/.ssh"
 
         # Copy SSH keys from source directory
-        ${lib.concatMapStringsSep "\n" (
+        local copied=0
+        ${lib.concatMapStringsSep "\n        " (
           key: ''
-            # Copy private key if it exists
-            if [ -f "${cfg.sourceDir}/${key}" ]; then
-              run cp -f "${cfg.sourceDir}/${key}" ${config.home.homeDirectory}/.ssh/${key}
-              run chmod 600 ${config.home.homeDirectory}/.ssh/${key}
-              $DRY_RUN_CMD echo "Copied SSH private key: ${key}"
-            fi
+        # Copy private key if it exists
+        if [ -f "${cfg.sourceDir}/${key}" ]; then
+          cp -f "${cfg.sourceDir}/${key}" "$HOME/.ssh/${key}"
+          chmod 600 "$HOME/.ssh/${key}"
+          copied=1
+        fi
 
-            # Copy public key if it exists
-            if [ -f "${cfg.sourceDir}/${key}.pub" ]; then
-              run cp -f "${cfg.sourceDir}/${key}.pub" ${config.home.homeDirectory}/.ssh/${key}.pub
-              run chmod 644 ${config.home.homeDirectory}/.ssh/${key}.pub
-              $DRY_RUN_CMD echo "Copied SSH public key: ${key}.pub"
-            fi
-          ''
+        # Copy public key if it exists
+        if [ -f "${cfg.sourceDir}/${key}.pub" ]; then
+          cp -f "${cfg.sourceDir}/${key}.pub" "$HOME/.ssh/${key}.pub"
+          chmod 644 "$HOME/.ssh/${key}.pub"
+          copied=1
+        fi''
         ) cfg.keys}
 
         # Set .ssh directory permissions
-        run chmod 700 ${config.home.homeDirectory}/.ssh
-        $DRY_RUN_CMD echo "SSH keys copied successfully from ${cfg.sourceDir}"
+        chmod 700 "$HOME/.ssh"
+
+        # Create marker file to prevent re-copying this session
+        if [ $copied -eq 1 ]; then
+          touch "$marker_file"
+        fi
+      }
+
+      # Run on interactive shell startup
+      if [[ $- == *i* ]]; then
+        _copy_ssh_keys_once
       fi
     '';
   };
