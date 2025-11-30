@@ -175,6 +175,7 @@
         };
 
         claude-flow = import ./shells/claude-flow.nix { inherit pkgs; };
+        devshell = import ./shells/devshell.nix { inherit pkgs; };
       };
     };
 }
