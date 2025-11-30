@@ -43,3 +43,59 @@ docs/skills-main
 - Use "ci" for changes to CI configuration files and scripts
 - Use "revert" for reverting previous commits
 - Use "docs" for documentation-only changes
+
+Rulesets (AI Agent Guidelines)
+
+  | File                                           | Purpose                                              |
+  | ---------------------------------------------- | ---------------------------------------------------- |
+  | general-principles.md                          | Core development principles                          |
+  | guidelines-devops-infrastructure.md            | DevOps/Infrastructure (K8s, Docker, Terraform, etc.) |
+  | guidelines-golang-backend-api.md               | Go backend API development                           |
+  | guidelines-java-kotlin-maven-gradle-backend.md | Java/Kotlin Spring backend                           |
+  | guidelines-nixos.md                            | NixOS/Nix Flakes                                     |
+  | guidelines-react-typescript.md                 | React + TypeScript frontend                          |
+  | specific-requests/systematic-diagnosis.md      | Issue diagnosis workflow                             |
+  | specific-requests/systematic-implementation.md | Feature implementation workflow                      |
+  | thinking/structured-contemplation.md           | Problem-solving framework                            |
+  | thinking/structured-reflection.md              | Learning/self-awareness framework                    |
+
+  Available Slash Commands
+
+  | Command                          | Description                                    |
+  | -------------------------------- | ---------------------------------------------- |
+  | /structured-reflection           | Expert guide for reflection techniques         |
+  | /structured-contemplation        | Expert guide for contemplation/problem-solving |
+  | /claude-create-architecture-docs | Generate architecture docs with diagrams       |
+  | /systematic-diagnosis            | Issue diagnosis and root cause analysis        |
+  | /systematic-implementation       | Validation-driven feature implementation       |
+
+  Available Specialized Agents
+
+  | Agent                                       | Use Case                          |
+  | ------------------------------------------- | --------------------------------- |
+  | guidelines-nextjs-fullstack                 | Next.js 14+ App Router full-stack |
+  | guidelines-java-kotlin-maven-gradle-backend | Java/Kotlin Spring backend        |
+  | guidelines-golang-backend-api               | Go backend APIs                   |
+  | guidelines-devops-infrastructure            | DevOps, K8s, Terraform, CI/CD     |
+  | guidelines-react-typescript                 | React + TypeScript frontend       |
+  | guidelines-nixos                            | NixOS, Nix Flakes, Home Manager   |
+  | guidelines-sveltekit-frontend               | Svelte 5 + SvelteKit frontend     |
+  | guidelines-sveltekit-fullstack              | SvelteKit full-stack apps         |
+  | code-architecture-review                    | Review code for best practices    |
+  | security-engineer                           | Security/compliance specialist    |
+  | mlops-engineer                              | ML pipelines and MLOps            |
+  | prompt-engineer                             | LLM prompt optimization           |
+  | mcp-expert                                  | MCP server integration            |
+  | error-detective                             | Log analysis and debugging        |
+  | code-reviewer                               | Code review for quality           |
+  | agent-expert                                | Creating specialized agents       |
+  | git-flow-manager                            | Git Flow workflows                |
+
+  Available Skills
+
+  | Skill             | Purpose                                     |
+  | ----------------- | ------------------------------------------- |
+  | artifacts-builder | Build complex React/Tailwind HTML artifacts |
+  | mcp-builder       | Create MCP servers                          |
+  | skill-creator     | Create new skills                           |
+  | theme-factory     | Style artifacts with themes (10 presets)    |
