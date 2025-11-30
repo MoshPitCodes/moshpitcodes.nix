@@ -23,5 +23,5 @@
   services.tlp.enable = lib.mkForce false;
 
   # Disable laptop-specific power profiles if they exist
-  services.power-profiles-daemon.enable = lib.mkDefault false;
+  services.power-profiles-daemon.enable = lib.mkForce false;
 }

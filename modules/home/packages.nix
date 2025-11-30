@@ -119,7 +119,7 @@ in
       _1password-gui # 1password
       # bitwarden # bitwarden
 
-      inputs.alejandra.defaultPackage.${system}
+      inputs.alejandra.defaultPackage.${pkgs.system}
     ]
   );
 }

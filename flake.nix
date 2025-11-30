@@ -20,7 +20,7 @@
     nix-flatpak.url = "github:gmodena/nix-flatpak";
     zen-browser = {
       url = "github:0xc000022070/zen-browser-flake";
-      # inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     yazi-plugins = {
       url = "github:yazi-rs/plugins";
@@ -53,8 +53,9 @@
       # Load secrets with fallback defaults for CI/testing environments
       defaultSecrets = {
         username = "testuser";
-        # Default test hash (password: "testpassword")
-        hashedPassword = "$6$test$test";
+        # INSECURE: CI/test-only hash - DO NOT use in production
+        # Generate a real hash with: mkpasswd -m sha-512
+        hashedPassword = "$6$INSECURE.CI.TEST$DONOTUSE.THIS.IN.PRODUCTION";
         reponame = "moshpitcodes.nix";
         git = {
           userName = "Test User";
@@ -79,16 +80,23 @@
         };
       };
 
-      # Validate that secrets have all required keys
+      # Validate that secrets have all required keys (including nested structures)
       validateSecrets = secrets:
         let
           requiredKeys = [ "username" "hashedPassword" "git" "network" ];
           missingKeys = builtins.filter (k: !(builtins.hasAttr k secrets)) requiredKeys;
+          # Validate nested git keys
+          requiredGitKeys = [ "userName" "userEmail" ];
+          missingGitKeys = if builtins.hasAttr "git" secrets
+            then builtins.filter (k: !(builtins.hasAttr k secrets.git)) requiredGitKeys
+            else requiredGitKeys;
         in
-        if missingKeys == [ ] then
-          secrets
+        if missingKeys != [ ] then
+          throw "secrets.nix missing required keys: ${builtins.toString missingKeys}"
+        else if missingGitKeys != [ ] then
+          throw "secrets.nix git section missing required keys: ${builtins.toString missingGitKeys}"
         else
-          throw "secrets.nix missing required keys: ${builtins.toString missingKeys}";
+          secrets;
 
       customsecrets =
         if builtins.pathExists ./secrets.nix then

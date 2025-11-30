@@ -39,8 +39,6 @@
     ./swayosd.nix # brightness / volume wiget
     ./swaync/swaync.nix # notification deamon
     ./tmux # terminal multiplexer
-    # ./viewnior.nix # image viewer
-    # ./vscodium.nix # vscode forck
     ./vscode.nix # vscode
     ./waybar # status bar
     ./waypaper.nix # GUI wallpaper picker

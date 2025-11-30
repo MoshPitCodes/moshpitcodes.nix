@@ -128,17 +128,17 @@ let
     "git.path" = "${pkgs.git}/bin/git";
 
     # Language-specific settings pointing to WSL tools
-    "go.goroot" = lib.mkIf (builtins.hasAttr "go" pkgs) "${pkgs.go}/share/go";
+    "go.goroot" = "${pkgs.go}/share/go";
     "go.gopath" = "\${env:HOME}/go";
-    "rust-analyzer.server.path" = lib.mkIf (builtins.hasAttr "rust-analyzer" pkgs) "${pkgs.rust-analyzer}/bin/rust-analyzer";
-    "python.defaultInterpreterPath" = lib.mkIf (builtins.hasAttr "python3" pkgs) "${pkgs.python3}/bin/python";
-    "zig.path" = lib.mkIf (builtins.hasAttr "zig" pkgs) "${pkgs.zig}/bin/zig";
-    "zig.zls.path" = lib.mkIf (builtins.hasAttr "zls" pkgs) "${pkgs.zls}/bin/zls";
+    "rust-analyzer.server.path" = "${pkgs.rust-analyzer}/bin/rust-analyzer";
+    "python.defaultInterpreterPath" = "${pkgs.python3}/bin/python";
+    "zig.path" = "${pkgs.zig}/bin/zig";
+    "zig.zls.path" = "${pkgs.zls}/bin/zls";
 
     # Nix IDE settings
     "nix.enableLanguageServer" = true;
-    "nix.serverPath" = lib.mkIf (builtins.hasAttr "nil" pkgs) "${pkgs.nil}/bin/nil";
-    "nix.formatterPath" = lib.mkIf (builtins.hasAttr "nixpkgs-fmt" pkgs) "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt";
+    "nix.serverPath" = "${pkgs.nil}/bin/nil";
+    "nix.formatterPath" = "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt";
 
     # Remote-WSL specific settings
     "remote.WSL.fileWatcher.polling" = true;

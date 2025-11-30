@@ -33,9 +33,6 @@
     # VSCode Remote-WSL extension management
     # Generates extensions.json and helper scripts for Windows VSCode
     ./vscode-remote.nix
-
-    # NOTE: VSCode not installed in WSL - use Windows VSCode with Remote-WSL extension
-    # ./vscode.nix
   ];
 
   # WSL-specific packages that don't require their own module

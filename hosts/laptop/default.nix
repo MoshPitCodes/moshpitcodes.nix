@@ -132,7 +132,7 @@
 
         # CPU energy performance policy
         CPU_ENERGY_PERF_POLICY_ON_AC = "performance";
-        CPU_ENERGY_PERf_POLICY_ON_BAT = "balance_performance";
+        CPU_ENERGY_PERF_POLICY_ON_BAT = "balance_performance";
 
         # CPU boost settings
         CPU_BOOST_ON_AC = 1; # Enable CPU boost on AC
