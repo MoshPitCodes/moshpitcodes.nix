@@ -148,19 +148,11 @@
         start_ssh_agent
       fi
       
-      # Auto-add SSH keys if not already loaded
-      # Note: The systemd service ssh-add-keys in openssh.nix handles this dynamically
-      # based on secrets.nix. This is a fallback for non-systemd shells.
-      # To add custom keys, update the keys list in secrets.nix
-      if compgen -G "$HOME/.ssh/id_*" > /dev/null 2>&1; then
-        for key in ~/.ssh/id_*; do
-          # Skip public keys, directories, and non-existent files
-          [[ -f "$key" ]] || continue
-          [[ "$key" == *.pub ]] && continue
-
-          if ! ssh-add -l 2>/dev/null | grep -q "$(ssh-keygen -lf "$key" 2>/dev/null | awk '{print $2}')"; then
-            ssh-add "$key" 2>/dev/null || true
-          fi
+      # Auto-add SSH keys when agent is empty
+      # Keys are loaded once per agent session, avoiding repeated prompts
+      if [[ "$(ssh-add -l 2>&1)" == "The agent has no identities." ]]; then
+        for key in ~/.ssh/id_ed25519_*; do
+          [[ -f "$key" && "$key" != *.pub ]] && ssh-add "$key" 2>/dev/null
         done
       fi
 
