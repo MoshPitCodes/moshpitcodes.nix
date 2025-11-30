@@ -57,13 +57,6 @@
     enableOnBoot = true;
   };
 
-  # Podman configuration (lightweight alternative to Docker)
-  # virtualisation.podman = {
-  #   enable = true;
-  #   dockerCompat = true; # Create docker alias for podman
-  #   defaultNetwork.settings.dns_enabled = true;
-  # };
-
   # Enable SSH server for remote access
   services.openssh = {
     enable = true;

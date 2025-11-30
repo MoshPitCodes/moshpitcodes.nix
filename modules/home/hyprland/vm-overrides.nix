@@ -13,10 +13,6 @@
     WLR_NO_HARDWARE_CURSORS = lib.mkForce "1";
     WLR_RENDERER_ALLOW_SOFTWARE = lib.mkForce "1";
 
-    # For VMs, we might want to use Wayland backend instead of Vulkan for better compatibility
-    # Uncomment if you experience issues with Vulkan in the VM
-    # WLR_BACKEND = lib.mkForce "wayland";
-    # WLR_RENDERER = lib.mkForce "gles2";
   };
 
   # Override Hyprland configuration for VM

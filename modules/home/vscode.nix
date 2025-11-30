@@ -276,9 +276,6 @@ in
             rename = true;
             signatureHelp = true;
           };
-          # formatFlags = [ "-w" ];
-          # formatTool = "gofmt";
-          # useLanguageServer" = true;
           useLanguageServer = true;
         };
 

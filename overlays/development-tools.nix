@@ -21,25 +21,4 @@ final: prev: {
     };
   });
 
-  # Add more tool overrides here as needed:
-  #
-  # ansible = prev.ansible.overridePythonAttrs (old: rec {
-  #   version = "9.2.0";
-  #   src = prev.fetchPypi {
-  #     pname = "ansible";
-  #     inherit version;
-  #     hash = prev.lib.fakeHash;  # Replace with actual hash after first build
-  #   };
-  # });
-  #
-  # kubernetes-helm = prev.kubernetes-helm.overrideAttrs (finalAttrs: prevAttrs: {
-  #   version = "3.14.1";
-  #   src = prev.fetchFromGitHub {
-  #     owner = "helm";
-  #     repo = "helm";
-  #     rev = "v${finalAttrs.version}";
-  #     hash = prev.lib.fakeHash;  # Replace with actual hash after first build
-  #   };
-  #   vendorHash = prev.lib.fakeHash;  # Replace with actual hash after first build
-  # });
 }
