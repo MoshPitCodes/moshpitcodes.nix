@@ -125,6 +125,9 @@ install_system() {
         warning "No wallpapers to copy, skipping..."
     fi
 
+    # Copy SSH keys from source directory
+    copy_ssh_keys "secrets.nix"
+
     # Handle hardware configuration
     if [[ "$host" == "wsl" ]]; then
         info "WSL detected - skipping hardware-configuration.nix"
