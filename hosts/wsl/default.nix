@@ -6,7 +6,7 @@
     inputs.nixos-wsl.nixosModules.wsl
 
     # Import core modules
-    ../../modules/core/default.nix
+    ../../modules/core/default.wsl.nix
 
     # Import WSL-specific overrides to disable incompatible modules
     ../../modules/core/wsl-overrides.nix
@@ -44,10 +44,6 @@
       interop = {
         enabled = true;
         appendWindowsPath = true;
-      };
-
-      gpu = {
-        enabled = true;
       };
     };
 
