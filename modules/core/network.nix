@@ -17,16 +17,11 @@
     firewall = {
       enable = true;
       allowedTCPPorts = [
-        22
-        80
-        443
-        59010
-        59011
+        22   # SSH
+        80   # HTTP
+        443  # HTTPS
       ];
-      allowedUDPPorts = [
-        59010
-        59011
-      ];
+      allowedUDPPorts = [ ];
     };
   };
 
