@@ -5,7 +5,7 @@
   networking.nameservers = lib.mkForce [ ];
 
   # Enable DrvFs and 9p filesystem support for WSL drive mounting
-  boot.supportedFilesystems = [ "drvfs" "9p" "9pnet_virtio" ];
+  # boot.supportedFilesystems = [ "drvfs" "9p" "9pnet_virtio" ];
 
   # Disable bootloader configuration - WSL doesn't use traditional bootloaders
   boot.loader.systemd-boot.enable = lib.mkForce false;
