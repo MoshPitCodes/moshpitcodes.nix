@@ -16,7 +16,6 @@
     ./git.nix # version control
     ./lazygit.nix # terminal git client
     ./openssh.nix # ssh client
-    ./ssh-keys.nix # ssh key copying from Windows
     ./micro.nix # nano replacement
     ./nvim.nix # neovim editor
     ./p10k/p10k.nix # zsh theme
