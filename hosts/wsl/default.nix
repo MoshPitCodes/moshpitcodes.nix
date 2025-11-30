@@ -1,6 +1,11 @@
 { pkgs, inputs, username, ... }:
 
 {
+  # NOTE: WSL dmesg will still show a warning about wsl-generator being world-writable.
+  # This is an upstream Microsoft WSL issue - the generator is created by WSL init
+  # with insecure permissions before NixOS runs. No local fix is possible.
+  # See: https://github.com/microsoft/WSL/issues
+
   imports = [
     # Import NixOS-WSL module
     inputs.nixos-wsl.nixosModules.wsl
@@ -16,6 +21,13 @@
   wsl = {
     enable = true;
     defaultUser = username;
+
+    # FHS compatibility for WSL init
+    # Fixes: execv(/bin/mount) failed with 2
+    extraBin = [
+      { src = "${pkgs.util-linux}/bin/mount"; name = "mount"; }
+      { src = "${pkgs.util-linux}/bin/umount"; name = "umount"; }
+    ];
 
     # Windows interoperability
     interop = {
@@ -107,6 +119,17 @@
     # This ensures home-manager services and user systemd units work properly
     tmpfiles.rules = [
       "f /var/lib/systemd/linger/${username} 0644 root root - -"
+
+      # FHS compatibility: timezone data for WSL init
+      # Fixes: /usr/share/zoneinfo/Europe/Berlin not found
+      "d /usr/share 0755 root root -"
+      "L+ /usr/share/zoneinfo - - - - /etc/zoneinfo"
+
+      # FHS compatibility: systemctl for WSL init
+      # Partially fixes: popen(systemctl is-system-running) failed
+      # Note: Early boot errors before systemd starts are unavoidable
+      "d /usr/bin 0755 root root -"
+      "L+ /usr/bin/systemctl - - - - /run/current-system/sw/bin/systemctl"
     ];
 
     services = {
