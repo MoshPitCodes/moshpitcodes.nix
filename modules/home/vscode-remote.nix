@@ -1,4 +1,4 @@
-{ pkgs, lib, config, ... }:
+{ pkgs, lib, ... }:
 let
   # For WSL remote, we only need extension IDs, not the actual packages
   # This avoids building VSCode and extensions which are not used in WSL
@@ -146,77 +146,81 @@ let
   };
 in
 {
-  # Create extensions.json in the default project location
-  # Users can copy this to their project's .vscode/ directory
-  home.file.".vscode-remote/extensions.json".text = extensionsJson;
+  home = {
+    # Add the install script to PATH
+    packages = [ installExtensionsScript ];
 
-  # Create WSL-specific settings snippet
-  home.file.".vscode-remote/wsl-settings.json".text = builtins.toJSON wslSettingsSnippet;
+    file = {
+      # Create extensions.json in the default project location
+      # Users can copy this to their project's .vscode/ directory
+      ".vscode-remote/extensions.json".text = extensionsJson;
 
-  # Create README for users
-  home.file.".vscode-remote/README.md".text = ''
-    # VSCode Remote-WSL Extension Configuration
+      # Create WSL-specific settings snippet
+      ".vscode-remote/wsl-settings.json".text = builtins.toJSON wslSettingsSnippet;
 
-    This directory contains VSCode configuration files for use with Remote-WSL.
+      # Create README for users
+      ".vscode-remote/README.md".text = ''
+        # VSCode Remote-WSL Extension Configuration
 
-    ## Files
+        This directory contains VSCode configuration files for use with Remote-WSL.
 
-    - `extensions.json` - Recommended extensions list
-    - `wsl-settings.json` - WSL-specific settings snippet
-    - `install-extensions.sh` - Helper script to install all extensions
+        ## Files
 
-    ## Usage
+        - `extensions.json` - Recommended extensions list
+        - `wsl-settings.json` - WSL-specific settings snippet
+        - `install-extensions.sh` - Helper script to install all extensions
 
-    ### Option 1: Use extensions.json in your projects
+        ## Usage
 
-    Copy `extensions.json` to your project's `.vscode/` directory:
+        ### Option 1: Use extensions.json in your projects
 
-    ```bash
-    cp ~/.vscode-remote/extensions.json ~/your-project/.vscode/
-    ```
+        Copy `extensions.json` to your project's `.vscode/` directory:
 
-    Windows VSCode will prompt you to install the recommended extensions when you open the project.
+        ```bash
+        cp ~/.vscode-remote/extensions.json ~/your-project/.vscode/
+        ```
 
-    ### Option 2: Install all extensions at once
+        Windows VSCode will prompt you to install the recommended extensions when you open the project.
 
-    Run the helper script to install all extensions:
+        ### Option 2: Install all extensions at once
 
-    ```bash
-    vscode-install-extensions
-    ```
+        Run the helper script to install all extensions:
 
-    This requires Windows VSCode to be accessible from WSL PATH.
+        ```bash
+        vscode-install-extensions
+        ```
 
-    ### Option 3: Merge WSL settings
+        This requires Windows VSCode to be accessible from WSL PATH.
 
-    Add the contents of `wsl-settings.json` to your VSCode settings:
+        ### Option 3: Merge WSL settings
 
-    ```bash
-    cat ~/.vscode-remote/wsl-settings.json
-    ```
+        Add the contents of `wsl-settings.json` to your VSCode settings:
 
-    Then copy the relevant settings to your VSCode User settings.
+        ```bash
+        cat ~/.vscode-remote/wsl-settings.json
+        ```
 
-    ## Extension List
+        Then copy the relevant settings to your VSCode User settings.
 
-    The extension list is declaratively managed in your NixOS configuration at:
-    `modules/home/vscode-extensions.nix`
+        ## Extension List
 
-    To add or remove extensions, edit that file and run `nixos-rebuild switch`.
+        The extension list is declaratively managed in your NixOS configuration at:
+        `modules/home/vscode-extensions.nix`
 
-    ## Keeping Extensions in Sync
+        To add or remove extensions, edit that file and run `nixos-rebuild switch`.
 
-    Your extensions are defined once in Nix and can be used:
-    1. On desktop Linux with full VSCode installation
-    2. In WSL with Windows VSCode via Remote-WSL
-    3. Via SSH with Remote-SSH
+        ## Keeping Extensions in Sync
 
-    The same extension list is shared across all environments!
-  '';
+        Your extensions are defined once in Nix and can be used:
+        1. On desktop Linux with full VSCode installation
+        2. In WSL with Windows VSCode via Remote-WSL
+        3. Via SSH with Remote-SSH
 
-  # Add the install script to PATH
-  home.packages = [ installExtensionsScript ];
+        The same extension list is shared across all environments!
+      '';
 
-  # Create a symlink script for easy access
-  home.file.".vscode-remote/install-extensions.sh".source = "${installExtensionsScript}/bin/vscode-install-extensions";
+      # Create a symlink script for easy access
+      ".vscode-remote/install-extensions.sh".source = "${installExtensionsScript}/bin/vscode-install-extensions";
+    };
+  };
 }

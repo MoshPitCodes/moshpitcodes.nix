@@ -1,6 +1,6 @@
 { pkgs, ... }:
 {
-  home.packages = (
+  home.packages =
     with pkgs;
     [
       evince # pdf
@@ -8,8 +8,7 @@
       gnome-text-editor # gedit
       gnome-keyring # keyring for credentials
       ssh-askpass-fullscreen # GUI SSH password prompt
-    ]
-  );
+    ];
 
   services.gnome-keyring = {
     enable = true;

@@ -1,6 +1,6 @@
-{ inputs }:
+{ inputs ? null }:
 
-final: prev: {
+_final: prev: {
   # Infrastructure as Code Tools
 
   # Terraform 1.14.0

@@ -1,17 +1,15 @@
 {
   config,
-  lib,
   pkgs,
   ...
 }:
 {
-  home.packages = (
+  home.packages =
     with pkgs;
     [
       waypaper
       hyprpaper
-    ]
-  );
+    ];
 
   xdg.configFile."waypaper/config.ini".text = ''
     [Settings]

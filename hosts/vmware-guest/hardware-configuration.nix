@@ -1,14 +1,18 @@
-{ config, lib, pkgs, modulesPath, ... }:
+{ config, lib, ... }:
 
 {
   # No QEMU profile - this is VMware!
   imports = [ ];
 
-  # VMware-specific kernel modules
-  boot.initrd.availableKernelModules = [ "ata_piix" "mptspi" "uhci_hcd" "ehci_pci" "sd_mod" "sr_mod" "ahci" "nvme" ];
-  boot.initrd.kernelModules = [ "vmw_pvscsi" ];
-  boot.kernelModules = [ "vmw_vsock_vmci_transport" "vmw_balloon" "vmwgfx" ];
-  boot.extraModulePackages = [ ];
+  boot = {
+    # VMware-specific kernel modules
+    initrd = {
+      availableKernelModules = [ "ata_piix" "mptspi" "uhci_hcd" "ehci_pci" "sd_mod" "sr_mod" "ahci" "nvme" ];
+      kernelModules = [ "vmw_pvscsi" ];
+    };
+    kernelModules = [ "vmw_vsock_vmci_transport" "vmw_balloon" "vmwgfx" ];
+    extraModulePackages = [ ];
+  };
 
   # Adjust these values based on your actual VM configuration
   fileSystems."/" = {
@@ -26,4 +30,4 @@
 
   # Enable VMware specific hardware
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
-} 
+}

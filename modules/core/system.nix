@@ -50,7 +50,7 @@
     openjdk25
     openh264
     # batgrep tests fail in Nix sandbox due to filesystem restrictions
-    (bat-extras.batgrep.overrideAttrs (oldAttrs: {
+    (bat-extras.batgrep.overrideAttrs (_oldAttrs: {
       doCheck = false;
     }))
   ];

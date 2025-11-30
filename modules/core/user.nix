@@ -22,16 +22,18 @@
           [ ./../home/default.wsl.nix ]
         else
           [ ./../home ];
-      home.username = "${username}";
-      home.homeDirectory = "/home/${username}";
-      home.stateVersion = "25.05";
+      home = {
+        username = "${username}";
+        homeDirectory = "/home/${username}";
+        stateVersion = "25.05";
+      };
       programs.home-manager.enable = true;
     };
     backupFileExtension = "hm-backup";
   };
 
   users.users.${username} = {
-    hashedPassword = customsecrets.hashedPassword;
+    inherit (customsecrets) hashedPassword;
     isNormalUser = true;
     description = "${username}";
     extraGroups = [

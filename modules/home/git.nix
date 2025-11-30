@@ -1,38 +1,66 @@
 { pkgs, customsecrets, ... }:
 {
-  programs.git = {
-    enable = true;
+  programs = {
+    git = {
+      enable = true;
 
-    settings = {
-      user = {
-        name = customsecrets.git.userName;
-        email = customsecrets.git.userEmail;
-        signingkey = customsecrets.git.user.signingkey;
-      };
-      init.defaultBranch = "main";
-      credential.helper = "${pkgs.git}/lib/git-core/git-credential-libsecret";
-      merge.conflictstyle = "diff3";
-      diff.colorMoved = "default";
-      commit.gpgsign = true;
-      gpg.format = "openpgp";
-      alias = {
-        lg = "log --oneline --decorate --graph";
-        lol = "log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset'";
-        lola = "log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --all";
-        lols = "log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --stat";
+      settings = {
+        user = {
+          name = customsecrets.git.userName;
+          email = customsecrets.git.userEmail;
+          inherit (customsecrets.git.user) signingkey;
+        };
+        init.defaultBranch = "main";
+        credential.helper = "${pkgs.git}/lib/git-core/git-credential-libsecret";
+        merge.conflictstyle = "diff3";
+        diff.colorMoved = "default";
+        commit.gpgsign = true;
+        gpg.format = "openpgp";
+        alias = {
+          lg = "log --oneline --decorate --graph";
+          lol = "log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset'";
+          lola = "log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --all";
+          lols = "log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --stat";
+        };
       };
     };
 
-  };
+    delta = {
+      enable = true;
+      enableGitIntegration = true;
+      options = {
+        line-numbers = true;
+        side-by-side = true;
+        diff-so-fancy = true;
+        navigate = true;
+      };
+    };
 
-  programs.delta = {
-    enable = true;
-    enableGitIntegration = true;
-    options = {
-      line-numbers = true;
-      side-by-side = true;
-      diff-so-fancy = true;
-      navigate = true;
+    zsh.shellAliases = {
+      g = "lazygit";
+      gf = "onefetch --number-of-file-churns 0 --no-color-palette";
+      ga = "git add";
+      gaa = "git add --all";
+      gs = "git status";
+      gb = "git branch";
+      gm = "git merge";
+      gd = "git diff";
+      gpl = "git pull";
+      gplo = "git pull origin";
+      gps = "git push";
+      gpso = "git push origin";
+      gpst = "git push --follow-tags";
+      gcl = "git clone";
+      gc = "git commit";
+      gcm = "git commit -m";
+      gcma = "git add --all && git commit -m";
+      gtag = "git tag -ma";
+      gch = "git checkout";
+      gchb = "git checkout -b";
+      glog = "git log --oneline --decorate --graph";
+      glol = "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset'";
+      glola = "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --all";
+      glols = "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --stat";
     };
   };
 
@@ -50,32 +78,5 @@
     enableSshSupport = false; # Use GNOME keyring for SSH
     defaultCacheTtl = 1800;
     maxCacheTtl = 7200;
-  };
-
-  programs.zsh.shellAliases = {
-    g = "lazygit";
-    gf = "onefetch --number-of-file-churns 0 --no-color-palette";
-    ga = "git add";
-    gaa = "git add --all";
-    gs = "git status";
-    gb = "git branch";
-    gm = "git merge";
-    gd = "git diff";
-    gpl = "git pull";
-    gplo = "git pull origin";
-    gps = "git push";
-    gpso = "git push origin";
-    gpst = "git push --follow-tags";
-    gcl = "git clone";
-    gc = "git commit";
-    gcm = "git commit -m";
-    gcma = "git add --all && git commit -m";
-    gtag = "git tag -ma";
-    gch = "git checkout";
-    gchb = "git checkout -b";
-    glog = "git log --oneline --decorate --graph";
-    glol = "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset'";
-    glola = "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --all";
-    glols = "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --stat";
   };
 }
