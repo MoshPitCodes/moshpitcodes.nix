@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 # Interactive installer for NixOS configuration
 
+# Ensure we're running in bash
+if [ -z "$BASH_VERSION" ]; then
+    echo "ERROR: This script requires bash. Run with: bash $0" >&2
+    exit 1
+fi
+
 set -euo pipefail
 
 # Source shared library
