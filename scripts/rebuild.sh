@@ -22,7 +22,7 @@ DRY_RUN=false
 
 # Parse arguments
 POSITIONAL_ARGS=()
-while [[ $# -gt 0 ]]; then
+while [[ $# -gt 0 ]]; do
     case $1 in
         --clear-cache)
             CLEAR_CACHE=true
