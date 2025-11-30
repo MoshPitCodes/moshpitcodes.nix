@@ -44,8 +44,8 @@
 
       automount = {
         root = "/mnt";
-        # Enable metadata support for proper permissions
-        options = "metadata,umask=022,fmask=011";
+        # Enable metadata support with explicit uid/gid for write access
+        options = "metadata,uid=1000,gid=1000";
       };
 
       network = {
@@ -158,7 +158,7 @@
               for drive in C D E F G; do
                 mnt="/mnt/$(echo $drive | tr '[:upper:]' '[:lower:]')"
                 if [ -d "$mnt" ] && ! ${pkgs.util-linux}/bin/mountpoint -q "$mnt"; then
-                  ${pkgs.util-linux}/bin/mount -t drvfs "$drive:" "$mnt" -o metadata,umask=022,fmask=011 2>/dev/null || true
+                  ${pkgs.util-linux}/bin/mount -t drvfs "$drive:" "$mnt" -o metadata,uid=1000,gid=1000 2>/dev/null || true
                 fi
               done
             '';
