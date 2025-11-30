@@ -34,6 +34,9 @@
         root = "/mnt";
         # Enable metadata support for proper permissions
         options = "metadata,umask=022,fmask=011";
+        # Explicitly enable fstab mounting for Windows drives
+        # NixOS-WSL defaults this to false when systemd is enabled, but we need it true
+        mountFsTab = true;
       };
 
       network = {
