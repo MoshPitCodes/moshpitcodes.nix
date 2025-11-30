@@ -34,9 +34,6 @@
         root = "/mnt";
         # Enable metadata support for proper permissions
         options = "metadata,umask=022,fmask=011";
-        # Disable fstab mounting - let systemd handle all mounts
-        # This prevents WSL from attempting mounts before systemd is ready
-        mountFsTab = false;
       };
 
       network = {
