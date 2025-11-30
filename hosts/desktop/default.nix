@@ -54,7 +54,7 @@
 
     kernelParams = [
       "intel_pstate=active" # Performance mode for Intel CPUs
-      "mitigations=off" # Disable CPU security mitigations for performance (security risk!)
+      "mitigations=auto" # Enable CPU security mitigations (Spectre/Meltdown protection)
       "threadirqs" # Threading for IRQs to improve responsiveness
       "nowatchdog" # Disable watchdog for slight performance improvement
 

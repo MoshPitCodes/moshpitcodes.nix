@@ -1,11 +1,12 @@
 {
+  lib,
   pkgs,
   username,
   ...
 }:
 {
-  # Add user to libvirtd group
-  users.users.${username}.extraGroups = [ "libvirtd" "kvm"];
+  # Add user to libvirtd and kvm groups (merged with existing groups from user.nix)
+  users.users.${username}.extraGroups = lib.mkAfter [ "libvirtd" "kvm" ];
 
   # Install necessary packages
   environment.systemPackages = with pkgs; [
