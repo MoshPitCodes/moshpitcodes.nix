@@ -31,7 +31,7 @@
   };
 
   users.users.${username} = {
-    password = customsecrets.password;
+    hashedPassword = customsecrets.hashedPassword;
     isNormalUser = true;
     description = "${username}";
     extraGroups = [
