@@ -117,4 +117,31 @@
   # Ensure PAM is configured to start systemd user sessions
   security.pam.services.login.startSession = true;
   security.pam.services.sshd.startSession = true;
+
+  # Workaround for WSL automount timing issue
+  # The built-in automount sometimes fails to mount Windows drives on boot
+  # This service ensures drives are mounted after systemd is fully running
+  systemd.services.wsl-automount = {
+    description = "Mount Windows drives via drvfs";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "local-fs.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = let
+        mountScript = pkgs.writeShellScript "wsl-mount-drives" ''
+          # Wait for Plan 9 server to be ready
+          sleep 2
+
+          # Mount each Windows drive if not already mounted
+          for drive in C D E F G; do
+            mnt="/mnt/$(echo $drive | tr '[:upper:]' '[:lower:]')"
+            if [ -d "$mnt" ] && ! ${pkgs.util-linux}/bin/mountpoint -q "$mnt"; then
+              ${pkgs.util-linux}/bin/mount -t drvfs "$drive:" "$mnt" -o metadata,umask=022,fmask=011 2>/dev/null || true
+            fi
+          done
+        '';
+      in "${mountScript}";
+    };
+  };
 }
