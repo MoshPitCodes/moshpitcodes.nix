@@ -207,3 +207,69 @@ If you want to install NixOS with this configuration:
   3. Then run this script again"
     fi
 }
+
+# Copy SSH keys from source directory defined in secrets.nix
+copy_ssh_keys() {
+    local secrets_file="${1:-secrets.nix}"
+
+    if [[ ! -f "$secrets_file" ]]; then
+        warning "secrets.nix not found, skipping SSH key copy"
+        return 0
+    fi
+
+    # Parse sourceDir from secrets.nix
+    local source_dir
+    source_dir=$(grep -oP 'sourceDir\s*=\s*"\K[^"]*' "$secrets_file" 2>/dev/null || echo "")
+
+    if [[ -z "$source_dir" ]]; then
+        info "No SSH key source directory configured, skipping SSH key copy"
+        return 0
+    fi
+
+    if [[ ! -d "$source_dir" ]]; then
+        warning "SSH key source directory not found: $source_dir"
+        return 0
+    fi
+
+    # Parse keys list from secrets.nix
+    local keys_section
+    keys_section=$(sed -n '/sshKeys\s*=\s*{/,/};/p' "$secrets_file" | sed -n '/keys\s*=\s*\[/,/\];/p')
+    local keys
+    keys=$(echo "$keys_section" | grep -oP '"\K[^"]+' || echo "")
+
+    if [[ -z "$keys" ]]; then
+        warning "No SSH keys defined in secrets.nix"
+        return 0
+    fi
+
+    info "Copying SSH keys from: $source_dir"
+
+    # Create .ssh directory with correct permissions
+    mkdir -p ~/.ssh
+    chmod 700 ~/.ssh
+
+    local copied=0
+    while IFS= read -r key; do
+        [[ -z "$key" ]] && continue
+
+        # Copy private key
+        if [[ -f "$source_dir/$key" ]]; then
+            cp "$source_dir/$key" ~/.ssh/"$key"
+            chmod 600 ~/.ssh/"$key"
+            info "  Copied: $key"
+            ((copied++))
+        fi
+
+        # Copy public key if exists
+        if [[ -f "$source_dir/$key.pub" ]]; then
+            cp "$source_dir/$key.pub" ~/.ssh/"$key.pub"
+            chmod 644 ~/.ssh/"$key.pub"
+        fi
+    done <<< "$keys"
+
+    if [[ $copied -gt 0 ]]; then
+        info "Copied $copied SSH key(s) to ~/.ssh/"
+    else
+        warning "No SSH keys were copied (keys not found in source directory)"
+    fi
+}
