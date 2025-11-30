@@ -2,6 +2,12 @@
 # Copy project contents to ~/moshpitcodes.nix
 # Excludes patterns defined in .rsyncignore
 
+# Ensure we're running in bash
+if [ -z "$BASH_VERSION" ]; then
+    echo "ERROR: This script requires bash. Run with: bash $0" >&2
+    exit 1
+fi
+
 set -euo pipefail
 
 # Source shared library

@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 # Rebuild NixOS configuration with optional garbage collection
 
+# Ensure we're running in bash
+if [ -z "$BASH_VERSION" ]; then
+    echo "ERROR: This script requires bash. Run with: bash $0" >&2
+    exit 1
+fi
+
 set -euo pipefail
 
 # Source shared library
