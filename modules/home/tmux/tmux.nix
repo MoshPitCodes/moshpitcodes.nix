@@ -14,8 +14,6 @@
 
     newSession = true;
     sensibleOnTop = true;
-    # shell = "${pkgs.zsh}/bin/zsh";
-    # terminal = "ghostty";
 
     # Enable tmux plugins
     plugins = with pkgs; [

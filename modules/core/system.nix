@@ -4,7 +4,6 @@
   ...
 }:
 {
-  # imports = [ inputs.nix-gaming.nixosModules.default ];
   nix = {
     settings = {
       auto-optimise-store = true;
@@ -15,6 +14,11 @@
 
       flake-registry = builtins.toFile "null-flake-registry.json" ''{"flakes":[],"version":2}'';
 
+      # Binary caches for faster builds
+      # nix-community: Home-manager, NUR, community packages
+      # nix-gaming: Gaming optimizations, Proton, Wine
+      # hyprland: Hyprland compositor pre-built binaries
+      # ghostty: Ghostty terminal emulator
       substituters = [
         "https://nix-community.cachix.org"
         "https://nix-gaming.cachix.org"
@@ -38,15 +42,16 @@
     overlays = [ inputs.nur.overlays.default ];
   };
 
-  security.sudo.enable = true;
+  # Note: security.sudo.enable is set in security.nix
 
   environment.systemPackages = with pkgs; [
     git
     nixfmt-tree
     openjdk25
     openh264
+    # batgrep tests fail in Nix sandbox due to filesystem restrictions
     (bat-extras.batgrep.overrideAttrs (oldAttrs: {
-      doCheck = false;  # Skip failing tests
+      doCheck = false;
     }))
   ];
 

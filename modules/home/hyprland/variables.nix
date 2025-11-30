@@ -33,9 +33,5 @@
     LIBVA_DRIVER_NAME = "iHD";
     MOZ_DISABLE_RDD_SANDBOX = "1"; # Can help Firefox performance
     WLR_DRM_NO_ATOMIC = "0"; # Try if you experience flickering
-    # WLR_RENDERER_ALLOW_SOFTWARE = "0"; # Try if you experience flickering
-    # Optional: these can help with certain performance issues
-    # WLR_RENDERER_ALLOW_SOFTWARE = "1";
-    # WLR_NO_HARDWARE_CURSORS = "1";
   };
 }

@@ -53,7 +53,8 @@
       # Load secrets with fallback defaults for CI/testing environments
       defaultSecrets = {
         username = "testuser";
-        password = "testpassword";
+        # Default test hash (password: "testpassword")
+        hashedPassword = "$6$test$test";
         reponame = "moshpitcodes.nix";
         git = {
           userName = "Test User";
@@ -78,9 +79,20 @@
         };
       };
 
+      # Validate that secrets have all required keys
+      validateSecrets = secrets:
+        let
+          requiredKeys = [ "username" "hashedPassword" "git" "network" ];
+          missingKeys = builtins.filter (k: !(builtins.hasAttr k secrets)) requiredKeys;
+        in
+        if missingKeys == [ ] then
+          secrets
+        else
+          throw "secrets.nix missing required keys: ${builtins.toString missingKeys}";
+
       customsecrets =
         if builtins.pathExists ./secrets.nix then
-          import ./secrets.nix
+          validateSecrets (import ./secrets.nix)
         else
           defaultSecrets;
 
