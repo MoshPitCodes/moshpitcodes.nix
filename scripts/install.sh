@@ -1,241 +1,168 @@
 #!/usr/bin/env bash
+# Interactive installer for NixOS configuration
 
-# Exit on error, undefined variables, and pipe failures
 set -euo pipefail
 
-# Change to repository root (parent of scripts/ directory)
-REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Source shared library
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/lib.sh"
+
+# Configuration
+REPO_ROOT="$(get_repo_root)"
 cd "$REPO_ROOT"
 
-init() {
-    # Colors
-    NORMAL=$(tput sgr0)
-    WHITE=$(tput setaf 7)
-    BLACK=$(tput setaf 0)
-    RED=$(tput setaf 1)
-    GREEN=$(tput setaf 2)
-    YELLOW=$(tput setaf 3)
-    BLUE=$(tput setaf 4)
-    MAGENTA=$(tput setaf 5)
-    CYAN=$(tput setaf 6)
-    BRIGHT=$(tput bold)
-    UNDERLINE=$(tput smul)
-}
-
-error() {
-    echo -e "${RED}ERROR:${NORMAL} $1" >&2
-    exit 1
-}
-
-warning() {
-    echo -e "${YELLOW}WARNING:${NORMAL} $1"
-}
-
-info() {
-    echo -e "${GREEN}INFO:${NORMAL} $1"
-}
-
-confirm() {
-    echo -en "[${GREEN}y${NORMAL}/${RED}n${NORMAL}]: "
-    read -n 1 -r
-    echo
-    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
-        exit 0
-    fi
-}
-
-print_header() {
-    echo -E "$CYAN
-     _   _ _       ___        ___           _        _ _
-    | \ | (_)_  __/ _ \ ___  |_ _|_ __  ___| |_ __ _| | | ___ _ __
-    |  \| | \ \/ / | | / __|  | || '_ \/ __| __/ _' | | |/ _ \ '__|
-    | |\  | |>  <| |_| \__ \  | || | | \__ \ || (_| | | |  __/ |
-    |_| \_|_/_/\_\\\\___/|___/ |___|_| |_|___/\__\__,_|_|_|\___|_|
-
-
-                      ! DO NOT run as root ! $GREEN
-                        -> '"./install.sh"' $NORMAL
-
-    "
-}
-
+# Validate prerequisites
 validate_prerequisites() {
     info "Checking prerequisites..."
 
-    # Check if running from repository root
-    if [[ ! -f "flake.nix" ]]; then
-        error "flake.nix not found. Please run this script from the repository root."
-    fi
-
-    # Check if required directories exist
-    if [[ ! -d "hosts" ]]; then
-        error "hosts/ directory not found. Repository structure may be incomplete."
-    fi
+    require_not_root
+    require_file "flake.nix" "flake.nix not found. Run this from repository root."
+    require_directory "hosts" "hosts/ directory not found. Repository incomplete."
+    require_file "secrets.nix" "secrets.nix not found. Create it from secrets.nix.example"
 
     if [[ ! -d "wallpapers" ]]; then
         warning "wallpapers/ directory not found. Wallpaper copying will be skipped."
     fi
 
-    # Check if secrets.nix exists
-    if [[ ! -f "secrets.nix" ]]; then
-        error "secrets.nix not found. Please create it from secrets.nix.template"
-    fi
-
     info "Prerequisites check passed."
 }
 
+# Get or confirm username
 get_username() {
-    # Try to read existing username from secrets.nix
+    local username=""
+
+    # Try reading existing username
     if [[ -f "secrets.nix" ]]; then
-        CURRENT_USERNAME=$(grep -oP '^\s*username\s*=\s*"\K[^"]+' secrets.nix 2>/dev/null || echo "")
-        if [[ -n "$CURRENT_USERNAME" ]]; then
-            info "Found existing username in secrets.nix: ${YELLOW}${CURRENT_USERNAME}${NORMAL}"
-            echo -en "Keep this username? "
-            read -n 1 -r
-            echo
-            if [[ $REPLY =~ ^[Yy]$ ]]; then
-                username="$CURRENT_USERNAME"
+        username=$(grep -oP '^\s*username\s*=\s*"\K[^"]+' secrets.nix 2>/dev/null || echo "")
+
+        if [[ -n "$username" ]]; then
+            info "Found username in secrets.nix: ${YELLOW}${username}${NORMAL}"
+            if confirm "Keep this username?"; then
+                echo "$username"
                 return
             fi
         fi
     fi
 
     # Prompt for new username
-    echo -en "Enter your ${GREEN}username${NORMAL}: ${YELLOW}"
-    read username
-    echo -en "$NORMAL"
-    echo -en "Use ${YELLOW}\"$username\"${NORMAL} as ${GREEN}username${NORMAL}? "
-    confirm
+    while [[ -z "$username" ]]; do
+        echo -en "Enter your ${GREEN}username${NORMAL}: "
+        read username
+        [[ -n "$username" ]] && confirm "Use '${YELLOW}${username}${NORMAL}' as username?" || username=""
+    done
+
+    echo "$username"
 }
 
+# Update username in secrets.nix
 set_username() {
+    local username="$1"
     info "Updating username in secrets.nix..."
 
-    # Create backup of secrets.nix
     cp secrets.nix secrets.nix.backup
+    trap 'rm -f secrets.nix.backup' EXIT
 
-    # Update username in secrets.nix
-    if grep -q '^\s*username\s*=' secrets.nix; then
-        sed -i "s/^\(\s*username\s*=\s*\)\"[^\"]*\"/\1\"${username}\"/" secrets.nix
+    if sed -i "s/^\(\s*username\s*=\s*\)\"[^\"]*\"/\1\"${username}\"/" secrets.nix; then
         info "Username updated to: ${YELLOW}${username}${NORMAL}"
     else
-        error "Could not find username field in secrets.nix"
+        mv secrets.nix.backup secrets.nix
+        error "Failed to update username in secrets.nix"
     fi
 }
 
+# Select host configuration
 get_host() {
-    echo -e "\nChoose a ${GREEN}host${NORMAL}:"
-    echo -e "  [${YELLOW}D${NORMAL}]esktop"
-    echo -e "  [${YELLOW}L${NORMAL}]aptop"
-    echo -e "  [${YELLOW}V${NORMAL}]irtual Machine"
-    echo -e "  [${YELLOW}W${NORMAL}]SL (Windows Subsystem for Linux)"
-    echo -e "  [${YELLOW}M${NORMAL}]Ware (VMware Guest)"
+    echo -e "\n${GREEN}Choose a host:${NORMAL}"
+    echo "  [D]esktop"
+    echo "  [L]aptop"
+    echo "  [V]M (Virtual Machine)"
+    echo "  [W]SL (Windows Subsystem for Linux)"
+    echo "  [M]Ware (VMware Guest)"
     echo -en "\nYour choice: "
-    read -n 1 -r
+
+    local host=""
+    read -n 1 -r choice
     echo
 
-    if [[ $REPLY =~ ^[Dd]$ ]]; then
-        HOST='desktop'
-    elif [[ $REPLY =~ ^[Ll]$ ]]; then
-        HOST='laptop'
-    elif [[ $REPLY =~ ^[Vv]$ ]]; then
-        HOST='vm'
-    elif [[ $REPLY =~ ^[Ww]$ ]]; then
-        HOST='wsl'
-    elif [[ $REPLY =~ ^[Mm]$ ]]; then
-        HOST='vmware-guest'
-    else
-        error "Invalid choice. Please select D/L/V/W/M."
-    fi
+    case "${choice,,}" in
+        d) host="desktop" ;;
+        l) host="laptop" ;;
+        v) host="vm" ;;
+        w) host="wsl" ;;
+        m) host="vmware-guest" ;;
+        *) error "Invalid choice. Select D/L/V/W/M." ;;
+    esac
 
-    # Verify host configuration exists
-    if [[ ! -d "hosts/${HOST}" ]]; then
-        error "Host configuration not found: hosts/${HOST}"
-    fi
+    require_directory "hosts/$host" "Host configuration not found: hosts/$host"
+    confirm "Use the '${YELLOW}${host}${NORMAL}' host?" || exit 0
 
-    echo -en "$NORMAL"
-    echo -en "Use the ${YELLOW}\"$HOST\"${NORMAL} ${GREEN}host${NORMAL}? "
-    confirm
+    echo "$host"
 }
 
-aseprite() {
-    info "Aseprite configuration is managed in modules/home/aseprite/aseprite.nix"
-    info "To disable Aseprite, comment out the import in modules/home/default.nix after installation"
-    echo -en "\nContinue with installation? "
-    confirm
-}
+# Install system
+install_system() {
+    local host="$1"
+    local username="$2"
 
-install() {
-    echo -e "\n${CYAN}${BRIGHT}START INSTALL PHASE${NORMAL}\n"
+    echo -e "\n${CYAN}${BRIGHT}INSTALLATION${NORMAL}\n"
 
-    # Create basic directories
+    # Create user directories
     info "Creating user directories..."
-    mkdir -p ~/Music || warning "Failed to create ~/Music"
-    mkdir -p ~/Documents || warning "Failed to create ~/Documents"
-    mkdir -p ~/Pictures/wallpapers/randomwallpaper || warning "Failed to create ~/Pictures/wallpapers"
-    mkdir -p ~/Documents/${username} || warning "Failed to create ~/Documents/${username}"
-    info "Directories created successfully"
+    mkdir -p ~/Music ~/Documents ~/Pictures/wallpapers/randomwallpaper ~/Documents/"$username" || \
+        warning "Some directories failed to create"
 
-    # Copy the wallpapers if they exist
+    # Copy wallpapers
     if [[ -d "wallpapers" ]] && [[ -n "$(ls -A wallpapers 2>/dev/null)" ]]; then
         info "Copying wallpapers..."
         cp -r wallpapers/* ~/Pictures/wallpapers/ || warning "Some wallpapers failed to copy"
-        info "Wallpapers copied successfully"
     else
-        warning "No wallpapers found to copy, skipping..."
+        warning "No wallpapers to copy, skipping..."
     fi
 
-    # Handle hardware configuration based on host type
-    if [[ "$HOST" == "wsl" ]]; then
-        info "WSL detected - skipping hardware-configuration.nix (not needed for WSL)"
+    # Handle hardware configuration
+    if [[ "$host" == "wsl" ]]; then
+        info "WSL detected - skipping hardware-configuration.nix"
     elif [[ -f "/etc/nixos/hardware-configuration.nix" ]]; then
-        info "Copying hardware-configuration.nix to hosts/${HOST}/"
-        cp /etc/nixos/hardware-configuration.nix hosts/${HOST}/hardware-configuration.nix || \
-            error "Failed to copy hardware-configuration.nix"
-        info "Hardware configuration copied successfully"
+        info "Copying hardware-configuration.nix to hosts/$host/"
+        cp /etc/nixos/hardware-configuration.nix "hosts/$host/hardware-configuration.nix"
     else
         warning "No /etc/nixos/hardware-configuration.nix found"
-        warning "For fresh installs, you may need to generate it first with:"
-        warning "  sudo nixos-generate-config --show-hardware-config > hosts/${HOST}/hardware-configuration.nix"
-        echo -en "\nContinue anyway? "
-        confirm
+        warning "Generate it with: sudo nixos-generate-config --show-hardware-config > hosts/$host/hardware-configuration.nix"
+        confirm "Continue anyway?" || exit 0
     fi
 
-    # Last Confirmation
-    echo -e "\n${YELLOW}${BRIGHT}READY TO BUILD SYSTEM${NORMAL}"
-    echo -e "Host: ${GREEN}${HOST}${NORMAL}"
-    echo -e "Username: ${GREEN}${username}${NORMAL}"
-    echo -en "\nStart the system build? "
-    confirm
+    # Final confirmation
+    echo -e "\n${YELLOW}${BRIGHT}READY TO BUILD${NORMAL}"
+    echo "  Host:     ${GREEN}$host${NORMAL}"
+    echo "  Username: ${GREEN}$username${NORMAL}"
+    confirm "\nStart system build?" || exit 0
 
-    # Build the system (flakes + home manager)
-    info "Building the system with nixos-rebuild..."
-    echo -e "${CYAN}This may take a while on first build...${NORMAL}\n"
-
-    if sudo nixos-rebuild switch --flake .#${HOST}; then
-        echo -e "\n${GREEN}${BRIGHT}✓ Installation completed successfully!${NORMAL}\n"
-        info "You may need to reboot for all changes to take effect"
+    # Build system
+    info "Building system (this may take a while)..."
+    if sudo nixos-rebuild switch --flake ".#$host"; then
+        echo -e "\n${GREEN}${BRIGHT}✓ Installation complete!${NORMAL}\n"
+        info "Reboot recommended for all changes to take effect"
     else
-        error "nixos-rebuild failed. Check the output above for errors."
+        error "nixos-rebuild failed. Check output above for errors."
     fi
 }
 
+# Main installation flow
 main() {
-    init
+    echo -e "${CYAN}${BRIGHT}"
+    echo "╔══════════════════════════════════════╗"
+    echo "║     NixOS Configuration Installer    ║"
+    echo "╚══════════════════════════════════════╝"
+    echo -e "${NORMAL}"
 
-    print_header
-
-    # Validate environment before proceeding
     validate_prerequisites
 
-    get_username
-    set_username
-    get_host
+    local username=$(get_username)
+    set_username "$username"
 
-    aseprite
-    install
+    local host=$(get_host)
+
+    install_system "$host" "$username"
 }
 
-# Run main and ensure clean exit
 main
-exit 0

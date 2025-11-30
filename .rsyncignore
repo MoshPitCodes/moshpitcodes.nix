@@ -1,0 +1,33 @@
+# Rsync exclusion patterns for copy-to-home.sh
+# Each line is an exclusion pattern passed to rsync --exclude
+
+# Version control
+.git/
+.gitignore
+.gitmodules
+.gitattributes
+.github/
+
+# IDE and editor
+.vscode/
+.vscode-test/
+.idea/
+
+# Claude AI
+.claude/
+.claude-plugin/
+
+# Documentation (usually not needed in home copy)
+docs/
+
+# Build artifacts
+result
+result-*
+*.tar.gz
+nixos.wsl
+
+# Temporary files
+*.swp
+*.swo
+*~
+.DS_Store
