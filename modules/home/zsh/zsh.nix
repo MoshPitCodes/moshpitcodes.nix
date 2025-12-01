@@ -128,29 +128,15 @@
 
       source ~/.p10k.zsh
 
-      # SSH Agent auto-start
-      ssh_env_file="$XDG_RUNTIME_DIR/ssh-agent.env"
-      
-      # Function to start SSH agent
-      start_ssh_agent() {
-        ssh-agent -s > "$ssh_env_file"
-        chmod 600 "$ssh_env_file"
-        source "$ssh_env_file" >/dev/null
-      }
-      
-      # Check if SSH agent is running and env file exists
-      if [[ -f "$ssh_env_file" ]]; then
-        source "$ssh_env_file" >/dev/null
-        if ! ps -p "$SSH_AGENT_PID" >/dev/null 2>&1; then
-          start_ssh_agent
-        fi
-      else
-        start_ssh_agent
+      # Use gcr-ssh-agent (GNOME Keyring's SSH agent)
+      # The agent is started by gnome-keyring service, we just need to set the socket
+      if [[ -S "$XDG_RUNTIME_DIR/gcr/ssh" ]]; then
+        export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gcr/ssh"
       fi
-      
+
       # Auto-add SSH keys when agent is empty
-      # Keys are loaded once per agent session, avoiding repeated prompts
-      if [[ "$(ssh-add -l 2>&1)" == "The agent has no identities." ]]; then
+      # Keys are loaded once per agent session, gcr-ssh-agent handles persistence
+      if [[ -n "$SSH_AUTH_SOCK" ]] && [[ "$(ssh-add -l 2>&1)" == "The agent has no identities." ]]; then
         for key in ~/.ssh/id_ed25519_*; do
           [[ -f "$key" && "$key" != *.pub ]] && ssh-add "$key" 2>/dev/null
         done

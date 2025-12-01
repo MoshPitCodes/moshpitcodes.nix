@@ -12,7 +12,7 @@
 
   services.gnome-keyring = {
     enable = true;
-    components = [ "secrets" "pkcs11" ]; # Remove SSH component, use SSH agent instead
+    components = [ "secrets" "pkcs11" "ssh" ]; # Include SSH for gcr-ssh-agent
   };
 
   dconf.settings = {
