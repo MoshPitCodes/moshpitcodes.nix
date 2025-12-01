@@ -93,7 +93,7 @@
     # Help GUI applications work via WSLg
     DISPLAY = ":0";
     # Set XDG directories for WSL
-    XDG_RUNTIME_DIR = "/run/user/$UID";
+    XDG_RUNTIME_DIR = "/run/user/1000";
     # Disable Claude Code telemetry to avoid OTEL errors
     CLAUDE_CODE_ENABLE_TELEMETRY = "false";
     # Set OTEL protocol to work around Claude Code enterprise metrics bug
