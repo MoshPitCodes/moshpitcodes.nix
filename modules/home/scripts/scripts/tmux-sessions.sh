@@ -20,7 +20,7 @@ set -euo pipefail
 # Special session (moshpitcodes-devops) gets 1 window with 3 panes:
 #   - Left pane: Shell in home directory
 #   - Top-right pane: gemini
-#   - Bottom-right pane: bashtop
+#   - Bottom-right pane: btop
 #
 # Format: "session_name|path"
 # Add your sessions here:
@@ -68,7 +68,7 @@ CONFIGURATION:
     Special session (moshpitcodes-devops) has 1 window with 3 panes:
       - Left pane:       Shell in home directory
       - Top-right pane:  gemini
-      - Bottom-right:    bashtop
+      - Bottom-right:    btop
 EOF
 }
 
@@ -115,19 +115,19 @@ ensure_session() {
         # Create session with a single window in the project directory
         tmux new-session -d -s "$name" -c "$path"
 
-        # Special layout for devops session: 3 panes (shell left, gemini top-right, bashtop bottom-right)
+        # Special layout for devops session: 3 panes (shell left, gemini top-right, btop bottom-right)
         if [[ "$name" == "moshpitcodes-devops" ]]; then
             # Split horizontally: left pane (shell), right pane
             tmux split-window -h -t "${name}:1" -c "$path"
-            # Split right pane vertically: top (gemini), bottom (bashtop)
+            # Split right pane vertically: top (gemini), bottom (btop)
             tmux split-window -v -t "${name}:1.2" -c "$path"
             # Run gemini in top-right pane (pane 2)
             tmux send-keys -t "${name}:1.2" "gemini" C-m
-            # Run bashtop in bottom-right pane (pane 3)
-            tmux send-keys -t "${name}:1.3" "bashtop" C-m
+            # Run btop in bottom-right pane (pane 3)
+            tmux send-keys -t "${name}:1.3" "btop" C-m
             # Select left pane (shell) as active
             tmux select-pane -t "${name}:1.1"
-            echo "Created session: $name (in $path) with panes: shell, gemini, bashtop"
+            echo "Created session: $name (in $path) with panes: shell, gemini, btop"
         else
             # Standard layout: 2 panes (shell left, claude right)
             # Split the window horizontally (left/right panes)
