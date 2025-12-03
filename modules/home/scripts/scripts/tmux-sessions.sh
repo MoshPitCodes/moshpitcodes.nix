@@ -13,9 +13,14 @@ set -euo pipefail
 # =============================================================================
 # SESSION CONFIGURATION
 # =============================================================================
-# Each session gets 2 windows:
-#   - Window 1 (code): Opens the directory
-#   - Window 2 (claude): Runs claude-code
+# Standard sessions get 1 window with 2 panes:
+#   - Left pane: Shell in the project directory
+#   - Right pane: claude-code running in the project directory
+#
+# Special session (moshpitcodes-devops) gets 1 window with 3 panes:
+#   - Left pane: Shell in home directory
+#   - Top-right pane: gemini
+#   - Bottom-right pane: bashtop
 #
 # Format: "session_name|path"
 # Add your sessions here:
@@ -24,6 +29,7 @@ SESSIONS=(
     "moshpitcodes-homelab|/mnt/f/Coding/moshpitcodes/moshpitcodes.homelab"
     "moshpitcodes-wsl2|/mnt/f/Coding/moshpitcodes/moshpitcodes.wsl2"
     "moshpitcodes-template|/mnt/f/Coding/moshpitcodes/moshpitcodes.template"
+    "moshpitcodes-devops|~"
 )
 
 # =============================================================================
@@ -55,9 +61,14 @@ CONFIGURATION:
     Edit the SESSIONS array in this script to add/modify sessions.
     Format: "session_name|path"
 
-    Each session is created with 2 windows:
-      - Window 1 (code):   Shell in the project directory
-      - Window 2 (claude): claude-code running in the project directory
+    Standard sessions are created with 1 window containing 2 panes:
+      - Left pane:  Shell in the project directory
+      - Right pane: claude-code running in the project directory
+
+    Special session (moshpitcodes-devops) has 1 window with 3 panes:
+      - Left pane:       Shell in home directory
+      - Top-right pane:  gemini
+      - Bottom-right:    bashtop
 EOF
 }
 
@@ -101,17 +112,36 @@ ensure_session() {
             path="$HOME"
         fi
 
-        # Create session with first window named 'code'
-        tmux new-session -d -s "$name" -n "code" -c "$path"
+        # Create session with a single window in the project directory
+        tmux new-session -d -s "$name" -c "$path"
 
-        # Create second window named 'claude' and run claude-code
-        tmux new-window -t "$name" -n "claude" -c "$path"
-        tmux send-keys -t "$name:claude.0" "claude" C-m
+        # Special layout for devops session: 3 panes (shell left, gemini top-right, bashtop bottom-right)
+        if [[ "$name" == "moshpitcodes-devops" ]]; then
+            # Split horizontally: left pane (shell), right pane
+            tmux split-window -h -t "${name}:1" -c "$path"
+            # Split right pane vertically: top (gemini), bottom (bashtop)
+            tmux split-window -v -t "${name}:1.2" -c "$path"
+            # Run gemini in top-right pane (pane 2)
+            tmux send-keys -t "${name}:1.2" "gemini" C-m
+            # Run bashtop in bottom-right pane (pane 3)
+            tmux send-keys -t "${name}:1.3" "bashtop" C-m
+            # Select left pane (shell) as active
+            tmux select-pane -t "${name}:1.1"
+            echo "Created session: $name (in $path) with panes: shell, gemini, bashtop"
+        else
+            # Standard layout: 2 panes (shell left, claude right)
+            # Split the window horizontally (left/right panes)
+            # Note: Using base-index 1 (configured in tmux.nix), so first window is :1
+            # Left pane (pane 1) is already the shell in the project directory
+            # Create right pane (pane 2) and run claude-code
+            tmux split-window -h -t "${name}:1" -c "$path"
+            tmux send-keys -t "${name}:1.2" "claude" C-m
 
-        # Select the first window by default
-        tmux select-window -t "$name:code"
+            # Select the left pane (shell) as the active pane
+            tmux select-pane -t "${name}:1.1"
 
-        echo "Created session: $name (in $path) with windows: code, claude"
+            echo "Created session: $name (in $path) with panes: shell, claude"
+        fi
     else
         echo "Session exists: $name"
     fi
