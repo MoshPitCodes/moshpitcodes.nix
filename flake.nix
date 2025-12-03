@@ -98,8 +98,24 @@
         else
           secrets;
 
+      # Load secrets from git-ignored file using absolute path
+      # The flake copies sources to /nix/store, excluding git-ignored files
+      # So we use PWD or FLAKE_ROOT to find the original directory
+      # Requires --impure flag for builds: nix build .#wsl-distro --impure
+      flakeRoot = builtins.getEnv "FLAKE_ROOT";
+      pwdPath = builtins.getEnv "PWD";
+
+      # Try FLAKE_ROOT first, then PWD, construct path to secrets.nix
+      secretsPath =
+        let
+          basePath = if flakeRoot != "" then flakeRoot else pwdPath;
+        in
+          if basePath != "" then /. + basePath + "/secrets.nix" else null;
+
       customsecrets =
-        if builtins.pathExists ./secrets.nix then
+        if secretsPath != null && builtins.pathExists secretsPath then
+          validateSecrets (import secretsPath)
+        else if builtins.pathExists ./secrets.nix then
           validateSecrets (import ./secrets.nix)
         else
           defaultSecrets;

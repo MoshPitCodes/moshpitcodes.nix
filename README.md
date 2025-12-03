@@ -177,12 +177,25 @@ Example `secrets.nix` structure:
 ```nix
 {
   username = "yourusername";
-  password = "yourpassword";
+  # Generate with: mkpasswd -m sha-512
+  hashedPassword = "$6$rounds=...";
+
+  reponame = "moshpitcodes.nix";  # Your repo directory name
 
   git = {
     userName = "Your Name";
     userEmail = "your.email@example.com";
-    user.signingkey = "YOUR_GPG_KEY_ID";
+    user.signingkey = "YOUR_GPG_KEY_ID";  # Optional
+  };
+
+  network = {
+    wifiSSID = "";      # Optional
+    wifiPassword = "";  # Optional
+  };
+
+  apiKeys = {
+    anthropic = "";  # Optional - for Claude AI
+    openai = "";     # Optional - for OpenAI
   };
 
   sshKeys = {
@@ -226,60 +239,24 @@ Files:
 <br/>
 
 ### Configure the Wi-Fi connection
-Files:
-```./modules/home/network.nix```
 
-```nix
-{
-   wireless.networks = {
-      "<SSID>" = { # replace with actual SSID
-         psk = throw "<Enter Wi-Fi password in ./modules/core/network.nix>"; # replace with actual password
-      };
-   };
-}
-```
+> [!TIP]
+> Wi-Fi configuration is handled via `secrets.nix`. Set `network.wifiSSID` and `network.wifiPassword` in your secrets file.
+
+The network module at `./modules/core/network.nix` reads credentials from `secrets.nix` automatically.
+
 <br/>
 
 ### Configure the Git account information
 
 > [!TIP]
-> Git configuration is now automated via `secrets.nix`. The install script reads your git settings from the secrets file.
+> Git configuration is handled automatically via `secrets.nix`. Configure your git settings in the `git` section of your secrets file.
 
-If you need to manually configure Git, edit:
-```./modules/home/git.nix```
+The git configuration in `./modules/home/git.nix` reads from `secrets.nix`:
+- `git.userName` - Your git display name
+- `git.userEmail` - Your git email
+- `git.user.signingkey` - Your GPG key ID (optional)
 
-```nix
-{
-   programs.git = {
-      # Rest of the configuration
-
-      # Remove 'throw' keyword, keep quotes
-      userName = throw "<Enter user.name in ./modules/home/git.nix)>";
-      userEmail = throw "<Enter user.mail in ./modules/home/git.nix)>";
-
-      # Rest of the configuration
-   };
-}
-```
-
-<br/>
-
-### Configure default username
-
-> [!TIP]
-> Username is now configured in `secrets.nix`. The install script reads your username from the secrets file and uses it automatically.
-
-If you need to manually configure the username fallback in the install script:
-Files: ```./install.sh```
-
-```bash
-init() {
-    # Vars
-    CURRENT_USERNAME='<username>'
-
-    # rest of the configuration
-}
-```
 <br/>
 
 ### Configure VSCode Extensions
@@ -310,13 +287,9 @@ Files:
 <br/>
 
 ### Configure Audacious
-Files: ```./modules/home/audacious.nix```
 
-Change the directory for the Music folder, replace ```<username>``` with your username.
-```text
-[audgui]
-filesel_path=/home/<username>/Music
-```
+> [!TIP]
+> Audacious music path is automatically configured using your username from `secrets.nix`. No manual configuration needed.
 
 <br/>
 
@@ -366,12 +339,15 @@ This configuration includes a WSL2-specific setup optimized for development and 
 1. **Build the WSL2 tarball**:
    ```bash
    # On your NixOS machine or in a Nix environment
-   # Step 1a: Build the tarball builder
-   nix build .#packages.x86_64-linux.wsl-distro
+   # The --impure flag is required to load secrets.nix (git-ignored file)
+   nix build .#wsl-distro --impure
 
-   # Step 1b: Run the builder to generate the tarball
+   # Run the builder to generate the tarball
    ./result/bin/nixos-wsl-tarball-builder
    ```
+
+   > [!IMPORTANT]
+   > The `--impure` flag is required because `secrets.nix` is git-ignored. Without it, default test credentials will be used instead of your actual secrets.
 
 2. **Copy the tarball to Windows**:
    The tarball will be located at `./result/tarball/nixos-wsl-installer.tar.gz`
@@ -411,10 +387,11 @@ This configuration includes a WSL2-specific setup optimized for development and 
 After making changes to the WSL configuration:
 
 ```bash
-# Rebuild from within WSL
-sudo nixos-rebuild switch --flake /path/to/repo#wsl
+# Rebuild from within WSL (--impure required for secrets.nix)
+sudo nixos-rebuild switch --flake /path/to/repo#wsl --impure
 
 # Or rebuild the tarball and reimport (clean install)
+nix build .#wsl-distro --impure
 ```
 
 ### Troubleshooting
@@ -429,40 +406,86 @@ sudo nixos-rebuild switch --flake /path/to/repo#wsl
 
 A brief walkthrough of what the install script does.
 
-#### 1. **Get username**
+#### 1. **Validate prerequisites**
 
-You will receive a prompt to enter your username with a confirmation check.
+The script checks for required files: `flake.nix`, `hosts/` directory, and `secrets.nix`.
 
-#### 2. **Set username**
+#### 2. **Get username**
 
-The script will replace all occurances of the default usename ```CURRENT_USERNAME``` by the given one stored in ```$username```
+Reads your username from `secrets.nix`, or prompts you to enter one if not found.
 
-#### 3. Create basic directories
+#### 3. **Update secrets.nix**
+
+If you entered a new username, the script updates `secrets.nix` with it.
+
+#### 4. **Create basic directories**
 
 The following directories will be created:
 - ```~/Music```
 - ```~/Documents```
 - ```~/Pictures/wallpapers/randomwallpaper```
 
-#### 4. Copy the wallpapers
+#### 5. **Copy the wallpapers**
 
-The wallpapers will be copied into ```~/Pictures/wallpapers/``` which is the folder in which the ```wallpaper-picker.sh``` script will be looking for them.
+The wallpapers will be copied into ```~/Pictures/wallpapers/``` which is the folder in which the ```random-wallpaper.sh``` script will be looking for them.
 
-#### 5. Get the hardware configuration
+#### 6. **Copy SSH keys**
 
-It will also automatically copy the hardware configuration from ```/etc/nixos/hardware-configuration.nix``` to ```./hosts/${host}/hardware-configuration.nix``` so that the hardware configuration used is yours and not the default one.
+SSH keys are automatically copied from the `sourceDir` path defined in your `secrets.nix` to `~/.ssh/` with proper permissions.
 
-#### 6. Choose a host (desktop / laptop)
+#### 7. **Get the hardware configuration**
 
-Now you will need to choose the host you want. It depend on whether you are using a desktop or laptop (or a VM altho it can be really buggy).
+Automatically copies the hardware configuration from ```/etc/nixos/hardware-configuration.nix``` to ```./hosts/${host}/hardware-configuration.nix```. This step is skipped for WSL hosts.
 
-#### 7. Choose whether to install Aseprite
+#### 8. **Choose a host**
 
-To reduce installation time, you can choose to skip installing Aseprite. The installation process for Aseprite is time-intensive as it requires compiling over 1100 C++ files from source.
+Select your target host configuration:
+- **Desktop** - Full desktop workstation
+- **Laptop** - Laptop configuration
+- **VM** - QEMU/KVM virtual machine
+- **WSL** - Windows Subsystem for Linux
+- **VMware** - VMware guest
 
-#### 8. Build the system
+#### 9. **Build the system**
 
-Lastly, it will build the system, which includes both the flake config and home-manager config.
+Runs `nixos-rebuild switch --flake .#<host>` to build and activate the configuration.
+
+<br/>
+
+## B. Rebuild script
+
+For subsequent rebuilds after initial installation, use the rebuild script:
+
+**Usage:**
+```bash
+./scripts/rebuild.sh [HOST] [OPTIONS]
+```
+
+**Arguments:**
+- `HOST` - Host configuration (default: laptop)
+
+**Options:**
+- `--clear-cache` - Clear `~/.cache/nix` before rebuild
+- `--gc` - Run garbage collection before rebuild
+- `-n, --dry-run` - Show what would be built without building
+- `-h, --help` - Show help message
+
+**Examples:**
+```bash
+# Rebuild laptop configuration
+./scripts/rebuild.sh laptop
+
+# Rebuild with garbage collection
+./scripts/rebuild.sh desktop --gc
+
+# Dry run to see what would change
+./scripts/rebuild.sh wsl --dry-run
+
+# Clear cache and rebuild
+./scripts/rebuild.sh laptop --clear-cache
+```
+
+<br/>
 
 ### VSCode Remote-WSL Integration
 
@@ -742,7 +765,7 @@ Other dotfiles that have inspired me greatly:
 [Wayland]: https://wayland.freedesktop.org/
 [Hyprland]: https://github.com/hyprwm/Hyprland
 [Waypaper]:https://github.com/anufrievroman/waypaper
-[Hyprpaper]: hhttps://github.com/hyprwm/hyprpaper
+[Hyprpaper]: https://github.com/hyprwm/hyprpaper
 [Ghostty]: https://ghostty.org/
 [powerlevel10k]: https://github.com/romkatv/powerlevel10k
 [Waybar]: https://github.com/Alexays/Waybar
