@@ -38,6 +38,10 @@ let
     builtins.readFile ./scripts/rofi-power-menu.sh
   );
   power-menu = pkgs.writeScriptBin "power-menu" (builtins.readFile ./scripts/power-menu.sh);
+
+  tmux-sessions = pkgs.writeShellScriptBin "tmux-sessions" (
+    builtins.readFile ./scripts/tmux-sessions.sh
+  );
 in
 {
   home.packages = with pkgs; [
@@ -71,5 +75,7 @@ in
 
     rofi-power-menu
     power-menu
+
+    tmux-sessions
   ];
 }

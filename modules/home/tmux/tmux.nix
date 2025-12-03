@@ -431,6 +431,9 @@
       # start with mouse mode enabled
       set -g mouse on
 
+      # SSH agent forwarding - update SSH_AUTH_SOCK when attaching to sessions
+      set -g update-environment "SSH_AUTH_SOCK SSH_AGENT_PID DISPLAY"
+
       # force Vi mode
       #   really you should export VISUAL or EDITOR environment variable, see manual
       #set -g status-keys vi
