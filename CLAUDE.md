@@ -19,7 +19,7 @@
 Git operations (branching, commits, PRs, releases) are managed by the `git-flow-manager` agent.
 See `.claude/agents/claude-git-flow-manager.md` for Git Flow conventions and commit message formats.
 
-Rulesets (AI Agent Guidelines)
+## Rulesets (AI Agent Guidelines)
 
   | File                                           | Purpose                                              |
   | ---------------------------------------------- | ---------------------------------------------------- |
