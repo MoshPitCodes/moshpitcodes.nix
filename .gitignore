@@ -43,6 +43,10 @@ go.work.sum
 tmp/
 temp/
 
+# Nix build outputs
+nixos.wsl
+result
+
 # Generated files
 proto/v1/*.pb.go
 
