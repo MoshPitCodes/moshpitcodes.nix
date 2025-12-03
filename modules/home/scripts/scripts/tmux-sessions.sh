@@ -20,10 +20,10 @@ set -euo pipefail
 # Format: "session_name|path"
 # Add your sessions here:
 SESSIONS=(
-    "moshpitcodes.nix|/mnt/f/Coding/moshpitcodes/moshpitcodes.nix"
-    "moshpitcodes.homelab|/mnt/f/Coding/moshpitcodes/moshpitcodes.homelab"
-    "moshpitcodes.wsl2|/mnt/f/Coding/moshpitcodes/moshpitcodes.wsl2"
-    "moshpitcodes.template|/mnt/f/Coding/moshpitcodes/moshpitcodes.template"
+    "moshpitcodes-nix|/mnt/f/Coding/moshpitcodes/moshpitcodes.nix"
+    "moshpitcodes-homelab|/mnt/f/Coding/moshpitcodes/moshpitcodes.homelab"
+    "moshpitcodes-wsl2|/mnt/f/Coding/moshpitcodes/moshpitcodes.wsl2"
+    "moshpitcodes-template|/mnt/f/Coding/moshpitcodes/moshpitcodes.template"
 )
 
 # =============================================================================
@@ -106,7 +106,7 @@ ensure_session() {
 
         # Create second window named 'claude' and run claude-code
         tmux new-window -t "$name" -n "claude" -c "$path"
-        tmux send-keys -t "$name:claude" "claude" C-m
+        tmux send-keys -t "$name:claude.0" "claude" C-m
 
         # Select the first window by default
         tmux select-window -t "$name:code"

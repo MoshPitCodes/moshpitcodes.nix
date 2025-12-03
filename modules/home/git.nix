@@ -1,4 +1,4 @@
-{ pkgs, customsecrets, ... }:
+{ lib, pkgs, customsecrets, ... }:
 {
   programs = {
     git = {
@@ -79,4 +79,26 @@
     defaultCacheTtl = 1800;
     maxCacheTtl = 7200;
   };
+
+  # Copy GitHub CLI config from backup directory during activation
+  home.activation.copyGhConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    sourceDir="${customsecrets.ghConfigDir or ""}"
+    if [[ -n "$sourceDir" && -d "$sourceDir" ]]; then
+      $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.config/gh
+      $DRY_RUN_CMD cp -r $VERBOSE_ARG "$sourceDir"/* ~/.config/gh/
+      $DRY_RUN_CMD chmod $VERBOSE_ARG 600 ~/.config/gh/hosts.yml 2>/dev/null || true
+    fi
+  '';
+
+  # Copy GPG keyring from backup directory during activation
+  home.activation.copyGpgKeys = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    sourceDir="${customsecrets.gpgDir or ""}"
+    if [[ -n "$sourceDir" && -d "$sourceDir" ]]; then
+      $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.gnupg
+      $DRY_RUN_CMD chmod $VERBOSE_ARG 700 ~/.gnupg
+      $DRY_RUN_CMD cp -r $VERBOSE_ARG "$sourceDir"/* ~/.gnupg/
+      $DRY_RUN_CMD chmod $VERBOSE_ARG 600 ~/.gnupg/private-keys-v1.d/* 2>/dev/null || true
+      $DRY_RUN_CMD chmod $VERBOSE_ARG 600 ~/.gnupg/trustdb.gpg 2>/dev/null || true
+    fi
+  '';
 }
