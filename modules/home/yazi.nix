@@ -5,7 +5,7 @@
     enableZshIntegration = true;
 
     settings = {
-      manager = {
+      mgr = {
         linemode = "size";
         show_hidden = true;
         show_symlink = true;
