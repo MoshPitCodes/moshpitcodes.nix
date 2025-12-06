@@ -117,7 +117,7 @@
         # velero # backup and restore for k8s
         helm # Helm package manager for Kubernetes
         # k3d # k3s in docker
-        k3s # lightweight k8s
+        # k3s # lightweight k8s
         k9s # k8s terminal UI
         # kubectl is provided by k3s package (included in development.nix)
         talosctl # Talos Linux CLI
@@ -130,11 +130,11 @@
 
 
         # NodejS
-        # bun # Alternative JavaScript runtime and package manager
+        bun # Alternative JavaScript runtime and package manager
         # npm # Node.js package manager
         # yarn # Alternative Node.js package manager
         nodejs # Node.js runtime
-        pnpm # Fast, disk space efficient package manager
+        # pnpm # Fast, disk space efficient package manager
 
         # OCaml
         # ocaml # OCaml programming language
@@ -191,32 +191,11 @@
       };
 
       # OpenCode configuration file
-      # You'll need to add your API keys here
+      # API key is set via ANTHROPIC_API_KEY environment variable
       ".config/opencode/config.json".text = builtins.toJSON {
-        agents = {
-          # Primary agent using Claude Sonnet 4
-          primary = {
-            provider = "anthropic";
-            model = "claude-4-sonnet-20250514";
-            # You'll need to set your API key as an environment variable
-            # or update this after deployment
-            apiKey = "$ANTHROPIC_API_KEY";
-          };
-
-          # Alternative: Claude Sonnet 4
-          # claude-sonnet-4 = {
-          #   provider = "anthropic";
-          #   model = "claude-4-sonnet-20250514";
-          #   # You'll need to set your API key as an environment variable
-          #   # or update this after deployment
-          #   apiKey = "$ANTHROPIC_API_KEY";
-          # };
-        };
-
-        # Optional: Set default settings
-        defaults = {
-          agent = "primary";
-        };
+        "$schema" = "https://opencode.ai/config.json";
+        provider = "anthropic";
+        model = "claude-opus-4-5-20251101";
       };
     };
 
