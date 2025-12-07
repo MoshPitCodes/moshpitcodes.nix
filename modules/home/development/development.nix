@@ -189,10 +189,10 @@
 
       # OpenCode configuration file
       # API key is set via ANTHROPIC_API_KEY environment variable
+      # Model format: provider/model (e.g., anthropic/claude-opus-4-5-20251101)
       ".config/opencode/config.json".text = builtins.toJSON {
         "$schema" = "https://opencode.ai/config.json";
-        provider = "anthropic";
-        model = "claude-opus-4-5-20251101";
+        model = "anthropic/claude-opus-4-5-20251101";
       };
     };
 
