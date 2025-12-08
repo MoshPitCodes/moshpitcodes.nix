@@ -16,7 +16,8 @@
         diff.colorMoved = "default";
         commit.gpgsign = true;
         gpg.format = "openpgp";
-        alias = {
+        core.autocrlf = "input"; 
+	alias = {
           lg = "log --oneline --decorate --graph";
           lol = "log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset'";
           lola = "log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --all";
