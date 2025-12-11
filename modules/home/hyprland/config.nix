@@ -68,7 +68,7 @@ _:
       };
 
       decoration = {
-        rounding = 0;
+        rounding = 5;
         # active_opacity = 0.90;
         # inactive_opacity = 0.90;
         # fullscreen_opacity = 1.0;
@@ -350,14 +350,6 @@ _:
         "maxsize 1 1,class:^(xwaylandvideobridge)$"
         "noblur,class:^(xwaylandvideobridge)$"
 
-        # No gaps when only
-        "bordersize 0,floating:0,onworkspace:w[t1]"
-        "rounding 0,floating:0,onworkspace:w[t1]"
-        "bordersize 0,floating:0,onworkspace:w[tg1]"
-        "rounding 0,floating:0,onworkspace:w[tg1]"
-        "bordersize 0,floating:0,onworkspace:f[1]"
-        "rounding 0,floating:0,onworkspace:f[1]"
-
         # Remove context menu transparency in chromium based apps
         "opaque,class:^()$,title:^()$"
         "noshadow,class:^()$,title:^()$"
@@ -378,12 +370,6 @@ _:
       #   "workspace=10,monitor:DP-5"
       # ];
 
-      # No gaps when only
-      workspace = [
-        "w[t1], gapsout:0, gapsin:0"
-        "w[tg1], gapsout:0, gapsin:0"
-        "f[1], gapsout:0, gapsin:0"
-      ];
     };
 
     extraConfig = "
