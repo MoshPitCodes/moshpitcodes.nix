@@ -128,6 +128,9 @@
 
       source ~/.p10k.zsh
 
+      # Set GPG_TTY for GPG agent (required for commit signing)
+      export GPG_TTY=$(tty)
+
       # Use gcr-ssh-agent (GNOME Keyring's SSH agent)
       # The agent is started by gnome-keyring service, we just need to set the socket
       if [[ -S "$XDG_RUNTIME_DIR/gcr/ssh" ]]; then
