@@ -66,16 +66,25 @@ And now, let the fun begin!
 -   [./hosts/](hosts) 🌳 Per-host configurations that contain machine specific setups
     - [../desktop/](hosts/desktop/) 🖥️ Specific configuration for desktop machines
     - [../laptop/](hosts/laptop/) 💻 Specific configuration for laptops
-    - [../vm/](hosts/vm/) 🗄️ QEMU/KVM specific configuration (WIP)
-    - [../vmware-guest/](hosts/vmware-guest/) 🗄️ VMWare Workstation/Player specific configuration (WIP)
+    - [../vm/](hosts/vm/) 🗄️ QEMU/KVM specific configuration
+    - [../vmware-guest/](hosts/vmware-guest/) 🗄️ VMWare Workstation/Player specific configuration
     - [../wsl/](hosts/wsl/) 🪟 WSL2 specific configuration for Windows development
 -   [./modules/](modules) 🍱 Modularized NixOS configurations
     -   [../core/](modules/core/) ⚙️ Core NixOS configuration
-    -   [../home/](modules/home/) 🏠 my [Home Manager](https://github.com/nix-community/home-manager) config
--   [./shells/](shells) 🧪 Development shell environments (claude-flow, etc.)
+        - System configuration (bootloader, hardware, networking, security)
+        - Services (pipewire, flatpak, virtualization, steam, samba)
+        - Platform-specific overrides (VM, WSL)
+    -   [../home/](modules/home/) 🏠 [Home Manager](https://github.com/nix-community/home-manager) user configurations
+        - Desktop environment (Hyprland, Waybar, Rofi, etc.)
+        - Development tools (VSCode, Neovim, Git, etc.)
+        - CLI tools and utilities (zsh, tmux, yazi, etc.)
+        - Applications (Browser, Discord, Gaming, etc.)
+-   [./overlays/](overlays) 🔧 Nixpkgs overlays for package version overrides
+-   [./shells/](shells) 🧪 Development shell environments (claude-flow, devshell)
+-   [./scripts/](scripts) 📜 Utility scripts for installation, rebuilding, and management
 -   [./secrets.nix](secrets.nix.example) 🔐 Secrets management (git-ignored, use secrets.nix.example as template)
--   [./pkgs](flake/pkgs) 📦 Packages built from source
--   [./wallpapers](wallpapers/) 🌄 Wallpapers collection
+-   [./pkgs/](pkgs) 📦 Custom packages built from source (2048, monolisa)
+-   [./wallpapers/](wallpapers) 🌄 Wallpapers collection
 
 <br/>
 
@@ -115,10 +124,45 @@ And now, let the fun begin!
 | **Music Player**            | [audacious][audacious]                                                              |
 | **Clipboard Management**    | [wl-clip-persist][wl-clip-persist]                                                  |
 | **Color Picker**            | [hyprpicker][hyprpicker]                                                            |
-| **DevOps Tools**            | several tools like k8s, Docker, etc.                                                |
+| **Password Manager**        | [1Password][1Password]                                                              |
+| **DevOps Tools**            | kubectl, terraform, ansible, helm, k9s, Docker/Podman                               |
+| **Network Storage**         | Samba/CIFS support for network shares                                               |
 
 
 <br/>
+
+## ✨ Key Features
+
+### Modular Architecture
+- **Flexible Host Configurations**: Separate configurations for desktop, laptop, VM, VMware guest, and WSL2
+- **Reusable Modules**: Core system modules and Home Manager user configurations
+- **Custom Overlays**: Package version overrides through Nixpkgs overlays
+
+### Development Tools
+- **Multiple Dev Shells**: Specialized environments for different workflows (default, devshell, claude-flow)
+- **AI Development**: Claude Flow integration for AI-assisted development workflows
+- **Full DevOps Stack**: kubectl, terraform, ansible, Docker/Podman, and more
+
+### System Management
+- **Interactive Installation**: Step-by-step guided setup with `install.sh`
+- **Smart Rebuilds**: Rebuild script with cache clearing, garbage collection, and dry-run options
+- **Automated Scripts**: 20+ user scripts for common tasks (wallpaper management, Hyprland toggles, media control, etc.)
+
+### Network Storage
+- **Samba/CIFS Support**: Full support for mounting network shares
+- **Automatic Credentials**: Secure credential management via `secrets.nix`
+- **Testing Tools**: `test-samba-mount.sh` for troubleshooting network mounts
+
+### Security & Secrets
+- **Git-ignored Secrets**: All sensitive data kept out of version control
+- **Flexible Configuration**: Template-based secrets management with fallback for CI/testing
+- **SSH Key Management**: Automatic SSH key copying during installation
+
+### Cross-Platform
+- **WSL2 Integration**: Full WSL2 support with systemd, Docker, and Windows interop
+- **VM Support**: Optimized configurations for QEMU/KVM and VMware
+- **Consistent Experience**: Same tools and workflows across all platforms
+
 <br/>
 
 # 🚀 Installation
@@ -392,6 +436,9 @@ sudo nixos-rebuild switch --flake /path/to/repo#wsl --impure
 
 # Or rebuild the tarball and reimport (clean install)
 nix build .#wsl-distro --impure
+
+# Or use the rebuild script
+./scripts/rebuild.sh wsl
 ```
 
 ### Troubleshooting
@@ -399,6 +446,7 @@ nix build .#wsl-distro --impure
 - **Systemd not working**: Ensure `wsl.nativeSystemd = true` is set (already configured)
 - **Networking issues**: Check `/etc/wsl.conf` settings
 - **Windows PATH integration**: Modify `wsl.interop.appendWindowsPath` in config if needed
+- **Build failures**: Try `./scripts/rebuild.sh wsl --clear-cache` to clear Nix cache
 
 <br/>
 
@@ -454,7 +502,7 @@ Runs `nixos-rebuild switch --flake .#<host>` to build and activate the configura
 
 ## B. Rebuild script
 
-For subsequent rebuilds after initial installation, use the rebuild script:
+For subsequent rebuilds after initial installation, use the rebuild script located in the `scripts/` directory:
 
 **Usage:**
 ```bash
@@ -463,12 +511,13 @@ For subsequent rebuilds after initial installation, use the rebuild script:
 
 **Arguments:**
 - `HOST` - Host configuration (default: laptop)
+  - Available hosts: desktop, laptop, vm, vmware-guest, wsl
 
 **Options:**
 - `--clear-cache` - Clear `~/.cache/nix` before rebuild
-- `--gc` - Run garbage collection before rebuild
+- `--gc, --garbage-collect` - Run garbage collection before rebuild
 - `-n, --dry-run` - Show what would be built without building
-- `-h, --help` - Show help message
+- `-h, --help` - Show help message and list available hosts
 
 **Examples:**
 ```bash
@@ -484,6 +533,13 @@ For subsequent rebuilds after initial installation, use the rebuild script:
 # Clear cache and rebuild
 ./scripts/rebuild.sh laptop --clear-cache
 ```
+
+**Features:**
+- Validates host configuration exists before building
+- Optional cache clearing for troubleshooting
+- Optional garbage collection to free disk space
+- Dry-run mode for testing changes safely
+- Confirmation prompts for destructive operations
 
 <br/>
 
@@ -591,76 +647,162 @@ Git (EXPAND)
 
 ## 🛠️ Scripts
 
-All the scripts located in ```modules/home/scripts/scripts/``` are exported as packages in ```modules/home/scripts/default.nix```
+This repository includes two types of scripts:
+
+### System Management Scripts (`./scripts/`)
+
+Located in the root `scripts/` directory for managing the NixOS configuration:
 
 <details>
 <summary>
-extract.sh
+install.sh
 </summary>
 
-**Description:** Script for extracting ```tar.gz``` archives in the current directory.
+**Description:** Interactive installer for initial NixOS system setup.
 
-**Usage:** ```extract <archive_file>```
+**Usage:** ```./install.sh```
+
+**Features:**
+- Interactive host selection (desktop, laptop, VM, WSL, VMware)
+- Automatic directory creation and wallpaper copying
+- SSH key management from secrets.nix
+- Hardware configuration detection
+- Built-in error handling and rollback
+
+**Prerequisites:** Must have `secrets.nix` configured before running.
 </details>
 
 <details>
 <summary>
-compress.sh
+rebuild.sh
 </summary>
 
-**Description:** Script for compressing a file or a folder into a ```tar.gz``` archive in the current directory with the name of the chosen file or folder.
+**Description:** Rebuild NixOS configuration with optional optimizations.
 
-**Usage:** ```compress <file>``` or ```compress <folder>```
+**Usage:** ```./scripts/rebuild.sh [HOST] [OPTIONS]```
+
+**Options:**
+- `--clear-cache` - Clear `~/.cache/nix` before rebuild
+- `--gc` - Run garbage collection before rebuild
+- `-n, --dry-run` - Show what would be built without building
+- `-h, --help` - Show help message
+
+**Examples:**
+```bash
+./scripts/rebuild.sh laptop
+./scripts/rebuild.sh desktop --gc
+./scripts/rebuild.sh wsl --dry-run
+```
 </details>
 
 <details>
 <summary>
-toggle_blur.sh
+copy-to-home.sh
 </summary>
 
-**Description:** Script for toggling the Hyprland blur effect. If the blur is currently enabled, it will be disabled and vice versa.
+**Description:** Copy project contents to `~/moshpitcodes.nix` for building.
 
-**Usage:** ```toggle_blur```
+**Usage:** ```./scripts/copy-to-home.sh [OPTIONS]```
+
+**Options:**
+- `-n, --dry-run` - Preview what would be copied
+- `-v, --verbose` - Show detailed rsync output
+- `-h, --help` - Show help message
+
+**Features:**
+- Uses `.rsyncignore` for clean exclusion patterns
+- Automatically fixes CRLF line endings
+- Progress indicator during copy
 </details>
 
 <details>
 <summary>
-toggle_opacity.sh
+test-samba-mount.sh
 </summary>
 
-**Description:** Script for toggling the Hyperland opacity effect. If the opacity is currently set to 0.90, it will be set to 1 and vice versa.
+**Description:** Test and troubleshoot Samba/CIFS network share mounting.
 
-**Usage:** ```toggle_opacity```
+**Usage:** ```./scripts/test-samba-mount.sh```
+
+**Features:**
+- Tests Samba credentials configuration
+- Validates network connectivity to shares
+- Helps diagnose mounting issues
+</details>
+
+### User Scripts (`modules/home/scripts/scripts/`)
+
+All user scripts located in `modules/home/scripts/scripts/` are exported as packages in `modules/home/scripts/scripts.nix` and available in your PATH:
+
+<details>
+<summary>
+Archive Management
+</summary>
+
+- **extract** - Extract `tar.gz` archives: `extract <archive_file>`
+- **compress** - Compress files/folders into `tar.gz`: `compress <file_or_folder>`
 </details>
 
 <details>
 <summary>
-maxfetch.sh
+Hyprland Toggles
 </summary>
 
-**Description:** Modified version of the [jobcmax/maxfetch][maxfetch] script.
-
-**Usage:** ```maxfetch```
+- **toggle_blur** - Toggle Hyprland blur effect
+- **toggle_opacity** - Toggle window opacity (0.90 ↔ 1.0)
+- **toggle_waybar** - Toggle Waybar visibility
+- **toggle_float** - Toggle floating window state
 </details>
 
 <details>
 <summary>
-music.sh
+Media & Entertainment
 </summary>
 
-**Description:** Script for managing Audacious (music player). If Audacious is currently running, it will be killed (stopping the music); otherwise, it will start Audacious in the 8th workspace and resume the music.
-
-**Usage:** ```music```
+- **music** - Manage Audacious music player (start/stop)
+- **lofi** - Launch lofi music streams
+- **twitch** - Quick access to Twitch streams
 </details>
 
 <details>
 <summary>
-runbg.sh
+Utilities
 </summary>
 
-**Description:** Script for running a provided command along with its arguments and detaching it from the terminal. Handy for launching apps from the command line without blocking it.
+- **maxfetch** - Modified version of [jobcmax/maxfetch][maxfetch]
+- **runbg** - Run commands detached from terminal: `runbg <command> <args>`
+- **show-keybinds** - Display Hyprland keybindings reference
+- **ascii** - Display ASCII art
+</details>
 
-**Usage:** ```runbg <command> <arg1> <arg2> <...>```
+<details>
+<summary>
+Wallpaper Management
+</summary>
+
+- **wall-change** - Change wallpaper manually
+- **wallpaper-picker** - Interactive wallpaper picker
+- **random-wallpaper** - Set a random wallpaper from collection
+</details>
+
+<details>
+<summary>
+Screen Capture
+</summary>
+
+- **screenshot** - Take screenshots with various options
+- **record** - Screen recording utility
+</details>
+
+<details>
+<summary>
+System Management
+</summary>
+
+- **power-menu** - Quick power options menu
+- **rofi-power-menu** - Rofi-based power menu
+- **vm-start** - Start virtual machines
+- **tmux-sessions** - Manage tmux sessions
 </details>
 
 <br/>
@@ -669,13 +811,65 @@ runbg.sh
 
 This repository includes specialized development environments using Nix shells. These provide isolated, reproducible environments for specific workflows.
 
-### Claude Flow
+### Default (General Development)
+
+General-purpose development environment for NixOS configuration management.
+
+**Features:**
+- Complete Nix toolchain (nixd, nixfmt-rfc-style, deadnix, statix)
+- Version control (git, gh)
+- Text processing utilities (jq, yq, ripgrep)
+- Build tools (make, cmake, pkg-config)
+- Shell tools and formatters
+- Tree formatting with treefmt
+
+**Usage:**
+```bash
+nix develop
+# or explicitly
+nix develop .#default
+```
+
+**Helpful Aliases:**
+- `nix-fmt` - Format all Nix files recursively
+- `nix-check` - Run flake check with trace
+- `nix-update` - Update flake inputs
+- `rebuild [host]` - Rebuild system configuration
+- `build-wsl` - Build WSL tarball
+
+### devshell
+
+Extended general development environment with additional utilities.
+
+**Features:**
+- All features from default shell
+- Additional development utilities (direnv, tree, btop)
+- Network tools (curl, wget, netcat)
+- Compression utilities (gzip, bzip2, xz, zip)
+
+**Usage:**
+```bash
+nix develop .#devshell
+```
+
+**Common Commands:**
+```bash
+nix flake check              # Validate flake configuration
+nix flake update             # Update flake inputs
+nixfmt-rfc-style **/*.nix    # Format Nix files
+deadnix .                    # Find dead Nix code
+statix check .               # Lint Nix files
+scripts/rebuild.sh [host]    # Rebuild system configuration
+```
+
+### claude-flow
 
 Enterprise AI agent orchestration platform development environment.
 
 **Features:**
-- Node.js 24 with npm
+- Node.js 20 LTS with npm
 - Python 3 + C/C++ build toolchain
+- TypeScript development tools
 - AgentDB vector storage (persists in `.swarm/memory.db`)
 - 100+ MCP integrated tools
 - 25+ specialized skills
@@ -684,19 +878,34 @@ Enterprise AI agent orchestration platform development environment.
 **Usage:**
 ```bash
 nix develop .#claude-flow
+
+# Install claude-flow (npx method - recommended)
 npx claude-flow@alpha init --force
 npx claude-flow@alpha --help
+
+# Or clone and develop locally
+git clone https://github.com/ruvnet/claude-flow
+cd claude-flow
+nix develop /path/to/moshpitcodes.nix#claude-flow
+npm install
+npm run dev
 ```
 
-**Aliases available in shell:**
-- `cf` - Run claude-flow commands
-- `cf-help` - Show help
-- `cf-init` - Initialize claude-flow
-
 **Data Persistence:**
-AgentDB stores vector embeddings in `.swarm/memory.db` within your project directory. This data persists across shell sessions and system reboots.
+- AgentDB data stored in: `.swarm/memory.db`
+- Persists across shell sessions and reboots
+- Automatically excluded from git
+- 96x-164x faster vector search
 
-See [shells/README.md](shells/README.md) for more details.
+**Optional Configuration:**
+```bash
+# For enhanced embeddings (optional)
+export OPENAI_API_KEY="sk-..."
+```
+
+**Repository:** https://github.com/ruvnet/claude-flow
+
+See [shells/README.md](shells/README.md) for more details on all development shells.
 
 <br/>
 
@@ -802,3 +1011,4 @@ Other dotfiles that have inspired me greatly:
 [maxfetch]: https://github.com/jobcmax/maxfetch
 [Colloid GTK Theme]: https://github.com/vinceliuice/Colloid-gtk-theme
 [OBS]: https://obsproject.com/
+[1Password]: https://1password.com/
