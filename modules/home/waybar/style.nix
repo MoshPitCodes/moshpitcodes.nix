@@ -4,18 +4,18 @@ let
     font = "Maple Mono NF";
     font_size = "18px";
     font_weight = "bold";
-    text_color = "#FBF1C7";
-    background_0 = "#1D2021";
-    background_1 = "#282828";
-    border_color = "#928374";
-    red = "#CC241D";
-    green = "#98971A";
-    yellow = "#FABD2F";
-    blue = "#458588";
-    magenta = "#B16286";
-    cyan = "#689D6A";
-    orange = "#D65D0E";
-    orange_bright = "#FE8019";
+    text_color = "#e0def4";
+    background_0 = "#191724";
+    background_1 = "#1f1d2e";
+    border_color = "#6e6a86";
+    red = "#eb6f92";
+    green = "#9ccfd8";
+    yellow = "#f6c177";
+    blue = "#31748f";
+    magenta = "#c4a7e7";
+    cyan = "#9ccfd8";
+    orange = "#f6c177";
+    orange_bright = "#ebbcba";
     opacity = "1";
     indicator_height = "2px";
   };
@@ -34,8 +34,8 @@ in
     }
 
     window#waybar {
-      background: #282828;
-      border: 1px solid #928374;
+      background: #1f1d2e;
+      border: 1px solid #6e6a86;
       border-radius: 5px;
     }
 

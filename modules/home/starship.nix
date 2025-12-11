@@ -23,18 +23,18 @@
         "[](fg:color_bg3) "
       ];
 
-      palette = "gruvbox_dark";
-      palettes.gruvbox_dark = {
-        color_fg0 = "#fbf1c7";
-        color_bg1 = "#3c3836";
-        color_bg3 = "#665c54";
-        color_blue = "#458588";
-        color_aqua = "#689d6a";
-        color_green = "#98971a";
-        color_orange = "#d65d0e";
-        color_purple = "#b16286";
-        color_red = "#cc241d";
-        color_yellow = "#d79921";
+      palette = "rose_pine";
+      palettes.rose_pine = {
+        color_fg0 = "#e0def4";
+        color_bg1 = "#1f1d2e";
+        color_bg3 = "#26233a";
+        color_blue = "#31748f";
+        color_aqua = "#9ccfd8";
+        color_green = "#9ccfd8";
+        color_orange = "#f6c177";
+        color_purple = "#c4a7e7";
+        color_red = "#eb6f92";
+        color_yellow = "#f6c177";
       };
 
       os = {

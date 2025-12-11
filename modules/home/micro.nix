@@ -4,7 +4,7 @@ _:
     enable = true;
 
     settings = {
-      "colorscheme" = "gruvbox";
+      "colorscheme" = "rose-pine";
       "*.nix" = {
         "tabsize" = 2;
       };
@@ -38,33 +38,33 @@ _:
     }
   '';
 
-  xdg.configFile."micro/colorschemes/gruvbox.micro".text = ''
-    color-link default "#ebdbb2"
-    color-link comment "#928374"
-    color-link symbol "#d79921"
-    color-link constant "#d3869b"
-    color-link constant.string "#b8bb26"
-    color-link constant.string.char "#b8bb26"
-    color-link identifier "#8ec07c"
-    color-link statement "#fb4934"
-    color-link preproc "#fb4934,235"
-    color-link type "#fb4934"
-    color-link special "#d79921"
-    color-link underlined "underline #1d2021"
-    color-link error "#9d0006"
-    color-link hlsearch "#1d2021,#fabd2f"
-    color-link diff-added "#00AF00"
-    color-link diff-modified "#FFAF00"
-    color-link diff-deleted "#D70000"
-    color-link gutter-error "#fb4934"
-    color-link gutter-warning "#d79921"
-    color-link line-number "#665c54"
-    color-link current-line-number "#8ec07c"
-    color-link cursor-line "#3c3836"
-    color-link color-column "#665c54"
-    color-link statusline "#8ec07c"
-    color-link tabbar "#ebdbb2,#665c54"
-    color-link type "#fe8019"
-    color-link todo "#ffcc00"
+  xdg.configFile."micro/colorschemes/rose-pine.micro".text = ''
+    color-link default "#e0def4"
+    color-link comment "#6e6a86"
+    color-link symbol "#f6c177"
+    color-link constant "#c4a7e7"
+    color-link constant.string "#f6c177"
+    color-link constant.string.char "#f6c177"
+    color-link identifier "#9ccfd8"
+    color-link statement "#eb6f92"
+    color-link preproc "#eb6f92,235"
+    color-link type "#eb6f92"
+    color-link special "#f6c177"
+    color-link underlined "underline #191724"
+    color-link error "#eb6f92"
+    color-link hlsearch "#191724,#f6c177"
+    color-link diff-added "#9ccfd8"
+    color-link diff-modified "#f6c177"
+    color-link diff-deleted "#eb6f92"
+    color-link gutter-error "#eb6f92"
+    color-link gutter-warning "#f6c177"
+    color-link line-number "#6e6a86"
+    color-link current-line-number "#9ccfd8"
+    color-link cursor-line "#26233a"
+    color-link color-column "#6e6a86"
+    color-link statusline "#9ccfd8"
+    color-link tabbar "#e0def4,#26233a"
+    color-link type "#ebbcba"
+    color-link todo "#f6c177"
   '';
 }

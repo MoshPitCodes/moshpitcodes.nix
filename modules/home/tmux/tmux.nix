@@ -23,7 +23,7 @@
       tmuxPlugins.open
       tmuxPlugins.logging
       tmuxPlugins.pain-control
-      tmuxPlugins.gruvbox
+      tmuxPlugins.rose-pine
     ];
 
     extraConfig = ''
@@ -127,24 +127,24 @@
       #   - tmux_conf_theme_synchronized
       tmux_conf_theme=enabled
 
-      # default theme
-      tmux_conf_theme_colour_1="#080808"    # dark gray
-      tmux_conf_theme_colour_2="#303030"    # gray
-      tmux_conf_theme_colour_3="#8a8a8a"    # light gray
-      tmux_conf_theme_colour_4="#00afff"    # light blue
-      tmux_conf_theme_colour_5="#ffff00"    # yellow
-      tmux_conf_theme_colour_6="#080808"    # dark gray
-      tmux_conf_theme_colour_7="#e4e4e4"    # white
-      tmux_conf_theme_colour_8="#080808"    # dark gray
-      tmux_conf_theme_colour_9="#ffff00"    # yellow
-      tmux_conf_theme_colour_10="#ff00af"   # pink
-      tmux_conf_theme_colour_11="#5fff00"   # green
-      tmux_conf_theme_colour_12="#8a8a8a"   # light gray
-      tmux_conf_theme_colour_13="#e4e4e4"   # white
-      tmux_conf_theme_colour_14="#080808"   # dark gray
-      tmux_conf_theme_colour_15="#080808"   # dark gray
-      tmux_conf_theme_colour_16="#d70000"   # red
-      tmux_conf_theme_colour_17="#e4e4e4"   # white
+      # Rose Pine theme
+      tmux_conf_theme_colour_1="#191724"    # base
+      tmux_conf_theme_colour_2="#1f1d2e"    # surface
+      tmux_conf_theme_colour_3="#6e6a86"    # muted
+      tmux_conf_theme_colour_4="#31748f"    # pine
+      tmux_conf_theme_colour_5="#f6c177"    # gold
+      tmux_conf_theme_colour_6="#191724"    # base
+      tmux_conf_theme_colour_7="#e0def4"    # text
+      tmux_conf_theme_colour_8="#191724"    # base
+      tmux_conf_theme_colour_9="#f6c177"    # gold
+      tmux_conf_theme_colour_10="#c4a7e7"   # iris
+      tmux_conf_theme_colour_11="#9ccfd8"   # foam
+      tmux_conf_theme_colour_12="#6e6a86"   # muted
+      tmux_conf_theme_colour_13="#e0def4"   # text
+      tmux_conf_theme_colour_14="#191724"   # base
+      tmux_conf_theme_colour_15="#191724"   # base
+      tmux_conf_theme_colour_16="#eb6f92"   # love
+      tmux_conf_theme_colour_17="#e0def4"   # text
 
       # default theme (ansi)
       #tmux_conf_theme_colour_1="colour0"
@@ -492,7 +492,7 @@
       set -g @plugin 'tmux-plugins/copycat'
       set -g @plugin 'tmux-plugins/continuum'
       set -g @plugin 'tmux-plugins/fzf-tmux-url'
-      set -g @plugin 'tmux-plugins/gruvbox'
+      set -g @plugin 'rose-pine/tmux'
       set -g @plugin 'tmux-plugins/logging'
       set -g @plugin 'tmux-plugins/open'
       set -g @plugin 'tmux-plugins/pain-control'
