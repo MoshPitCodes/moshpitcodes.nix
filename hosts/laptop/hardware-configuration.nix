@@ -43,12 +43,16 @@
   };
 
   # UGREEN NAS SMB/CIFS network mount
+  # IMPORTANT: Replace "personal_folder" with your actual share name if different
+  # To find available shares, run: nix-shell -p samba --run "smbclient -L //192.168.178.144 -U username"
+  # Common UGREEN NAS share names: "Public", "personal_folder", "media", etc.
   fileSystems."/mnt/ugreen-nas" = {
-    device = "//192.168.178.144/share";
+    device = "//192.168.178.144/personal_folder";
     fsType = "cifs";
     options = [
       # Authentication
       "credentials=/root/.secrets/samba-credentials"
+      "sec=ntlmssp"                   # Use NTLMv2 authentication
 
       # User/Group mapping - adjust UID/GID to match your user
       "uid=1000"
@@ -66,7 +70,7 @@
       "noauto"                        # Don't mount at boot, use automount instead
 
       # Performance and compatibility
-      "vers=3.0"                      # SMB protocol version (try 3.0, 2.1, or 2.0 if issues)
+      "vers=3.0"                      # SMB protocol version (3.0, supports 2.0, 2.1, 3.0)
       "cache=loose"                   # Better performance, less strict consistency
       "rsize=130048"                  # Read buffer size (128KB)
       "wsize=130048"                  # Write buffer size (128KB)

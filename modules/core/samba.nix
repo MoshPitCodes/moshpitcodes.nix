@@ -41,8 +41,13 @@
       chmod 700 /root/.secrets
 
       # Write credentials file securely
+      # For CIFS mounts, the credentials file format should have:
+      # - username without domain prefix
+      # - domain on separate line
+      # - password
       cat > /root/.secrets/samba-credentials << EOF
-username=${customsecrets.samba.username or ""}
+username=${builtins.elemAt (builtins.split "\\\\" (customsecrets.samba.username or "")) 2}
+domain=${builtins.elemAt (builtins.split "\\\\" (customsecrets.samba.username or "WORKGROUP")) 0}
 password=${customsecrets.samba.password or ""}
 EOF
       chmod 600 /root/.secrets/samba-credentials
