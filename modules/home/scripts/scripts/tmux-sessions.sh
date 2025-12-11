@@ -25,11 +25,11 @@ set -euo pipefail
 # Format: "session_name|path"
 # Add your sessions here:
 SESSIONS=(
-    "moshpitcodes-nix|/mnt/f/Coding/moshpitcodes/moshpitcodes.nix"
-    "moshpitcodes-homelab|/mnt/f/Coding/moshpitcodes/moshpitcodes.homelab"
-    "moshpitcodes-wsl2|/mnt/f/Coding/moshpitcodes/moshpitcodes.wsl2"
-    "moshpitcodes-template|/mnt/f/Coding/moshpitcodes/moshpitcodes.template"
-    "moshpitcodes-devops|~"
+    "moshpitcodes-nix|/mnt/ugreen-nas/Coding/moshpitcodes/moshpitcodes.nix"
+    "moshpitcodes-homelab|/mnt/ugreen-nas/Coding/moshpitcodes/moshpitcodes.homelab"
+    "moshpitcodes-wsl2|/mnt/ugreen-nas/Coding/moshpitcodes/moshpitcodes.wsl2"
+    "moshpitcodes-template|/mnt/ugreen-nas/Coding/moshpitcodes/moshpitcodes.template"
+    "moshpitcodes-devops|/mnt/ugreen-nas/Coding/moshpitcodes"
 )
 
 # =============================================================================
