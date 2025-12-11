@@ -69,17 +69,10 @@
     gh
     git-secrets
     libsecret
-    gnupg
-    pinentry-gnome3
   ]; # pkgs.git-lfs
 
-  services.gpg-agent = {
-    enable = true;
-    pinentry.package = pkgs.pinentry-gnome3;
-    enableSshSupport = false; # Use GNOME keyring for SSH
-    defaultCacheTtl = 1800;
-    maxCacheTtl = 7200;
-  };
+  # GPG agent configuration is managed at the system level in modules/core/program.nix
+  # to avoid conflicts between system and home-manager configurations
 
   # Copy GitHub CLI config from backup directory during activation
   home.activation.copyGhConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''

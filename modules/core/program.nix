@@ -5,7 +5,7 @@
     zsh.enable = true;
     gnupg.agent = {
       enable = true;
-      enableSSHSupport = true;
+      enableSSHSupport = false; # Use GNOME keyring for SSH instead
       pinentryPackage = pkgs.pinentry-gnome3;
     };
     nix-ld = {
