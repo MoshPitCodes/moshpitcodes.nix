@@ -29,7 +29,8 @@ _:
         follow_mouse = 1;
         float_switch_override_focus = 0;
         mouse_refocus = 0;
-        sensitivity = 0;
+        sensitivity = 0.0;
+        accel_profile = "flat";
         touchpad = {
           natural_scroll = true;
         };
@@ -285,8 +286,8 @@ _:
         "$mainMod, mouse:273, resizewindow"
       ];
 
-      # windowrule
-      windowrule = [
+      # windowrulev2 - new syntax for Hyprland v0.48+
+      windowrulev2 = [
         "float,class:^(Viewnior)$"
         "float,class:^(imv)$"
         "float,class:^(mpv)$"
@@ -294,8 +295,6 @@ _:
         "float,class:^(Audacious)$"
         "pin,class:^(rofi)$"
         "pin,class:^(waypaper)$"
-        # "idleinhibit focus,mpv"
-        # "float,udiskie"
         "float,title:^(Transmission)$"
         "float,title:^(Volume Control)$"
         "float,title:^(Firefox — Sharing Indicator)$"
@@ -303,26 +302,26 @@ _:
         "size 700 450,title:^(Volume Control)$"
         "move 40 55%,title:^(Volume Control)$"
 
-        "float, title:^(Picture-in-Picture)$"
-        "opacity 1.0 override 1.0 override, title:^(Picture-in-Picture)$"
-        "pin, title:^(Picture-in-Picture)$"
-        "opacity 1.0 override 1.0 override, title:^(.*imv.*)$"
-        "opacity 1.0 override 1.0 override, title:^(.*mpv.*)$"
-        "opacity 1.0 override 1.0 override, class:(Aseprite)"
-        "opacity 1.0 override 1.0 override, class:(Unity)"
-        "opacity 1.0 override 1.0 override, class:(zen)"
-        "opacity 1.0 override 1.0 override, class:(evince)"
-        "workspace 1, class:^(zen)$"
-        "workspace 3, class:^(evince)$"
-        "workspace 4, class:^(Gimp-2.10)$"
-        "workspace 4, class:^(Aseprite)$"
-        "workspace 5, class:^(Audacious)$"
-        "workspace 5, class:^(Spotify)$"
-        "workspace 8, class:^(com.obsproject.Studio)$"
-        "workspace 10, class:^(discord)$"
-        "workspace 10, class:^(WebCord)$"
-        "idleinhibit focus, class:^(mpv)$"
-        "idleinhibit fullscreen, class:^(firefox)$"
+        "float,title:^(Picture-in-Picture)$"
+        "opacity 1.0 override 1.0 override,title:^(Picture-in-Picture)$"
+        "pin,title:^(Picture-in-Picture)$"
+        "opacity 1.0 override 1.0 override,title:^(.*imv.*)$"
+        "opacity 1.0 override 1.0 override,title:^(.*mpv.*)$"
+        "opacity 1.0 override 1.0 override,class:^(Aseprite)$"
+        "opacity 1.0 override 1.0 override,class:^(Unity)$"
+        "opacity 1.0 override 1.0 override,class:^(zen)$"
+        "opacity 1.0 override 1.0 override,class:^(evince)$"
+        "workspace 1,class:^(zen)$"
+        "workspace 3,class:^(evince)$"
+        "workspace 4,class:^(Gimp-2.10)$"
+        "workspace 4,class:^(Aseprite)$"
+        "workspace 5,class:^(Audacious)$"
+        "workspace 5,class:^(Spotify)$"
+        "workspace 8,class:^(com.obsproject.Studio)$"
+        "workspace 10,class:^(discord)$"
+        "workspace 10,class:^(WebCord)$"
+        "idleinhibit focus,class:^(mpv)$"
+        "idleinhibit fullscreen,class:^(firefox)$"
         "float,class:^(org.gnome.Calculator)$"
         "float,class:^(waypaper)$"
         "float,class:^(zenity)$"
@@ -352,15 +351,12 @@ _:
         "noblur,class:^(xwaylandvideobridge)$"
 
         # No gaps when only
-        "bordersize 0, floating:0, onworkspace:w[t1]"
-        "rounding 0, floating:0, onworkspace:w[t1]"
-        "bordersize 0, floating:0, onworkspace:w[tg1]"
-        "rounding 0, floating:0, onworkspace:w[tg1]"
-        "bordersize 0, floating:0, onworkspace:f[1]"
-        "rounding 0, floating:0, onworkspace:f[1]"
-
-        # "maxsize 1280 720, floating: 1"
-        # "center, floating: 1"
+        "bordersize 0,floating:0,onworkspace:w[t1]"
+        "rounding 0,floating:0,onworkspace:w[t1]"
+        "bordersize 0,floating:0,onworkspace:w[tg1]"
+        "rounding 0,floating:0,onworkspace:w[tg1]"
+        "bordersize 0,floating:0,onworkspace:f[1]"
+        "rounding 0,floating:0,onworkspace:f[1]"
 
         # Remove context menu transparency in chromium based apps
         "opaque,class:^()$,title:^()$"
