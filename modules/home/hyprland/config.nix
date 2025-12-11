@@ -29,7 +29,8 @@ _:
         follow_mouse = 1;
         float_switch_override_focus = 0;
         mouse_refocus = 0;
-        sensitivity = 0;
+        sensitivity = 0.0;
+        accel_profile = "flat";
         touchpad = {
           natural_scroll = true;
         };
@@ -40,32 +41,25 @@ _:
         layout = "dwindle";
         gaps_in = 6;
         gaps_out = 12;
-        border_size = 2;
         "col.active_border" = "rgb(98971A) rgb(CC241D) 45deg";
         "col.inactive_border" = "0x00000000";
-        # border_part_of_window = false;
-        no_border_on_floating = false;
+        border_size = 2;
       };
 
       misc = {
         disable_autoreload = true;
         disable_hyprland_logo = true;
-        always_follow_on_dnd = true;
         layers_hog_keyboard_focus = true;
         animate_manual_resizes = false;
         enable_swallow = true;
         focus_on_activate = true;
-        new_window_takes_over_fullscreen = 2;
         middle_click_paste = false;
       };
 
       dwindle = {
         force_split = 2;
-        special_scale_factor = 1.0;
-        split_width_multiplier = 1.0;
-        use_active_for_splits = true;
-        pseudotile = "yes";
-        preserve_split = "yes";
+        pseudotile = true;
+        preserve_split = true;
       };
 
       master = {
@@ -87,7 +81,6 @@ _:
           contrast = 1.4;
           ignore_opacity = true;
           noise = 0;
-          new_optimizations = true;
           xray = true;
         };
 
@@ -293,8 +286,8 @@ _:
         "$mainMod, mouse:273, resizewindow"
       ];
 
-      # windowrule
-      windowrule = [
+      # windowrulev2 - new syntax for Hyprland v0.48+
+      windowrulev2 = [
         "float,class:^(Viewnior)$"
         "float,class:^(imv)$"
         "float,class:^(mpv)$"
@@ -302,8 +295,6 @@ _:
         "float,class:^(Audacious)$"
         "pin,class:^(rofi)$"
         "pin,class:^(waypaper)$"
-        # "idleinhibit focus,mpv"
-        # "float,udiskie"
         "float,title:^(Transmission)$"
         "float,title:^(Volume Control)$"
         "float,title:^(Firefox — Sharing Indicator)$"
@@ -311,26 +302,26 @@ _:
         "size 700 450,title:^(Volume Control)$"
         "move 40 55%,title:^(Volume Control)$"
 
-        "float, title:^(Picture-in-Picture)$"
-        "opacity 1.0 override 1.0 override, title:^(Picture-in-Picture)$"
-        "pin, title:^(Picture-in-Picture)$"
-        "opacity 1.0 override 1.0 override, title:^(.*imv.*)$"
-        "opacity 1.0 override 1.0 override, title:^(.*mpv.*)$"
-        "opacity 1.0 override 1.0 override, class:(Aseprite)"
-        "opacity 1.0 override 1.0 override, class:(Unity)"
-        "opacity 1.0 override 1.0 override, class:(zen)"
-        "opacity 1.0 override 1.0 override, class:(evince)"
-        "workspace 1, class:^(zen)$"
-        "workspace 3, class:^(evince)$"
-        "workspace 4, class:^(Gimp-2.10)$"
-        "workspace 4, class:^(Aseprite)$"
-        "workspace 5, class:^(Audacious)$"
-        "workspace 5, class:^(Spotify)$"
-        "workspace 8, class:^(com.obsproject.Studio)$"
-        "workspace 10, class:^(discord)$"
-        "workspace 10, class:^(WebCord)$"
-        "idleinhibit focus, class:^(mpv)$"
-        "idleinhibit fullscreen, class:^(firefox)$"
+        "float,title:^(Picture-in-Picture)$"
+        "opacity 1.0 override 1.0 override,title:^(Picture-in-Picture)$"
+        "pin,title:^(Picture-in-Picture)$"
+        "opacity 1.0 override 1.0 override,title:^(.*imv.*)$"
+        "opacity 1.0 override 1.0 override,title:^(.*mpv.*)$"
+        "opacity 1.0 override 1.0 override,class:^(Aseprite)$"
+        "opacity 1.0 override 1.0 override,class:^(Unity)$"
+        "opacity 1.0 override 1.0 override,class:^(zen)$"
+        "opacity 1.0 override 1.0 override,class:^(evince)$"
+        "workspace 1,class:^(zen)$"
+        "workspace 3,class:^(evince)$"
+        "workspace 4,class:^(Gimp-2.10)$"
+        "workspace 4,class:^(Aseprite)$"
+        "workspace 5,class:^(Audacious)$"
+        "workspace 5,class:^(Spotify)$"
+        "workspace 8,class:^(com.obsproject.Studio)$"
+        "workspace 10,class:^(discord)$"
+        "workspace 10,class:^(WebCord)$"
+        "idleinhibit focus,class:^(mpv)$"
+        "idleinhibit fullscreen,class:^(firefox)$"
         "float,class:^(org.gnome.Calculator)$"
         "float,class:^(waypaper)$"
         "float,class:^(zenity)$"
@@ -360,15 +351,12 @@ _:
         "noblur,class:^(xwaylandvideobridge)$"
 
         # No gaps when only
-        "bordersize 0, floating:0, onworkspace:w[t1]"
-        "rounding 0, floating:0, onworkspace:w[t1]"
-        "bordersize 0, floating:0, onworkspace:w[tg1]"
-        "rounding 0, floating:0, onworkspace:w[tg1]"
-        "bordersize 0, floating:0, onworkspace:f[1]"
-        "rounding 0, floating:0, onworkspace:f[1]"
-
-        # "maxsize 1280 720, floating: 1"
-        # "center, floating: 1"
+        "bordersize 0,floating:0,onworkspace:w[t1]"
+        "rounding 0,floating:0,onworkspace:w[t1]"
+        "bordersize 0,floating:0,onworkspace:w[tg1]"
+        "rounding 0,floating:0,onworkspace:w[tg1]"
+        "bordersize 0,floating:0,onworkspace:f[1]"
+        "rounding 0,floating:0,onworkspace:f[1]"
 
         # Remove context menu transparency in chromium based apps
         "opaque,class:^()$,title:^()$"

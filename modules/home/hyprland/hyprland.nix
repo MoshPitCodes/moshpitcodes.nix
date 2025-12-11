@@ -22,23 +22,9 @@
     package = null;
     portalPackage = null;
 
-    extraConfig = ''
-      # Input settings
-      input {
-        follow_mouse = 1
-        sensitivity = 0.0
-        accel_profile = flat
-      }
-
-      # Add other Hyprland config sections here
-    '';
-
     xwayland = {
       enable = true;
-      # hidpi = true;
     };
-    # Nvidia patches no longer needed
-    # enableNvidiaPatches = false;
     systemd.enable = true;
   };
 }

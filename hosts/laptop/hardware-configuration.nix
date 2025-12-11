@@ -42,6 +42,45 @@
     ];
   };
 
+  # UGREEN NAS SMB/CIFS network mount
+  # IMPORTANT: Replace "personal_folder" with your actual share name if different
+  # To find available shares, run: nix-shell -p samba --run "smbclient -L //192.168.178.144 -U username"
+  # Common UGREEN NAS share names: "Public", "personal_folder", "media", etc.
+  fileSystems."/mnt/ugreen-nas" = {
+    device = "//192.168.178.144/personal_folder";
+    fsType = "cifs";
+    options = [
+      # Authentication
+      "credentials=/root/.secrets/samba-credentials"
+      "sec=ntlmssp"                   # Use NTLMv2 authentication
+
+      # User/Group mapping - adjust UID/GID to match your user
+      "uid=1000"
+      "gid=100"
+
+      # File and directory permissions
+      "file_mode=0755"
+      "dir_mode=0755"
+
+      # Network and reliability options
+      "x-systemd.automount"           # Automount on access
+      "x-systemd.idle-timeout=300"    # Unmount after 5 minutes of inactivity
+      "x-systemd.mount-timeout=30"    # Timeout for mount attempts
+      "x-systemd.requires=network-online.target"  # Wait for network
+      "noauto"                        # Don't mount at boot, use automount instead
+
+      # Performance and compatibility
+      "vers=3.0"                      # SMB protocol version (3.0, supports 2.0, 2.1, 3.0)
+      "cache=loose"                   # Better performance, less strict consistency
+      "rsize=130048"                  # Read buffer size (128KB)
+      "wsize=130048"                  # Write buffer size (128KB)
+
+      # Reliability options
+      "_netdev"                       # Network device, don't mount until network is up
+      "nofail"                        # Don't fail boot if mount fails
+    ];
+  };
+
   swapDevices = [
     { device = "/dev/disk/by-uuid/4c410f48-47bb-4b37-914a-489cf4ad28c6"; }
   ];
