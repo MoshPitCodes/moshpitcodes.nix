@@ -55,7 +55,8 @@ proto/v1/*.pb.go
 .env.local
 secrets.nix
 docs/
-.claude
+.claude/*
+!.claude/settings.json
 # CLAUDE.md
 
 # Claude Flow / AI Agent data directories
