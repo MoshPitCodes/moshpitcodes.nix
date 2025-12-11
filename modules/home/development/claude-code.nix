@@ -71,12 +71,6 @@ in
       text = builtins.toJSON localSettingsExample;
     };
 
-    # Copy project CLAUDE.md to ~/.claude/ as a global reference
-    # This provides context for all Claude Code sessions
-    ".claude/CLAUDE.md" = lib.mkIf (builtins.pathExists /mnt/ugreen-nas/Coding/moshpitcodes/moshpitcodes.nix/CLAUDE.md) {
-      source = /mnt/ugreen-nas/Coding/moshpitcodes/moshpitcodes.nix/CLAUDE.md;
-    };
-
     # Create agents directory
     ".claude/agents/.gitkeep".text = "";
   };

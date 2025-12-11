@@ -126,8 +126,8 @@
     {
       nixosConfigurations = {
         desktop = nixpkgs.lib.nixosSystem {
-          inherit system;
           modules = [
+            { nixpkgs.hostPlatform = system; }
             ./hosts/desktop
             # Apply overlays to nixpkgs for this configuration
             { nixpkgs.overlays = overlays; }
@@ -138,8 +138,8 @@
           };
         };
         laptop = nixpkgs.lib.nixosSystem {
-          inherit system;
           modules = [
+            { nixpkgs.hostPlatform = system; }
             ./hosts/laptop
             # Apply overlays to nixpkgs for this configuration
             { nixpkgs.overlays = overlays; }
@@ -150,8 +150,8 @@
           };
         };
         vm = nixpkgs.lib.nixosSystem {
-          inherit system;
           modules = [
+            { nixpkgs.hostPlatform = system; }
             ./hosts/vm
             # Apply overlays to nixpkgs for this configuration
             { nixpkgs.overlays = overlays; }
@@ -162,8 +162,8 @@
           };
         };
         vmware-guest = nixpkgs.lib.nixosSystem {
-          inherit system;
           modules = [
+            { nixpkgs.hostPlatform = system; }
             ./hosts/vmware-guest
             # Apply overlays to nixpkgs for this configuration
             { nixpkgs.overlays = overlays; }
@@ -174,8 +174,8 @@
           };
         };
         wsl = nixpkgs.lib.nixosSystem {
-          inherit system;
           modules = [
+            { nixpkgs.hostPlatform = system; }
             ./hosts/wsl
             # Apply overlays to nixpkgs for this configuration
             { nixpkgs.overlays = overlays; }
