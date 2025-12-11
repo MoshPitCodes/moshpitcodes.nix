@@ -37,8 +37,8 @@
 
       theme = {
         enable = true;
-        name = "gruvbox";
-        style = "dark";
+        name = "rose-pine";
+        style = "main";
         transparent = true;
       };
 
@@ -96,7 +96,7 @@
       statusline = {
         lualine = {
           enable = true;
-          theme = "gruvbox";
+          theme = "rose-pine";
         };
       };
 
@@ -131,7 +131,7 @@
         nvim-notify = {
           enable = true;
           setupOpts = {
-            background_colour = "#1d2021";
+            background_colour = "#191724";
             render = "compact";
             timeout = 3000;
             top_down = true;

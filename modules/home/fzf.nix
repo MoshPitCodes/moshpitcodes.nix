@@ -15,12 +15,12 @@ _:
       "--preview 'eza --tree --color=always {} | head -200'"
     ];
 
-    ## Theme
+    ## Theme - Rose Pine
     defaultOptions = [
-      "--color=fg:-1,fg+:#FBF1C7,bg:-1,bg+:#282828"
-      "--color=hl:#98971A,hl+:#B8BB26,info:#928374,marker:#D65D0E"
-      "--color=prompt:#CC241D,spinner:#689D6A,pointer:#D65D0E,header:#458588"
-      "--color=border:#665C54,label:#aeaeae,query:#FBF1C7"
+      "--color=fg:-1,fg+:#e0def4,bg:-1,bg+:#26233a"
+      "--color=hl:#eb6f92,hl+:#eb6f92,info:#908caa,marker:#f6c177"
+      "--color=prompt:#eb6f92,spinner:#9ccfd8,pointer:#c4a7e7,header:#31748f"
+      "--color=border:#6e6a86,label:#908caa,query:#e0def4"
       "--border='double' --border-label='' --preview-window='border-sharp' --prompt='> '"
       "--marker='>' --pointer='>' --separator='─' --scrollbar='│'"
       "--info='right'"

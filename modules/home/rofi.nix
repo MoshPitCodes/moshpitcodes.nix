@@ -4,14 +4,14 @@
 
   xdg.configFile."rofi/theme.rasi".text = ''
     * {
-      bg-col: #1D2021;
-      bg-col-light: #282828;
-      border-col: #A89984;
-      selected-col: #3C3836;
-      green: #98971A;
-      fg-col: #FBF1C7;
-      fg-col2: #EBDBB2;
-      grey: #BDAE93;
+      bg-col: #191724;
+      bg-col-light: #1f1d2e;
+      border-col: #908caa;
+      selected-col: #26233a;
+      green: #9ccfd8;
+      fg-col: #e0def4;
+      fg-col2: #e0def4;
+      grey: #6e6a86;
       highlight: @green;
     }
   '';
