@@ -13,28 +13,52 @@ set -euo pipefail
 # =============================================================================
 # SESSION CONFIGURATION
 # =============================================================================
+# Sessions are auto-discovered from git repositories in $DEVELOPMENT_DIR
+#
 # Standard sessions get 1 window with 2 panes:
 #   - Left pane: Shell in the project directory
 #   - Right pane: claude-code running in the project directory
 #
-# Special session (moshpitcodes-devops) gets 1 window with 3 panes:
-#   - Left pane: Shell in home directory
+# Special sessions (name contains "devops") get 1 window with 3 panes:
+#   - Left pane: Shell in the project directory
 #   - Top-right pane: gemini
 #   - Bottom-right pane: btop
 #
 # Format: "session_name|path"
-# Add your sessions here:
-SESSIONS=(
-    "moshpitcodes-nix|/mnt/ugreen-nas/Coding/moshpitcodes/moshpitcodes.nix"
-    "moshpitcodes-homelab|/mnt/ugreen-nas/Coding/moshpitcodes/moshpitcodes.homelab"
-    "moshpitcodes-wsl2|/mnt/ugreen-nas/Coding/moshpitcodes/moshpitcodes.wsl2"
-    "moshpitcodes-template|/mnt/ugreen-nas/Coding/moshpitcodes/moshpitcodes.template"
-    "moshpitcodes-devops|/mnt/ugreen-nas/Coding/moshpitcodes"
-)
+DEVELOPMENT_DIR="$HOME/Development"
 
 # =============================================================================
 # HELPER FUNCTIONS
 # =============================================================================
+
+discover_sessions() {
+    local -a sessions=()
+
+    # Check if development directory exists
+    if [[ ! -d "$DEVELOPMENT_DIR" ]]; then
+        echo "Warning: Development directory '$DEVELOPMENT_DIR' does not exist" >&2
+        return 0
+    fi
+
+    # Scan development directory for git repositories
+    while IFS= read -r -d '' dir; do
+        # Skip if not a directory
+        [[ ! -d "$dir" ]] && continue
+
+        # Check if it's a git repository
+        if [[ -d "$dir/.git" ]]; then
+            # Extract basename as session name
+            local session_name
+            session_name=$(basename "$dir")
+
+            # Add to sessions array in format "name|path"
+            sessions+=("${session_name}|${dir}")
+        fi
+    done < <(find "$DEVELOPMENT_DIR" -mindepth 1 -maxdepth 1 -type d -print0 2>/dev/null)
+
+    # Return the sessions array
+    printf '%s\n' "${sessions[@]}"
+}
 
 show_help() {
     cat << 'EOF'
@@ -58,15 +82,14 @@ EXAMPLES:
     tmux-sessions --create-only    # Create sessions without attaching
 
 CONFIGURATION:
-    Edit the SESSIONS array in this script to add/modify sessions.
-    Format: "session_name|path"
+    Sessions are auto-discovered from git repositories in ~/Development
 
     Standard sessions are created with 1 window containing 2 panes:
       - Left pane:  Shell in the project directory
       - Right pane: claude-code running in the project directory
 
-    Special session (moshpitcodes-devops) has 1 window with 3 panes:
-      - Left pane:       Shell in home directory
+    Special sessions (name contains "devops") have 1 window with 3 panes:
+      - Left pane:       Shell in the project directory
       - Top-right pane:  gemini
       - Bottom-right:    btop
 EOF
@@ -78,7 +101,11 @@ list_sessions() {
     printf "%-25s %-50s %s\n" "SESSION" "PATH" "STATUS"
     printf "%-25s %-50s %s\n" "-------" "----" "------"
 
-    for entry in "${SESSIONS[@]}"; do
+    # Get discovered sessions
+    local -a discovered_sessions
+    mapfile -t discovered_sessions < <(discover_sessions)
+
+    for entry in "${discovered_sessions[@]}"; do
         IFS='|' read -r name path <<< "$entry"
         # Expand tilde
         path="${path/#\~/$HOME}"
@@ -115,8 +142,8 @@ ensure_session() {
         # Create session with a single window in the project directory
         tmux new-session -d -s "$name" -c "$path"
 
-        # Special layout for devops session: 3 panes (shell left, gemini top-right, btop bottom-right)
-        if [[ "$name" == "moshpitcodes-devops" ]]; then
+        # Special layout for devops sessions: 3 panes (shell left, gemini top-right, btop bottom-right)
+        if [[ "${name,,}" == *"devops"* ]]; then
             # Split horizontally: left pane (shell), right pane
             tmux split-window -h -t "${name}:1" -c "$path"
             # Split right pane vertically: top (gemini), bottom (btop)
@@ -148,7 +175,11 @@ ensure_session() {
 }
 
 create_all_sessions() {
-    for entry in "${SESSIONS[@]}"; do
+    # Get discovered sessions
+    local -a discovered_sessions
+    mapfile -t discovered_sessions < <(discover_sessions)
+
+    for entry in "${discovered_sessions[@]}"; do
         IFS='|' read -r name path <<< "$entry"
         ensure_session "$name" "$path"
     done
