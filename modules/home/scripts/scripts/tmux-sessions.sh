@@ -47,9 +47,10 @@ discover_sessions() {
 
         # Check if it's a git repository
         if [[ -d "$dir/.git" ]]; then
-            # Extract basename as session name
+            # Extract basename and convert dots to dashes for tmux compatibility
+            # (tmux interprets dots as target separators: session.window.pane)
             local session_name
-            session_name=$(basename "$dir")
+            session_name=$(basename "$dir" | tr '.' '-')
 
             # Add to sessions array in format "name|path"
             sessions+=("${session_name}|${dir}")
@@ -77,9 +78,14 @@ ARGUMENTS:
 
 EXAMPLES:
     tmux-sessions                  # Create all sessions, show list
-    tmux-sessions moshpitcodes.nix # Create all sessions, attach to session
+    tmux-sessions moshpitcodes-nix # Create all sessions, attach to session
     tmux-sessions --list           # Show configured sessions
     tmux-sessions --create-only    # Create sessions without attaching
+
+NOTE:
+    Session names are derived from directory names with dots converted to
+    dashes (e.g., moshpitcodes.nix becomes moshpitcodes-nix) to avoid
+    conflicts with tmux's target separator syntax (session.window.pane)
 
 CONFIGURATION:
     Sessions are auto-discovered from git repositories in ~/Development
@@ -214,7 +220,8 @@ main() {
                 exit 1
                 ;;
             *)
-                attach_to="$1"
+                # Convert dots to dashes in session name for consistency
+                attach_to="${1//\./-}"
                 shift
                 ;;
         esac
