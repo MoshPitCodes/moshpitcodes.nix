@@ -5,7 +5,7 @@
     # BACKGROUND
     background {
       monitor =
-      path = ${../../../wallpapers/mix/titlwinzbst81.jpg}
+      path = ${../../../wallpapers/mix/astronaut.jpg}
       blur_passes = 2
       contrast = 0.8916
       brightness = 0.8172
