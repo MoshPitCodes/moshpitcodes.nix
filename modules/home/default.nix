@@ -16,6 +16,7 @@
     ./ghostty.nix # terminal
     ./git.nix # version control
     ./gnome.nix # gnome apps
+    ./gpg.nix # GPG configuration for commit signing
     ./gtk.nix # gtk theme
     ./hyprland # window manager
     ./kitty.nix # terminal

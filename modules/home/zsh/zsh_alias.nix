@@ -3,6 +3,13 @@
   ...
 }:
 {
+  # Shell Aliases
+  #
+  # Note: Additional aliases are defined in their respective modules:
+  # - Git aliases: modules/home/git.nix
+  # - Development tool aliases (opencode-setup, opencode-doppler): modules/home/development/development.nix
+  # - Claude Code aliases (claude-code-setup, claude-code-auth-doppler): modules/home/development/claude-code.nix (if enabled)
+
   programs.zsh = {
     shellAliases = {
       # Utils

@@ -1,22 +1,7 @@
 { pkgs, ... }:
 let
-  jonathanharty.gruvbox-material-icon-theme = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
-    mktplcRef = {
-      name = "gruvbox-material-icon-theme";
-      publisher = "JonathanHarty";
-      version = "1.1.5";
-      hash = "sha256-86UWUuWKT6adx4hw4OJw3cSZxWZKLH4uLTO+Ssg75gY=";
-    };
-  };
-  ziglang_vscode-zig = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
-    mktplcRef = {
-      name = "vscode-zig";
-      publisher = "ziglang";
-      version = "0.6.5";
-      hash = "sha256-eFfucWSioF1w4veoO8VAFNi5q2g9JZbZu+NEOuuyHtM=";
-    };
-  };
-
+  # Import shared VSCode extension definitions
+  vscodeExtensions = import ./vscode-extensions.nix { inherit pkgs; };
 in
 {
   programs.vscode = {
@@ -24,6 +9,10 @@ in
     package = pkgs.vscodium;
     profiles.default = {
       extensions = with pkgs.vscode-extensions; [
+        # Use shared custom extension definitions
+        vscodeExtensions.vscodeExtensions.custom.vscode-zig
+        vscodeExtensions.vscodeExtensions.custom.gruvbox-material-icon-theme
+
         # nix language
         jnoortheen.nix-ide
         # nix-shell suport
@@ -34,14 +23,10 @@ in
         ms-vscode.cpptools
         # OCaml
         # ocamllabs.ocaml-platform
-        # Zig
-        # ziglang.vscode-zig
-        ziglang_vscode-zig
 
         # Color theme
         jdinhlife.gruvbox
         # sainnhe.gruvbox-material
-        jonathanharty.gruvbox-material-icon-theme
       ];
       userSettings = {
         "update.mode" = "none";
