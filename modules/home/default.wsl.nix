@@ -18,7 +18,7 @@
     ./openssh.nix # ssh client
     ./micro.nix # nano replacement
     ./nvim.nix # neovim editor
-    ./p10k/p10k.nix # zsh theme
+    ./oh-my-posh/oh-my-posh.nix # zsh prompt theme
     ./scripts/scripts.nix # personal scripts
     ./starship.nix # shell prompt
     ./tmux # terminal multiplexer
