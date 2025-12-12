@@ -16,6 +16,7 @@ _:
         "swaync &"
         "hyprctl setcursor Bibata-Modern-Ice 24 &"
         "swww-daemon"
+        "sleep 1 && swww img ~/Pictures/wallpapers/mix/titlwinzbst81.jpg --transition-type wipe --transition-duration 1"
 
         "hyprlock"
       ];
