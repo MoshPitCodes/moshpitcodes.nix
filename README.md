@@ -105,7 +105,7 @@ And now, let the fun begin!
 | **Application Launcher**    | [rofi][rofi]                                                                        |
 | **Notification Daemon**     | [swaync][swaync]                                                                    |
 | **Terminal Emulator**       | [Ghostty][Ghostty]                                                                  |
-| **Shell**                   | [zsh][zsh] + [powerlevel10k][powerlevel10k]                                         |
+| **Shell**                   | [zsh][zsh] + [Oh-My-Posh][Oh-My-Posh]                                               |
 | **Text Editor**             | [VSCodium][VSCodium] + [VSCode][VSCode] + [Neovim][Neovim]                          |
 | **AI Editor**               | [CursorAI][CursorAI]                                                                |
 | **Network Management Tool** | [NetworkManager][NetworkManager] + [network-manager-applet][network-manager-applet] |
@@ -976,7 +976,7 @@ Other dotfiles that have inspired me greatly:
 [Waypaper]:https://github.com/anufrievroman/waypaper
 [Hyprpaper]: https://github.com/hyprwm/hyprpaper
 [Ghostty]: https://ghostty.org/
-[powerlevel10k]: https://github.com/romkatv/powerlevel10k
+[Oh-My-Posh]: https://ohmyposh.dev/
 [Waybar]: https://github.com/Alexays/Waybar
 [rofi]: https://github.com/lbonn/rofi
 [Btop]: https://github.com/aristocratos/btop
