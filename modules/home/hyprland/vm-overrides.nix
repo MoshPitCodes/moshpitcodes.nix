@@ -57,6 +57,6 @@
     }
 
     # Exec-once commands (keep your original startup apps if needed)
-    exec-once = waybar & hyprpaper
+    exec-once = waybar & swww-daemon
   '';
 }

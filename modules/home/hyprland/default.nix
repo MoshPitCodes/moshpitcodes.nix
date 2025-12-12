@@ -5,7 +5,6 @@
     ./config.nix
     ./hyprlock.nix
     ./variables.nix
-    ./hyprpaper.nix
     inputs.hyprland.homeManagerModules.default
   ];
 }

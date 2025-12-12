@@ -27,7 +27,7 @@
     label {
       monitor =
       text = cmd[update:1000] echo "$(date +"%k:%M")"
-      color = rgba(235, 219, 178, .9)
+      color = rgba(224, 222, 244, .9)
       font_size = 115
       font_family = Maple Mono NF Bold
       shadow_passes = 3
@@ -40,7 +40,7 @@
     label {
       monitor =
       text = cmd[update:1000] echo "- $(date +"%A, %B %d") -"
-      color = rgba(235, 219, 178, .9)
+      color = rgba(224, 222, 244, .9)
       font_size = 18
       font_family = Maple Mono NF
       shadow_passes = 3
@@ -54,7 +54,7 @@
     shape {
       monitor =
       size = 300, 50
-      color = rgba(102, 92, 84, .33)
+      color = rgba(38, 35, 58, .66)
       rounding = 10
       border_size = 0
       border_color = rgba(255, 255, 255, 0)
@@ -69,7 +69,7 @@
     label {
       monitor =
       text =   $USER
-      color = rgba(235, 219, 178, 1)
+      color = rgba(224, 222, 244, 1)
       font_size = 16
       font_family = Maple Mono NF Bold
       position = 0, ${if (host == "laptop") then "131" else "281"}
@@ -86,14 +86,14 @@
       dots_size = 0.25 # Scale of input-field height, 0.2 - 0.8
       dots_spacing = 0.4 # Scale of dots' absolute size, 0.0 - 1.0
       dots_center = true
-      outer_color = rgba(102, 92, 84, .33)
-      inner_color = rgba(102, 92, 84, .33)
-      color = rgba(235, 219, 178, .9)
-      font_color = rgba(235, 219, 178, .9)
+      outer_color = rgba(38, 35, 58, .66)
+      inner_color = rgba(38, 35, 58, .66)
+      color = rgba(224, 222, 244, .9)
+      font_color = rgba(224, 222, 244, .9)
       font_size = 15
       font_family = Maple Mono NF Bold
       fade_on_empty = false
-      placeholder_text = <i><span foreground="##fbf1c7">Enter Password</span></i>
+      placeholder_text = <i><span foreground="##e0def4">Enter Password</span></i>
       hide_input = false
       position = 0, ${if (host == "laptop") then "50" else "200"}
       halign = center

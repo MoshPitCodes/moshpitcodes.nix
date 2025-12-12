@@ -9,14 +9,15 @@ _:
         "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
 
         "nm-applet &"
+        "easyeffects --gapplication-service &"
         "poweralertd &"
         "wl-clip-persist --clipboard both &"
         "wl-paste --watch cliphist store &"
         "waybar &"
         "swaync &"
         "hyprctl setcursor Bibata-Modern-Ice 24 &"
-        # "swww-daemon &"
-        "hyprpaper"
+        "swww-daemon"
+        "sleep 1 && swww img ~/Pictures/wallpapers/mix/titlwinzbst81.jpg --transition-type wipe --transition-duration 1"
 
         "hyprlock"
       ];
@@ -41,7 +42,7 @@ _:
         layout = "dwindle";
         gaps_in = 6;
         gaps_out = 12;
-        "col.active_border" = "rgb(98971A) rgb(CC241D) 45deg";
+        "col.active_border" = "rgb(c4a7e7) rgb(eb6f92) 45deg";
         "col.inactive_border" = "0x00000000";
         border_size = 2;
       };

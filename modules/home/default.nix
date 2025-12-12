@@ -26,7 +26,7 @@
     ./nemo.nix # file manager
     ./nvim.nix # neovim editor
     ./obsidian.nix
-    ./p10k/p10k.nix
+    ./oh-my-posh/oh-my-posh.nix
     ./packages.nix # other packages
     ./retroarch.nix
     ./rofi.nix # launcher
@@ -37,6 +37,7 @@
     ./swayosd.nix # brightness / volume wiget
     ./swaync/swaync.nix # notification deamon
     ./tmux # terminal multiplexer
+    ./vivid.nix # Rose Pine LS_COLORS for directory listings
     ./vscode.nix # vscode
     ./waybar # status bar
     ./waypaper.nix # GUI wallpaper picker

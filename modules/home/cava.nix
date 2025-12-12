@@ -15,13 +15,13 @@ _:
     gradient = 1
     gradient_count = 8
 
-    gradient_color_1 = '#99991a'
-    gradient_color_2 = '#a28e00'
-    gradient_color_3 = '#ab8200'
-    gradient_color_4 = '#b37400'
-    gradient_color_5 = '#bb6600'
-    gradient_color_6 = '#c25400'
-    gradient_color_7 = '#c8400d'
-    gradient_color_8 = '#cd231d'
+    gradient_color_1 = '#9ccfd8'
+    gradient_color_2 = '#c4a7e7'
+    gradient_color_3 = '#c4a7e7'
+    gradient_color_4 = '#ebbcba'
+    gradient_color_5 = '#ebbcba'
+    gradient_color_6 = '#f6c177'
+    gradient_color_7 = '#eb6f92'
+    gradient_color_8 = '#eb6f92'
   '';
 }
