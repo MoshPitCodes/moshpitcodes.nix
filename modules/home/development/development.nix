@@ -1,13 +1,25 @@
-{ pkgs, ... }:
+{
+  inputs,
+  pkgs,
+  lib,
+  host,
+  ...
+}:
 {
   home = {
     packages =
       with pkgs;
       [
+        # C / C++
+        gcc # C compiler
+        gdb # C debugger
+        gnumake # C build tool
+
         # Nix
         nixd # nix lsp
         nixfmt-rfc-style # nix formatter
         nix-prefetch-github # fetch GitHub repositories
+        inputs.alejandra.defaultPackage.${pkgs.system} # alejandra formatter
 
         # API Testing
         bruno # API testing tool
@@ -72,7 +84,6 @@
         # jetbrains.rubymine-community-bin # RubyMine Community Edition
         # jetbrains.webstorm-community-bin # WebStorm Community Edition
         # code-cursor # VSCode cursor navigation tool
-        vscode # Visual Studio Code
 
         # Infrastructure as Code
         ansible # Configuration management
@@ -116,6 +127,7 @@
         # minikube # local k8s cluster
         # velero # backup and restore for k8s
         helm # Helm package manager for Kubernetes
+        cilium-cli # Cilium CNI and service mesh CLI
         # k3d # k3s in docker
         # k3s # lightweight k8s
         k9s # k8s terminal UI
@@ -161,7 +173,9 @@
 
         # Secrets Management
         doppler # secrets management
-      ];
+      ]
+      # Conditionally include vscode for non-WSL hosts (managed by vscode.nix)
+      ++ lib.optionals (host != "nixos-wsl") [ pkgs.vscode ];
 
     # Create configuration directories for AI Coding Agents
     file = {
