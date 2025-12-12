@@ -13,7 +13,7 @@ in
   xdg.configFile."ghostty/config".text = ''
     # Font
     font-family = "Maple Mono NF"
-    font-size = ${if (host == "laptop") then "14" else "16"}
+    font-size = ${if (host == "laptop") then "12" else "14"}
     font-thicken = true
     font-feature = ss01
     font-feature = ss04

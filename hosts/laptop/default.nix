@@ -25,13 +25,8 @@
   boot = {
     plymouth = {
       enable = true;
-      theme = "circle_flow";
-      themePackages = with pkgs; [
-        # By default we would install all themes
-        (adi1090x-plymouth-themes.override {
-          selected_themes = [ "circle_flow" ];
-        })
-      ];
+      theme = "mac-style";
+      themePackages = [ pkgs.mac-style-plymouth ];
     };
 
     # Enable "Silent boot"

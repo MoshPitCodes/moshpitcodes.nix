@@ -35,6 +35,10 @@
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    s4rchiso-plymouth = {
+      url = "github:SergioRibera/s4rchiso-plymouth-theme";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -46,7 +50,8 @@
       overlays = import ./overlays { inherit inputs; };
 
       pkgs = import nixpkgs {
-        inherit system overlays;
+        inherit system;
+        overlays = overlays ++ [ inputs.s4rchiso-plymouth.overlays.default ];
         config.allowUnfree = true;
       };
 
@@ -130,7 +135,7 @@
             { nixpkgs.hostPlatform = system; }
             ./hosts/desktop
             # Apply overlays to nixpkgs for this configuration
-            { nixpkgs.overlays = overlays; }
+            { nixpkgs.overlays = overlays ++ [ inputs.s4rchiso-plymouth.overlays.default ]; }
           ];
           specialArgs = {
             host = "desktop";
@@ -142,7 +147,7 @@
             { nixpkgs.hostPlatform = system; }
             ./hosts/laptop
             # Apply overlays to nixpkgs for this configuration
-            { nixpkgs.overlays = overlays; }
+            { nixpkgs.overlays = overlays ++ [ inputs.s4rchiso-plymouth.overlays.default ]; }
           ];
           specialArgs = {
             host = "laptop";
