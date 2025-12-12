@@ -6,9 +6,8 @@
     {
       "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
       "logo": {
-        "source": "${../../.github/assets/logo/nixos-logo.png}",
-        "type": "kitty-direct",
-        "width": 33,
+        "source": "nixos",
+        "type": "builtin",
         "padding": {
           "top": 2
         }

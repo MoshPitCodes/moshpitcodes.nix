@@ -30,6 +30,7 @@ in
       # hexdump # hex viewer
       # htop # system monitor
       imv # image viewer
+      viu # terminal image viewer
       killall # kill processes by name
       libnotify # notification library
       man-pages # extra man pages

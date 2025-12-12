@@ -19,7 +19,6 @@
     ./gpg.nix # GPG configuration for commit signing
     ./gtk.nix # gtk theme
     ./hyprland # window manager
-    ./kitty.nix # terminal
     ./lazygit.nix # terminal git client
     ./openssh.nix # ssh client
     ./micro.nix # nano replacement
