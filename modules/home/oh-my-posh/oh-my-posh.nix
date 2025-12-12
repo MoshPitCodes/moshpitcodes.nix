@@ -3,8 +3,6 @@
   programs.oh-my-posh = {
     enable = true;
     enableZshIntegration = true;
-    useTheme = "rose-pine";
+    settings = builtins.fromTOML (builtins.readFile ./rose-pine.omp.toml);
   };
-
-  xdg.configFile."oh-my-posh/themes/rose-pine.omp.json".source = ./rose-pine.omp.json;
 }

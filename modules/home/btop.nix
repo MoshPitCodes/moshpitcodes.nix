@@ -4,7 +4,7 @@
     enable = true;
 
     settings = {
-      color_theme = "TTY";
+      color_theme = "rose-pine";
       theme_background = false;
       update_ms = 500;
       rounded_corners = false;

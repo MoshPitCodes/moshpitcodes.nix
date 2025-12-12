@@ -1,0 +1,89 @@
+#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+
+version = 2
+final_space = true
+console_title_template = '{{ .Shell }} in {{ .Folder }}'
+
+[[blocks]]
+  type = 'prompt'
+  alignment = 'left'
+
+  [[blocks.segments]]
+    foreground = "#ea9a97"
+    style = "plain"
+    template = "{{ .UserName }}@{{ .HostName }}"
+    type = "session"
+
+  [[blocks.segments]]
+    type = 'path'
+    style = 'plain'
+    background = 'transparent'
+    foreground = '#9ccfd8'
+    template = ' {{ .Path }} '
+
+    [blocks.segments.properties]
+      style = 'letter'
+
+  [[blocks.segments]]
+    type = 'git'
+    style = 'plain'
+    foreground = '#9ccfd8'
+    background = 'transparent'
+    foreground_templates = [
+      "{{ if or (.Working.Changed) (.Staging.Changed) }}#f6c177{{ end }}",
+      "{{ if gt .Ahead 0 }}#c4a7e7{{ end }}",
+      "{{ if gt .Behind 0 }}#eb6f92{{ end }}"
+    ]
+    template = '{{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}  {{ end }}{{ if gt .Behind 0 }}⇣{{ end }}{{ if gt .Ahead 0 }}⇡{{ end }}</>'
+
+    [blocks.segments.properties]
+      branch_icon = "\uE725 "
+      commit_icon = '@'
+      fetch_status = true
+
+[[blocks]]
+  type = 'rprompt'
+  overflow = 'hidden'
+
+  [[blocks.segments]]
+    type = 'executiontime'
+    style = 'plain'
+    foreground = '#f6c177'
+    background = 'transparent'
+    template = '{{ .FormattedMs }}'
+
+    [blocks.segments.properties]
+      threshold = 5000
+
+  [[blocks.segments]]
+    type = "sysinfo"
+    template = "  {{ round .PhysicalPercentUsed .Precision }}% "
+    style = "plain"
+
+[[blocks]]
+  type = 'prompt'
+  alignment = 'left'
+  newline = true
+
+  [[blocks.segments]]
+    type = 'text'
+    style = 'plain'
+    foreground_templates = [
+      "{{if gt .Code 0}}#eb6f92{{end}}",
+      "{{if eq .Code 0}}#ea9a97{{end}}",
+    ]
+    background = 'transparent'
+    template = '❯'
+
+[transient_prompt]
+  foreground_templates = [
+    "{{if gt .Code 0}}#eb6f92{{end}}",
+    "{{if eq .Code 0}}#ea9a97{{end}}",
+  ]
+  background = 'transparent'
+  template = '❯ '
+
+[secondary_prompt]
+  foreground = '#ea9a97'
+  background = 'transparent'
+  template = '❯❯ '

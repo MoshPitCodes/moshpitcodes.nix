@@ -90,7 +90,7 @@ let
     redhat.java
     redhat.vscode-yaml
     yzhang.markdown-all-in-one
-    jdinhlife.gruvbox
+    mvllow.rose-pine
   ];
 
   # Extension identifiers for recommendations (publisher.extension-id format)
@@ -125,7 +125,7 @@ let
     "redhat.java"
     "redhat.vscode-yaml"
     "yzhang.markdown-all-in-one"
-    "jdinhlife.gruvbox"
+    "mvllow.rose-pine"
   ];
 in
 {

@@ -217,7 +217,7 @@ in
 
         workbench = {
           activityBar.location = "default";
-          colorTheme = "Gruvbox Dark Hard";
+          colorTheme = "Rosé Pine";
           editor = {
             limit = {
               enabled = true;
