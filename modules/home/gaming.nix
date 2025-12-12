@@ -8,7 +8,7 @@
     # gamemode
     # gamescope
     # winetricks
-    # inputs.nix-gaming.packages.${pkgs.system}.wine-ge
+    # inputs.nix-gaming.packages.${pkgs.stdenv.hostPlatform.system}.wine-ge
 
     ## Minecraft
     # prismlauncher

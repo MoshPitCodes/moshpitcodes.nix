@@ -19,7 +19,7 @@
         nixd # nix lsp
         nixfmt-rfc-style # nix formatter
         nix-prefetch-github # fetch GitHub repositories
-        inputs.alejandra.defaultPackage.${pkgs.system} # alejandra formatter
+        inputs.alejandra.defaultPackage.${pkgs.stdenv.hostPlatform.system} # alejandra formatter
 
         # API Testing
         bruno # API testing tool
