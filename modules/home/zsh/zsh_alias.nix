@@ -24,7 +24,7 @@
       y = "yazi";
       py = "python";
       ipy = "ipython";
-      icat = "kitten icat";
+      icat = "viu"; # Terminal image viewer (replaced kitten icat)
       dsize = "du -hs";
       pdf = "tdf";
       open = "xdg-open";
