@@ -11,20 +11,23 @@
       hyprpaper
     ];
 
+  # Waypaper configuration for wallpaper selection GUI
+  # Note: Uses post_command to call wall-change script which communicates
+  # directly with hyprpaper socket, bypassing broken hyprctl hyprpaper commands
   xdg.configFile."waypaper/config.ini".text = ''
     [Settings]
     language = en
     folder = ${config.home.homeDirectory}/Pictures/wallpapers/
     monitors = All
     wallpaper = ${config.home.homeDirectory}/Pictures/wallpapers/mix/titlwinzbst81.jpg
-    backend = hyprpaper 
+    backend = hyprpaper
     fill = fill
     sort = name
     color = #ffffff
     subfolders = False
     show_hidden = False
     show_gifs_only = False
-    post_command =
+    post_command = wall-change
     number_of_columns = 3
     # swww_transition_type = wipe
     # swww_transition_step = 90
