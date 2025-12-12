@@ -9,6 +9,7 @@ _:
         "systemctl --user import-environment WAYLAND_DISPLAY XDG_CURRENT_DESKTOP"
 
         "nm-applet &"
+        "easyeffects --gapplication-service &"
         "poweralertd &"
         "wl-clip-persist --clipboard both &"
         "wl-paste --watch cliphist store &"
@@ -16,6 +17,7 @@ _:
         "swaync &"
         "hyprctl setcursor Bibata-Modern-Ice 24 &"
         "swww-daemon"
+        "sleep 1 && swww img ~/Pictures/wallpapers/mix/titlwinzbst81.jpg --transition-type wipe --transition-duration 1"
 
         "hyprlock"
       ];
