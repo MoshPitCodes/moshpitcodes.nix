@@ -501,6 +501,38 @@
       set -g @plugin 'tmux-plugins/yank'
       set -g @continuum-restore 'on'
 
+      # -- Rose Pine theme configuration ---------------------------------------------
+
+      # Rose Pine variant: 'main', 'moon', or 'dawn'
+      set -g @rose_pine_variant 'main'
+
+      # Status bar modules
+      set -g @rose_pine_host 'on'
+      set -g @rose_pine_user 'on'
+      set -g @rose_pine_directory 'on'
+
+      # Date and time display
+      set -g @rose_pine_date_time '%H:%M | %d %b'
+
+      # Additional status bar information
+      set -g @rose_pine_show_current_program 'on'
+      set -g @rose_pine_show_pane_directory 'on'
+
+      # Status bar separators for clean look
+      set -g @rose_pine_left_separator ' > '
+      set -g @rose_pine_right_separator ' < '
+      set -g @rose_pine_field_separator ' | '
+      set -g @rose_pine_window_separator ' - '
+
+      # Disable default window status behavior
+      set -g @rose_pine_disable_active_window_menu 'on'
+
+      # Status bar position
+      set -g @rose_pine_status_left_prepend_section ''
+      set -g @rose_pine_status_left_append_section ''
+      set -g @rose_pine_status_right_prepend_section ''
+      set -g @rose_pine_status_right_append_section ''
+
       # -- custom variables ----------------------------------------------------------
 
       # to define a custom #{foo} variable, define a POSIX shell function between the
