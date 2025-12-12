@@ -528,10 +528,10 @@
       set -g @rose_pine_disable_active_window_menu 'on'
 
       # Status bar position
-      set -g @rose_pine_status_left_prepend_section ''
-      set -g @rose_pine_status_left_append_section ''
-      set -g @rose_pine_status_right_prepend_section ''
-      set -g @rose_pine_status_right_append_section ''
+      set -g @rose_pine_status_left_prepend_section '''
+      set -g @rose_pine_status_left_append_section '''
+      set -g @rose_pine_status_right_prepend_section '''
+      set -g @rose_pine_status_right_append_section '''
 
       # -- custom variables ----------------------------------------------------------
 
