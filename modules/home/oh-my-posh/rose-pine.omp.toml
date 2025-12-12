@@ -4,43 +4,61 @@ version = 2
 final_space = true
 console_title_template = '{{ .Shell }} in {{ .Folder }}'
 
+# Line 1: Box opening with path and git status
 [[blocks]]
   type = 'prompt'
   alignment = 'left'
 
   [[blocks.segments]]
-    foreground = "#ea9a97"
-    style = "plain"
-    template = "{{ .UserName }}@{{ .HostName }}"
-    type = "session"
+    type = 'text'
+    style = 'plain'
+    foreground = '#6e6a86'
+    template = '┌──'
 
   [[blocks.segments]]
     type = 'path'
-    style = 'plain'
-    background = 'transparent'
-    foreground = '#9ccfd8'
-    template = ' {{ .Path }} '
+    style = 'powerline'
+    powerline_symbol = ''
+    foreground = '#191724'
+    background = '#9ccfd8'
+    template = '  {{ .Path }} '
 
     [blocks.segments.properties]
-      style = 'letter'
+      style = 'full'
 
   [[blocks.segments]]
     type = 'git'
-    style = 'plain'
-    foreground = '#9ccfd8'
-    background = 'transparent'
+    style = 'powerline'
+    powerline_symbol = ''
+    foreground = '#191724'
+    background = '#c4a7e7'
     foreground_templates = [
+      "{{ if or (.Working.Changed) (.Staging.Changed) }}#191724{{ end }}"
+    ]
+    background_templates = [
       "{{ if or (.Working.Changed) (.Staging.Changed) }}#f6c177{{ end }}",
-      "{{ if gt .Ahead 0 }}#c4a7e7{{ end }}",
+      "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#eb6f92{{ end }}",
+      "{{ if gt .Ahead 0 }}#ebbcba{{ end }}",
       "{{ if gt .Behind 0 }}#eb6f92{{ end }}"
     ]
-    template = '{{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}  {{ end }}{{ if gt .Behind 0 }}⇣{{ end }}{{ if gt .Ahead 0 }}⇡{{ end }}</>'
+    template = '  {{ .HEAD }}{{ if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }} '
 
     [blocks.segments.properties]
-      branch_icon = "\uE725 "
+      branch_icon = ' '
       commit_icon = '@'
       fetch_status = true
+      fetch_upstream_icon = true
 
+  [[blocks.segments]]
+    type = 'text'
+    style = 'plain'
+    foreground = '#c4a7e7'
+    foreground_templates = [
+      "{{ if or (.Working.Changed) (.Staging.Changed) }}#f6c177{{ end }}"
+    ]
+    template = ''
+
+# Line 1: Right side with execution time
 [[blocks]]
   type = 'rprompt'
   overflow = 'hidden'
@@ -50,16 +68,12 @@ console_title_template = '{{ .Shell }} in {{ .Folder }}'
     style = 'plain'
     foreground = '#f6c177'
     background = 'transparent'
-    template = '{{ .FormattedMs }}'
+    template = ' {{ .FormattedMs }}'
 
     [blocks.segments.properties]
-      threshold = 5000
+      threshold = 500
 
-  [[blocks.segments]]
-    type = "sysinfo"
-    template = "  {{ round .PhysicalPercentUsed .Precision }}% "
-    style = "plain"
-
+# Line 2: Box closing with prompt character
 [[blocks]]
   type = 'prompt'
   alignment = 'left'
@@ -68,9 +82,15 @@ console_title_template = '{{ .Shell }} in {{ .Folder }}'
   [[blocks.segments]]
     type = 'text'
     style = 'plain'
+    foreground = '#6e6a86'
+    template = '└─'
+
+  [[blocks.segments]]
+    type = 'text'
+    style = 'plain'
     foreground_templates = [
       "{{if gt .Code 0}}#eb6f92{{end}}",
-      "{{if eq .Code 0}}#ea9a97{{end}}",
+      "{{if eq .Code 0}}#9ccfd8{{end}}"
     ]
     background = 'transparent'
     template = '❯'
@@ -78,12 +98,12 @@ console_title_template = '{{ .Shell }} in {{ .Folder }}'
 [transient_prompt]
   foreground_templates = [
     "{{if gt .Code 0}}#eb6f92{{end}}",
-    "{{if eq .Code 0}}#ea9a97{{end}}",
+    "{{if eq .Code 0}}#9ccfd8{{end}}"
   ]
   background = 'transparent'
   template = '❯ '
 
 [secondary_prompt]
-  foreground = '#ea9a97'
+  foreground = '#9ccfd8'
   background = 'transparent'
   template = '❯❯ '
