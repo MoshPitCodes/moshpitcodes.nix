@@ -22,6 +22,7 @@
     ./scripts/scripts.nix # personal scripts
     ./starship.nix # shell prompt
     ./tmux # terminal multiplexer
+    ./vivid.nix # Rose Pine LS_COLORS for directory listings
     ./yazi.nix # terminal file manager
     ./zsh # shell
 
