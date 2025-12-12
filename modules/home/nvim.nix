@@ -96,7 +96,7 @@
       statusline = {
         lualine = {
           enable = true;
-          theme = "rose-pine";
+          theme = "auto";
         };
       };
 

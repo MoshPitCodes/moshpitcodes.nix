@@ -29,7 +29,7 @@
     ./nemo.nix
     ./nvim.nix
     ./obsidian.nix
-    ./p10k/p10k.nix
+    ./oh-my-posh/oh-my-posh.nix
     ./packages.nix
     # ./retroarch.nix # Optional: disable in VM
     ./rofi.nix
