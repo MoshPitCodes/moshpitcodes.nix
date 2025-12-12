@@ -24,7 +24,6 @@ in
       # ffmpeg # video / audio processing
       ffmpeg-full
       ffsend # file sharing
-      file # Show file information
       # gtt # google translate TUI
       # gifsicle # gif utility
       gtrash # rm replacement, put deleted files in system trash
@@ -39,7 +38,6 @@ in
       ncdu # disk space
       nitch # systhem fetch util
       openssl # ssl utility
-      openssh # ssh client
       onefetch # fetch utility for git repo
       pamixer # pulseaudio command line mixer
       playerctl # controller for media players
@@ -48,25 +46,19 @@ in
       streamlink # extract and play streaming content
       swappy # snapshot editing tool
       tdf # cli pdf viewer
-      tree # tree viewer
       treefmt # project formatter
       tldr # tldr pages
-      tmux # terminal multiplexer
       todo # cli todo list
       toipe # typing test in the terminal
       ttyper # cli typing test
-      unzip # zip utility
       valgrind # c memory analyzer
       watchman
       wavemon # monitoring for wireless network devices
       wl-clipboard # clipboard utils for wayland (wl-copy, wl-paste)
-      wget # download utility
       woomer # wallpaper manager
       # yt-dlp-light # youtube-dl fork
       xdg-utils # xdg utils
       xxd # hex viewer
-      zip # zip utility
-
 
       ## Media support packages
       libva # Video acceleration
@@ -110,15 +102,8 @@ in
       wineWowPackages.wayland # wine
       zenity # GUI dialogs
 
-      # C / C++
-      gcc # C compiler
-      gdb # C debugger
-      gnumake # C build tool
-
       # Password Managers
       _1password-gui # 1password
       # bitwarden # bitwarden
-
-      inputs.alejandra.defaultPackage.${pkgs.system}
     ];
 }
