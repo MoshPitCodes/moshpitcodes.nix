@@ -6,7 +6,7 @@
       "segments": [
         {
           "background": "#eb6f92",
-          "foreground": "#e0def4",
+          "foreground": "#191724",
           "leading_diamond": "\ue0b6",
           "properties": {
             "windows": "\ue62a"
@@ -17,7 +17,7 @@
         },
         {
           "background": "#eb6f92",
-          "foreground": "#e0def4",
+          "foreground": "#191724",
           "powerline_symbol": "\ue0b0",
           "properties": {
             "style": "full"
