@@ -7,8 +7,9 @@
   home.packages =
     with pkgs;
     [
-      # inputs.zen-browser.packages."${pkgs.stdenv.hostPlatform.system}".default
-      # inputs.zen-browser.packages."${pkgs.stdenv.hostPlatform.system}".twilight-official  # Temporarily disabled - hash mismatch
+      # Use stable versioned release instead of rolling twilight release
+      inputs.zen-browser.packages."${pkgs.stdenv.hostPlatform.system}".default
+      # inputs.zen-browser.packages."${pkgs.stdenv.hostPlatform.system}".twilight-official
       # firefox
       # pkgs.librewolf
 

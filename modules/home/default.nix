@@ -27,7 +27,6 @@
     ./obsidian.nix
     ./oh-my-posh/oh-my-posh.nix
     ./packages.nix # other packages
-    ./retroarch.nix
     ./rofi.nix # launcher
     ./scripts/scripts.nix # personal scripts
     ./spicetify.nix # spotify client

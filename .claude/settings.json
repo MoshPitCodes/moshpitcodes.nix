@@ -12,7 +12,8 @@
 			"Bash(git log:*)",
 			"Bash(git checkout:*)",
 			"Bash(git branch:*)",
-			"Bash(git rev-parse --git-dir)"
+			"Bash(git rev-parse --git-dir)",
+			"Bash(gh pr:*)"
 		],
 		"deny": [
 			"Read(./.env)",

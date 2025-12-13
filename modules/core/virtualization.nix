@@ -29,8 +29,6 @@
       enable = true;
       qemu = {
         swtpm.enable = true;
-        # ovmf.enable = true; # Removed: All OVMF images are now available by default
-        # ovmf.packages = [ pkgs.OVMFFull.fd ]; # Removed: No longer needed
       };
     };
     docker.enable = true;
