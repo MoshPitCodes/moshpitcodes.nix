@@ -1,0 +1,144 @@
+#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
+
+# Rose Pine Modern Theme
+# Two-line prompt with left and right segments
+# Based on the bubblesline theme with Rose Pine colors
+
+version = 3
+final_space = true
+
+# Left-aligned primary prompt block
+[[blocks]]
+  type = "prompt"
+  alignment = "left"
+
+  # OS segment
+  [[blocks.segments]]
+    type = "os"
+    style = "diamond"
+    leading_diamond = "\ue0b6"
+    background = "#eb6f92"  # Rose Pine love (red/pink)
+    foreground = "#e0def4"  # Rose Pine text
+    template = "{{ if .WSL }}WSL at {{ end }}{{ .Icon }}"
+
+    [blocks.segments.properties]
+      windows = "\ue62a"
+
+  # Path segment
+  [[blocks.segments]]
+    type = "path"
+    style = "powerline"
+    powerline_symbol = "\ue0b0"
+    background = "#eb6f92"  # Rose Pine love (red/pink)
+    foreground = "#e0def4"  # Rose Pine text
+    template = " {{ .Path }} "
+
+    [blocks.segments.properties]
+      style = "full"
+
+  # Node.js segment
+  [[blocks.segments]]
+    type = "node"
+    style = "powerline"
+    powerline_symbol = "\ue0b0"
+    background = "#ebbcba"  # Rose Pine rose (light pink)
+    foreground = "#e0def4"  # Rose Pine text
+    template = " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
+
+  # Python segment
+  [[blocks.segments]]
+    type = "python"
+    style = "powerline"
+    powerline_symbol = "\ue0b0"
+    background = "#ebbcba"  # Rose Pine rose (light pink)
+    foreground = "#e0def4"  # Rose Pine text
+    template = " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} "
+
+    [blocks.segments.properties]
+      fetch_version = false
+
+  # Git segment
+  [[blocks.segments]]
+    type = "git"
+    style = "powerline"
+    powerline_symbol = "\ue0b0"
+    background = "#9ccfd8"  # Rose Pine foam (cyan) - default
+    background_templates = [
+      "{{ if or (.Working.Changed) (.Staging.Changed) }}#f6c177{{ end }}",  # Rose Pine gold - changes
+      "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#c4a7e7{{ end }}",  # Rose Pine iris - diverged
+      "{{ if gt .Ahead 0 }}#31748f{{ end }}",  # Rose Pine pine - ahead
+      "{{ if gt .Behind 0 }}#eb6f92{{ end }}"  # Rose Pine love - behind
+    ]
+    foreground = "#e0def4"  # Rose Pine text
+    template = " {{ .UpstreamIcon }}{{ .HEAD }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }} "
+
+    [blocks.segments.properties]
+      fetch_status = true
+      fetch_upstream_icon = true
+
+# Right-aligned prompt block
+[[blocks]]
+  type = "prompt"
+  alignment = "right"
+
+  # Execution time segment
+  [[blocks.segments]]
+    type = "executiontime"
+    style = "powerline"
+    powerline_symbol = "\ue0b2"
+    invert_powerline = true
+    background = "#908caa"  # Rose Pine subtle
+    foreground = "#e0def4"  # Rose Pine text
+    template = " {{ .FormattedMs }} "
+
+    [blocks.segments.properties]
+      always_enabled = true
+
+  # Root indicator segment
+  [[blocks.segments]]
+    type = "root"
+    style = "powerline"
+    powerline_symbol = "\ue0b2"
+    invert_powerline = true
+    background = "#31748f"  # Rose Pine pine
+    foreground = "#f6c177"  # Rose Pine gold (warning color)
+    template = " \u26a1"
+
+  # User session segment
+  [[blocks.segments]]
+    type = "session"
+    style = "powerline"
+    powerline_symbol = "\ue0b2"
+    invert_powerline = true
+    background = "#31748f"  # Rose Pine pine
+    foreground = "#e0def4"  # Rose Pine text
+    template = " {{ .UserName }} "
+
+  # Shell segment
+  [[blocks.segments]]
+    type = "shell"
+    style = "diamond"
+    trailing_diamond = "\ue0b4"
+    invert_powerline = true
+    background = "#26233a"  # Rose Pine overlay
+    foreground = "#e0def4"  # Rose Pine text
+    template = " {{ .Name }} "
+
+# New line prompt
+[[blocks]]
+  type = "prompt"
+  alignment = "left"
+  newline = true
+
+  # Root indicator (only shown when root)
+  [[blocks.segments]]
+    type = "root"
+    style = "plain"
+    template = " \uf0e7 "
+
+  # Prompt character
+  [[blocks.segments]]
+    type = "text"
+    style = "plain"
+    foreground = "#9ccfd8"  # Rose Pine foam (cyan)
+    template = "\u276f"
