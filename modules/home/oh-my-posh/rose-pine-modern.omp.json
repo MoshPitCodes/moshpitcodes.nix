@@ -1,0 +1,135 @@
+{
+  "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+  "version": 3,
+  "final_space": true,
+  "blocks": [
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "segments": [
+        {
+          "type": "os",
+          "style": "diamond",
+          "leading_diamond": "\ue0b6",
+          "background": "#eb6f92",
+          "foreground": "#e0def4",
+          "template": "{{ if .WSL }}WSL at {{ end }}{{ .Icon }}",
+          "properties": {
+            "windows": "\ue62a"
+          }
+        },
+        {
+          "type": "path",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "background": "#eb6f92",
+          "foreground": "#e0def4",
+          "template": " {{ .Path }} ",
+          "properties": {
+            "style": "full"
+          }
+        },
+        {
+          "type": "node",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "background": "#ebbcba",
+          "foreground": "#e0def4",
+          "template": " \ue718 {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }} "
+        },
+        {
+          "type": "python",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "background": "#ebbcba",
+          "foreground": "#e0def4",
+          "template": " \ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }} ",
+          "properties": {
+            "fetch_version": false
+          }
+        },
+        {
+          "type": "git",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b0",
+          "background": "#9ccfd8",
+          "background_templates": [
+            "{{ if or (.Working.Changed) (.Staging.Changed) }}#f6c177{{ end }}",
+            "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#c4a7e7{{ end }}",
+            "{{ if gt .Ahead 0 }}#31748f{{ end }}",
+            "{{ if gt .Behind 0 }}#eb6f92{{ end }}"
+          ],
+          "foreground": "#e0def4",
+          "template": " {{ .UpstreamIcon }}{{ .HEAD }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }} ",
+          "properties": {
+            "fetch_status": true,
+            "fetch_upstream_icon": true
+          }
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "right",
+      "segments": [
+        {
+          "type": "executiontime",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b2",
+          "invert_powerline": true,
+          "background": "#908caa",
+          "foreground": "#e0def4",
+          "template": " {{ .FormattedMs }} ",
+          "properties": {
+            "always_enabled": true
+          }
+        },
+        {
+          "type": "root",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b2",
+          "invert_powerline": true,
+          "background": "#31748f",
+          "foreground": "#f6c177",
+          "template": " \u26a1"
+        },
+        {
+          "type": "session",
+          "style": "powerline",
+          "powerline_symbol": "\ue0b2",
+          "invert_powerline": true,
+          "background": "#31748f",
+          "foreground": "#e0def4",
+          "template": " {{ .UserName }} "
+        },
+        {
+          "type": "shell",
+          "style": "diamond",
+          "trailing_diamond": "\ue0b4",
+          "invert_powerline": true,
+          "background": "#26233a",
+          "foreground": "#e0def4",
+          "template": " {{ .Name }} "
+        }
+      ]
+    },
+    {
+      "type": "prompt",
+      "alignment": "left",
+      "newline": true,
+      "segments": [
+        {
+          "type": "root",
+          "style": "plain",
+          "template": " \uf0e7 "
+        },
+        {
+          "type": "text",
+          "style": "plain",
+          "foreground": "#9ccfd8",
+          "template": "\u276f"
+        }
+      ]
+    }
+  ]
+}
