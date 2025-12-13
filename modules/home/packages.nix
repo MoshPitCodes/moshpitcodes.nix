@@ -1,12 +1,14 @@
 { inputs, pkgs, ... }:
 let
   _2048 = pkgs.callPackage ../../pkgs/2048/default.nix { };
+  reposync = pkgs.callPackage ../../pkgs/reposync/default.nix { };
 in
 {
   home.packages =
     with pkgs;
     [
       _2048 # 2048 game
+      reposync # repository synchronization TUI
 
       ## CLI utility
       # ani-cli # cli tool for anime
