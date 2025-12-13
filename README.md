@@ -920,8 +920,10 @@ You can view all keybinds by pressing ```$mainMod F1``` and the wallpaper picker
 ## 🖼️ Gallery
 
 <p align="center">
-   <img src="./.github/assets/screenshots/system-usage.png" style="margin-bottom: 15px;"/> <br>
-   Screenshots last updated <b>2025-03-25</b>
+   <img src="./.github/assets/screenshots/Screenshot_2025_12_13_at_15h46m13s.png" style="margin-bottom: 15px;"/> <br>
+   <img src="./.github/assets/screenshots/Screenshot_2025_12_13_at_15h46m38s.png" style="margin-bottom: 15px;"/> <br>
+   <img src="./.github/assets/screenshots/Screenshot_2025_12_13_at_15h46m53s.png" style="margin-bottom: 15px;"/> <br>
+   Screenshots last updated <b>2025-12-13</b>
 </p>
 
 <br/>
