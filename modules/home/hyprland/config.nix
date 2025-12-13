@@ -136,7 +136,7 @@ _:
 
         # keybindings
         "$mainMod, Return, exec, ghostty"
-        "ALT, Return, exec, [float; size 1280 720] ghostty"
+        "ALT, Return, exec, [float; size 1431 805] ghostty"
         "$mainMod SHIFT, Return, exec, [fullscreen] ghostty"
         "$mainMod, B, exec, hyprctl dispatch exec '[workspace 4 silent] zen'"
         "$mainMod, Q, killactive,"
