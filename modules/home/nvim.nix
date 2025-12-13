@@ -7,22 +7,6 @@
     -- Add any custom Lua configuration here
   '';
 
-  programs.neovim = {
-    enable = false;
-    # vimAlias = true;
-    # extraLuaPackages = ps: [ ps.jsregexp ];
-    # extraPackages = with pkgs; [
-    #   tree-sitter
-    #   cargo
-    #   rustc
-    # ];
-    # plugins = with pkgs.vimPlugins; [
-    #   nvim-treesitter.withAllGrammars
-    #   # or specific grammars:
-    #   # (nvim-treesitter.withPlugins (p: [ p.typescript p.javascript ]))
-    # ];
-  };
-
   programs.nvf = {
     enable = true;
     

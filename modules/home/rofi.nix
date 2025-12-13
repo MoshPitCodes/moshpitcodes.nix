@@ -21,7 +21,7 @@
       modi: "run,drun,window";
       lines: 5;
       cycle: false;
-      font: "Maple Mono NF Bold 16";
+      font: "Maple Mono NF Bold 14";
       show-icons: true;
       icon-theme: "Papirus-dark";
       terminal: "ghostty";
@@ -49,6 +49,7 @@
       width: 400px;
       border: 2px;
       border-color: @border-col;
+      border-radius: 5px;
       background-color: @bg-col;
     }
 

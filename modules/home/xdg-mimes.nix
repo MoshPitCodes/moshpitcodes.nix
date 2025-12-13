@@ -12,7 +12,7 @@ let
     pdf = [ "org.gnome.Evince.desktop" ];
     terminal = [ "ghostty.desktop" ];
     archive = [ "org.gnome.FileRoller.desktop" ];
-    discord = [ "discord.desktop" ];  # Changed from webcord.desktop to discord.desktop
+    discord = [ "discord.desktop" ];
   };
 
   mimeMap = {

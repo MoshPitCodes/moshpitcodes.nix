@@ -53,6 +53,9 @@
     (bat-extras.batgrep.overrideAttrs (_oldAttrs: {
       doCheck = false;
     }))
+    # Nix utilities for monitoring builds and generation diffs
+    nix-output-monitor
+    nvd
   ];
 
   time.timeZone = "Europe/Berlin";

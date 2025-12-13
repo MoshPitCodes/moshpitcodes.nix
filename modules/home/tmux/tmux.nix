@@ -146,25 +146,6 @@
       tmux_conf_theme_colour_16="#eb6f92"   # love
       tmux_conf_theme_colour_17="#e0def4"   # text
 
-      # default theme (ansi)
-      #tmux_conf_theme_colour_1="colour0"
-      #tmux_conf_theme_colour_2="colour8"
-      #tmux_conf_theme_colour_3="colour8"
-      #tmux_conf_theme_colour_4="colour14"
-      #tmux_conf_theme_colour_5="colour11"
-      #tmux_conf_theme_colour_6="colour0"
-      #tmux_conf_theme_colour_7="colour15"
-      #tmux_conf_theme_colour_8="colour0"
-      #tmux_conf_theme_colour_9="colour11"
-      #tmux_conf_theme_colour_10="colour13"
-      #tmux_conf_theme_colour_11="colour10"
-      #tmux_conf_theme_colour_12="colour8"
-      #tmux_conf_theme_colour_13="colour15"
-      #tmux_conf_theme_colour_14="colour0"
-      #tmux_conf_theme_colour_15="colour0"
-      #tmux_conf_theme_colour_16="colour1"
-      #tmux_conf_theme_colour_17="colour15"
-
       # window style
       tmux_conf_theme_window_fg="default"
       tmux_conf_theme_window_bg="default"
@@ -239,8 +220,6 @@
       tmux_conf_theme_window_status_bg="$tmux_conf_theme_colour_1"
       tmux_conf_theme_window_status_attr="none"
       tmux_conf_theme_window_status_format="#I #W#{?#{||:#{window_bell_flag},#{window_zoomed_flag}}, ,}#{?window_bell_flag,!,}#{?window_zoomed_flag,Z,}"
-      #tmux_conf_theme_window_status_format="#{circled_window_index} #W#{?#{||:#{window_bell_flag},#{window_zoomed_flag}}, ,}#{?window_bell_flag,!,}#{?window_zoomed_flag,Z,}"
-      #tmux_conf_theme_window_status_format="#I #W#{?#{||:#{window_bell_flag},#{window_zoomed_flag}}, ,}#{?window_bell_flag,🔔,}#{?window_zoomed_flag,🔍,}"
 
       # window current status style
       #   - built-in variables are:
@@ -256,8 +235,6 @@
       tmux_conf_theme_window_status_current_bg="$tmux_conf_theme_colour_4"
       tmux_conf_theme_window_status_current_attr="bold"
       tmux_conf_theme_window_status_current_format="#I #W#{?#{||:#{window_bell_flag},#{window_zoomed_flag}}, ,}#{?window_bell_flag,!,}#{?window_zoomed_flag,Z,}"
-      #tmux_conf_theme_window_status_current_format="#{circled_window_index} #W#{?#{||:#{window_bell_flag},#{window_zoomed_flag}}, ,}#{?window_bell_flag,!,}#{?window_zoomed_flag,Z,}"
-      #tmux_conf_theme_window_status_current_format="#I #W#{?#{||:#{window_bell_flag},#{window_zoomed_flag}}, ,}#{?window_bell_flag,🔔,}#{?window_zoomed_flag,🔍,}"
 
       # window activity status style
       tmux_conf_theme_window_status_activity_fg="default"
@@ -279,10 +256,6 @@
       tmux_conf_theme_left_separator_sub="|"
       tmux_conf_theme_right_separator_main=""
       tmux_conf_theme_right_separator_sub="|"
-      #tmux_conf_theme_left_separator_main='\uE0B0'  # /!\ you don't need to install Powerline
-      #tmux_conf_theme_left_separator_sub='\uE0B1'   #   you only need fonts patched with
-      #tmux_conf_theme_right_separator_main='\uE0B2' #   Powerline symbols or the standalone
-      #tmux_conf_theme_right_separator_sub='\uE0B3'  #   PowerlineSymbols.otf font, see README.md
 
       # status left/right content:
       #   - separate main sections with "|"
@@ -358,8 +331,6 @@
       # battery bar symbols
       tmux_conf_battery_bar_symbol_full="◼"
       tmux_conf_battery_bar_symbol_empty="◻"
-      #tmux_conf_battery_bar_symbol_full="♥"
-      #tmux_conf_battery_bar_symbol_empty="·"
 
       # battery bar length (in number of symbols), possible values are:
       #   - auto
@@ -372,8 +343,6 @@
       #   - "colour_full_fg,colour_empty_fg,colour_bg"
       #   - gradient(colour_fg_1,colour_fg_2,...,colour_fg_n)
       tmux_conf_battery_bar_palette="gradient"
-      #tmux_conf_battery_bar_palette="#d70000,#e4e4e4,#000000"   # red, white, black
-      #tmux_conf_battery_bar_palette="gradient(#00afff,#47a2ff,#7c91ff,#ac7afb,#d65be2,#e163df,#eb6cdd,#f475db,#ec9ff1,#eac3fe,#efe2ff,#ffffff)"
 
       # battery hbar palette, possible values are:
       #   - gradient (default)
@@ -381,8 +350,6 @@
       #   - "colour_low,colour_half,colour_full"
       #   - gradient(colour_fg_1,colour_fg_2,...,colour_fg_n)
       tmux_conf_battery_hbar_palette="gradient"
-      #tmux_conf_battery_hbar_palette="#d70000,#ff5f00,#5fff00"  # red, orange, green
-      #tmux_conf_battery_hbar_palette="gradient(#00afff,#47a2ff,#7c91ff,#ac7afb,#d65be2,#e163df,#eb6cdd,#f475db,#ec9ff1,#eac3fe,#efe2ff,#ffffff)"
 
       # battery vbar palette, possible values are:
       #   - gradient (default)
@@ -390,14 +357,10 @@
       #   - "colour_low,colour_half,colour_full"
       #   - gradient(colour_fg_1,colour_fg_2,...,colour_fg_n)
       tmux_conf_battery_vbar_palette="gradient"
-      #tmux_conf_battery_vbar_palette="#d70000,#ff5f00,#5fff00"  # red, orange, green
-      #tmux_conf_battery_vbar_palette="gradient(#00afff,#47a2ff,#7c91ff,#ac7afb,#d65be2,#e163df,#eb6cdd,#f475db,#ec9ff1,#eac3fe,#efe2ff,#ffffff)"
 
       # symbols used to indicate whether battery is charging or discharging
       tmux_conf_battery_status_charging="↑"       # U+2191
       tmux_conf_battery_status_discharging="↓"    # U+2193
-      #tmux_conf_battery_status_charging="🔌"     # U+1F50C
-      #tmux_conf_battery_status_discharging="🔋"  # U+1F50B
 
       # clock style (when you hit <prefix> + t)
       # you may want to use %I:%M %p in place of %R in tmux_conf_theme_status_right
@@ -492,7 +455,55 @@
       set -g @plugin 'tmux-plugins/copycat'
       set -g @plugin 'tmux-plugins/continuum'
       set -g @plugin 'tmux-plugins/fzf-tmux-url'
+
+      # -- Rose Pine theme configuration ---------------------------------------------
+      # IMPORTANT: Settings must come BEFORE the plugin declaration!
+      # Official documentation: https://github.com/rose-pine/tmux
+
+      # Rose Pine variant: 'main', 'moon', or 'dawn'
+      set -g @rose_pine_variant 'main'
+
+      # Status bar modules (set to 'on' to enable)
+      set -g @rose_pine_host 'on'
+      set -g @rose_pine_user 'on'
+      set -g @rose_pine_directory 'on'
+      set -g @rose_pine_show_current_program 'on'
+      set -g @rose_pine_show_pane_directory 'on'
+
+      # Date/time format (Unix date format)
+      set -g @rose_pine_date_time '%H:%M %d-%b-%y'
+
+      # Background transparency
+      set -g @rose_pine_bar_bg_disable 'on'
+      set -g @rose_pine_bar_bg_disabled_color_option 'default'
+
+      # Window display behavior
+      set -g @rose_pine_default_window_behavior 'on'
+
+      # Separators - using clean spacing for modern look
+      set -g @rose_pine_left_separator ' > '
+      set -g @rose_pine_right_separator ' < '
+      set -g @rose_pine_field_separator ' | '
+      set -g @rose_pine_window_separator ' - '
+      set -g @rose_pine_window_status_separator '  '
+
+      # Icons - Nerd Fonts required for proper display
+      # Using double quotes to prevent Nix parsing issues with special characters
+      set -g @rose_pine_session_icon "󰞷"
+      set -g @rose_pine_current_window_icon ""
+      set -g @rose_pine_folder_icon ""
+      set -g @rose_pine_username_icon ""
+      set -g @rose_pine_hostname_icon "󰒋"
+      set -g @rose_pine_date_time_icon "󰃰"
+
+      # Responsive behavior - hide right side based on terminal width
+      set -g @rose_pine_prioritize_windows 'on'
+      set -g @rose_pine_width_to_hide '80'
+      set -g @rose_pine_window_count '5'
+
+      # NOW load the Rose Pine plugin (after settings are defined)
       set -g @plugin 'rose-pine/tmux'
+
       set -g @plugin 'tmux-plugins/logging'
       set -g @plugin 'tmux-plugins/open'
       set -g @plugin 'tmux-plugins/pain-control'
@@ -500,38 +511,6 @@
 
       set -g @plugin 'tmux-plugins/yank'
       set -g @continuum-restore 'on'
-
-      # -- Rose Pine theme configuration ---------------------------------------------
-
-      # Rose Pine variant: 'main', 'moon', or 'dawn'
-      set -g @rose_pine_variant 'main'
-
-      # Status bar modules
-      set -g @rose_pine_host 'on'
-      set -g @rose_pine_user 'on'
-      set -g @rose_pine_directory 'on'
-
-      # Date and time display
-      set -g @rose_pine_date_time '%H:%M | %d %b'
-
-      # Additional status bar information
-      set -g @rose_pine_show_current_program 'on'
-      set -g @rose_pine_show_pane_directory 'on'
-
-      # Status bar separators for clean look
-      set -g @rose_pine_left_separator ' > '
-      set -g @rose_pine_right_separator ' < '
-      set -g @rose_pine_field_separator ' | '
-      set -g @rose_pine_window_separator ' - '
-
-      # Disable default window status behavior
-      set -g @rose_pine_disable_active_window_menu 'on'
-
-      # Status bar position
-      set -g @rose_pine_status_left_prepend_section '''
-      set -g @rose_pine_status_left_append_section '''
-      set -g @rose_pine_status_right_prepend_section '''
-      set -g @rose_pine_status_right_append_section '''
 
       # -- custom variables ----------------------------------------------------------
 
