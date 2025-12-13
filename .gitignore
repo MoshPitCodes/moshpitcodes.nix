@@ -54,7 +54,6 @@ proto/v1/*.pb.go
 .env
 .env.local
 secrets.nix
-docs/
 .claude/*
 !.claude/settings.json
 # CLAUDE.md
