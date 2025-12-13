@@ -61,7 +61,6 @@
 
   # Keep these enabled as they work fine in WSL:
   # - networking
-  # - nix helper (nh)
   # - security settings
   # - basic services
   # - system settings

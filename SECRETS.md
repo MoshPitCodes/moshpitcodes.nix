@@ -83,7 +83,6 @@ cp secrets.nix.example secrets.nix
 - `flake.nix:39` - Username now uses `NIXOS_USERNAME` environment variable
 - `modules/home/git.nix:6-7` - Git credentials use `GIT_USERNAME` and `GIT_EMAIL`
 - `modules/core/network.nix:11-19` - WiFi credentials use `WIFI_SSID` and `WIFI_PASSWORD`
-- `modules/core/nh.nix:9-12` - Repository path uses `NIXOS_REPO_NAME` environment variable
 - `modules/home/zsh/zsh_alias.nix:35-38` - cdnix alias uses `NIXOS_REPO_NAME` environment variable
 
 ## Helper Functions
