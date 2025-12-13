@@ -40,11 +40,11 @@
       ns = "nom-shell --run zsh";
       nd = "nom develop --command zsh";
       nb = "nom build";
-      nix-switch = "nh os switch";
-      nix-update = "nh os switch --update";
-      nix-clean = "nh clean all --keep 5";
-      nix-search = "nh search";
-      nix-test = "nh os test";
+      nix-switch = "sudo nixos-rebuild switch --flake .";
+      nix-test = "sudo nixos-rebuild test --flake .";
+      nix-update = "nix flake update";
+      nix-clean = "sudo nix-collect-garbage -d";
+      nix-search = "nix search nixpkgs";
 
       # python
       piv = "python -m venv .venv";

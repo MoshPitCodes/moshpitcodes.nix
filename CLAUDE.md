@@ -1,12 +1,8 @@
 ## Relevant Files and Folders
 - CLAUDE.md
-- documentation/
-- docs/ai-agent-rulesets
-- docs/ai-agent-rulesets/specific-requests
-- docs/ai-agent-rulesets/thinking
-- docs/ai-agent-rulesets/general-principles.md
-- docs/ai-agent-rulesets/guidelines-devops-infrastructure.md
-- docs/skills-main
+- .claude/agents/ - Specialized AI agents
+- .claude/commands/ - Custom slash commands
+- .claude/skills/ - Claude Code skills
 
 ## General
 - Always follow the project's coding standards and style guide

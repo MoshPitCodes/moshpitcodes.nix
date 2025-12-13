@@ -40,8 +40,8 @@ _:
       general = {
         "$mainMod" = "SUPER";
         layout = "dwindle";
-        gaps_in = 6;
-        gaps_out = 12;
+        gaps_in = 4;
+        gaps_out = 8;
         "col.active_border" = "rgb(c4a7e7) rgb(eb6f92) 45deg";
         "col.inactive_border" = "0x00000000";
         border_size = 2;

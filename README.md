@@ -112,7 +112,7 @@ And now, let the fun begin!
 | **System Resource Monitor** | [Btop][Btop]                                                                        |
 | **File Manager**            | [nemo][nemo] + [yazi][yazi]                                                         |
 | **Fonts**                   | [Maple Mono][Maple Mono]                                                            |
-| **Color Scheme**            | [Gruvbox Dark Hard][Gruvbox]                                                        |
+| **Color Scheme**            | [Rose Pine][Rose Pine]                                                              |
 | **GTK Theme**               | [Colloid GTK Theme][Colloid GTK Theme]                                              |
 | **Mouse Cursor Theme**      | [Bibata-Modern-Ice][Bibata-Modern-Ice]                                              |
 | **Icon Theme**              | [Papirus-Dark][Papirus-Dark]                                                        |
@@ -604,11 +604,13 @@ NixOS (EXPAND)
 
 - ```cdnix```      $\rightarrow$ ```cd ~/moshpitcodes.nix && codium ~/moshpitcodes.nix```
 - ```ns```         $\rightarrow$ ```nom-shell --run zsh```
-- ```nix-test```   $\rightarrow$ ```nh os test```
-- ```nix-switch``` $\rightarrow$ ```nh os switch```
-- ```nix-update``` $\rightarrow$ ```nh os switch --update```
-- ```nix-clean```  $\rightarrow$ ```nh clean all --keep 5```
-- ```nix-search``` $\rightarrow$ ```nh search```
+- ```nd```         $\rightarrow$ ```nom develop --command zsh```
+- ```nb```         $\rightarrow$ ```nom build```
+- ```nix-switch``` $\rightarrow$ ```sudo nixos-rebuild switch --flake .```
+- ```nix-test```   $\rightarrow$ ```sudo nixos-rebuild test --flake .```
+- ```nix-update``` $\rightarrow$ ```nix flake update```
+- ```nix-clean```  $\rightarrow$ ```sudo nix-collect-garbage -d```
+- ```nix-search``` $\rightarrow$ ```nix search nixpkgs```
 </details>
 
 <details>
@@ -992,7 +994,7 @@ Other dotfiles that have inspired me greatly:
 [Neovim]: https://github.com/neovim/neovim
 [CursorAI]: https://www.cursor.com/
 [grimblast]: https://github.com/hyprwm/contrib
-[Gruvbox]: https://github.com/morhetz/gruvbox
+[Rose Pine]: https://rosepinetheme.com/
 [Hyprland]: https://github.com/hyprwm/Hyprland
 [Hyprlock]: https://github.com/hyprwm/hyprlock
 [Hyprpaper]: https://github.com/hyprwm/hyprpaper
@@ -1005,7 +1007,6 @@ Other dotfiles that have inspired me greatly:
 [wl-clip-persist]: https://github.com/Linus789/wl-clip-persist
 [wf-recorder]: https://github.com/ammen99/wf-recorder
 [hyprpicker]: https://github.com/hyprwm/hyprpicker
-[Gruvbox]: https://github.com/morhetz/gruvbox
 [Papirus-Dark]: https://github.com/PapirusDevelopmentTeam/papirus-icon-theme
 [Bibata-Modern-Ice]: https://www.gnome-look.org/p/1197198
 [maxfetch]: https://github.com/jobcmax/maxfetch
