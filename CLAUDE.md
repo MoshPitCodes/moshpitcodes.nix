@@ -1,10 +1,13 @@
 ## Relevant Files and Folders
-- CLAUDE.md
-- .claude/agents/ - Specialized AI agents
-- .claude/commands/ - Custom slash commands
-- .claude/skills/ - Claude Code skills
+
+- `CLAUDE.md` - This file (AI assistant configuration)
+- `.claude/agents/` - Specialized AI agents
+- `.claude/commands/` - Custom slash commands
+- `.claude/skills/` - Claude Code skills
+- `docs/` - Project documentation
 
 ## General
+
 - Always follow the project's coding standards and style guide
 - Always write clear and concise documentation for your code
 - Always write unit tests for new features and bug fixes
@@ -12,61 +15,53 @@
 - Always handle errors and exceptions gracefully
 
 ## Git Workflow
+
 Git operations (branching, commits, PRs, releases) are managed by the `git-flow-manager` agent.
 See `.claude/agents/claude-git-flow-manager.md` for Git Flow conventions and commit message formats.
 
-## Rulesets (AI Agent Guidelines)
+## Available Slash Commands
 
-  | File                                           | Purpose                                              |
-  | ---------------------------------------------- | ---------------------------------------------------- |
-  | general-principles.md                          | Core development principles                          |
-  | guidelines-devops-infrastructure.md            | DevOps/Infrastructure (K8s, Docker, Terraform, etc.) |
-  | guidelines-golang-backend-api.md               | Go backend API development                           |
-  | guidelines-java-kotlin-maven-gradle-backend.md | Java/Kotlin Spring backend                           |
-  | guidelines-nixos.md                            | NixOS/Nix Flakes                                     |
-  | guidelines-react-typescript.md                 | React + TypeScript frontend                          |
-  | specific-requests/systematic-diagnosis.md      | Issue diagnosis workflow                             |
-  | specific-requests/systematic-implementation.md | Feature implementation workflow                      |
-  | thinking/structured-contemplation.md           | Problem-solving framework                            |
-  | thinking/structured-reflection.md              | Learning/self-awareness framework                    |
+| Command | Description |
+|---------|-------------|
+| /claude-create-architecture-docs | Generate architecture docs with diagrams |
+| /claude-refactor-code | Code refactoring guidance |
+| /claude-ultrathink | Deep analysis and problem solving |
+| /structured-contemplation | Expert guide for contemplation/problem-solving |
+| /structured-reflection | Expert guide for reflection techniques |
+| /systematic-diagnosis | Issue diagnosis and root cause analysis |
+| /systematic-implementation | Validation-driven feature implementation |
 
-  Available Slash Commands
+## Available Specialized Agents
 
-  | Command                          | Description                                    |
-  | -------------------------------- | ---------------------------------------------- |
-  | /structured-reflection           | Expert guide for reflection techniques         |
-  | /structured-contemplation        | Expert guide for contemplation/problem-solving |
-  | /claude-create-architecture-docs | Generate architecture docs with diagrams       |
-  | /systematic-diagnosis            | Issue diagnosis and root cause analysis        |
-  | /systematic-implementation       | Validation-driven feature implementation       |
+| Agent | Use Case |
+|-------|----------|
+| claude-code-architecture-review | Review code for best practices |
+| claude-expert-agent-creation | Creating specialized agents |
+| claude-expert-code-review | Code review for quality |
+| claude-expert-command-creation | Creating slash commands |
+| claude-expert-error-detective | Log analysis and debugging |
+| claude-expert-mcp-server | MCP server integration |
+| claude-expert-prompt-engineering | LLM prompt optimization |
+| claude-git-flow-manager | Git Flow workflows |
+| claude-markdown-formatter | Markdown formatting |
+| claude-mlops-engineer | ML pipelines and MLOps |
+| claude-security-engineer | Security/compliance specialist |
+| mpc-devops-infrastructure | DevOps, K8s, Terraform, CI/CD |
+| mpc-golang-backend-api | Go backend APIs |
+| mpc-golang-tui-bubbletea | Go TUI with Bubbletea |
+| mpc-java-kotlin-maven-gradle-backend | Java/Kotlin Spring backend |
+| mpc-nextjs-fullstack | Next.js 14+ App Router full-stack |
+| mpc-nixos | NixOS, Nix Flakes, Home Manager |
+| mpc-react-typescript | React + TypeScript frontend |
+| mpc-sveltekit-frontend | Svelte 5 + SvelteKit frontend |
+| mpc-sveltekit-fullstack | SvelteKit full-stack apps |
 
-  Available Specialized Agents
+## Available Skills
 
-  | Agent                                       | Use Case                          |
-  | ------------------------------------------- | --------------------------------- |
-  | guidelines-nextjs-fullstack                 | Next.js 14+ App Router full-stack |
-  | guidelines-java-kotlin-maven-gradle-backend | Java/Kotlin Spring backend        |
-  | guidelines-golang-backend-api               | Go backend APIs                   |
-  | guidelines-devops-infrastructure            | DevOps, K8s, Terraform, CI/CD     |
-  | guidelines-react-typescript                 | React + TypeScript frontend       |
-  | guidelines-nixos                            | NixOS, Nix Flakes, Home Manager   |
-  | guidelines-sveltekit-frontend               | Svelte 5 + SvelteKit frontend     |
-  | guidelines-sveltekit-fullstack              | SvelteKit full-stack apps         |
-  | code-architecture-review                    | Review code for best practices    |
-  | security-engineer                           | Security/compliance specialist    |
-  | mlops-engineer                              | ML pipelines and MLOps            |
-  | prompt-engineer                             | LLM prompt optimization           |
-  | mcp-expert                                  | MCP server integration            |
-  | error-detective                             | Log analysis and debugging        |
-  | code-reviewer                               | Code review for quality           |
-  | agent-expert                                | Creating specialized agents       |
-  | git-flow-manager                            | Git Flow workflows                |
-
-  Available Skills
-
-  | Skill             | Purpose                                     |
-  | ----------------- | ------------------------------------------- |
-  | artifacts-builder | Build complex React/Tailwind HTML artifacts |
-  | mcp-builder       | Create MCP servers                          |
-  | skill-creator     | Create new skills                           |
-  | theme-factory     | Style artifacts with themes (10 presets)    |
+| Skill | Purpose |
+|-------|---------|
+| artifacts-builder | Build complex React/Tailwind HTML artifacts |
+| document-skills | Document manipulation (docx, pdf, pptx, xlsx) |
+| mcp-builder | Create MCP servers |
+| skill-creator | Create new skills |
+| theme-factory | Style artifacts with themes (10 presets) |
