@@ -39,6 +39,7 @@
         yq # yaml processor
         ripgrep # fast text search tool
         shfmt # bash formatter
+        pre-commit # Framework for managing pre-commit hooks
 
         # Configuration Management
         # salt
@@ -83,7 +84,6 @@
         # jetbrains.rider-community-bin # Rider Community Edition
         # jetbrains.rubymine-community-bin # RubyMine Community Edition
         # jetbrains.webstorm-community-bin # WebStorm Community Edition
-        # code-cursor # VSCode cursor navigation tool
 
         # Infrastructure as Code
         ansible # Configuration management
@@ -92,10 +92,6 @@
         # opentofu-ls # OpenTofu Language Server
         # pulumi # Infrastructure as Code
         # pulumictl # pulumi cli
-        # terraform-provider-tfe
-        # terraform-provider-vault
-        # terraform-provider-vsphere
-        # terraform-provider-yaml # yaml support for Terraform
         # terraform-validator # validate Terraform configurations
         # terraform-workspace # manage Terraform workspaces
         # tfenv # terraform version manager
@@ -131,11 +127,11 @@
         # k3d # k3s in docker
         # k3s # lightweight k8s
         k9s # k8s terminal UI
-        # kubectl is provided by k3s package (included in development.nix)
+        kubectl # is also provided by k3s package
         talosctl # Talos Linux CLI
         kubectx # switch between k8s contexts
-        # kubernetes # k8s
-        # kubernetes-helm # Helm package manager for Kubernetes
+        kubernetes # k8s
+        kubernetes-helm # Helm package manager for Kubernetes
         rancher # k8s management
 
         # NodejS
