@@ -169,9 +169,8 @@
         zle -N zle-line-init
         zle -N zle-line-finish
       fi
-    '';
 
-    initExtra = ''
+      # Initialize zoxide
       eval "$(zoxide init zsh)"
     '';
   };

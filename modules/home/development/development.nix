@@ -96,7 +96,7 @@
         # terraform-workspace # manage Terraform workspaces
         # tfenv # terraform version manager
         # tfnotify # notify on terraform plan
-        # tfsec # terraform security scanner
+        tfsec # terraform security scanner
         # tfswitch # terraform version manager
         # tfupdate # update terraform modules
         # tfwatch # watch terraform plan
