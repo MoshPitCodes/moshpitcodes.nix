@@ -170,10 +170,14 @@
         zle -N zle-line-finish
       fi
     '';
+
+    initExtra = ''
+      eval "$(zoxide init zsh)"
+    '';
   };
 
   programs.zoxide = {
     enable = true;
-    enableZshIntegration = true;
+    enableZshIntegration = false;
   };
 }
