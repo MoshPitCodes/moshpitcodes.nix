@@ -122,7 +122,6 @@
         # kustomize # k8s
         # minikube # local k8s cluster
         # velero # backup and restore for k8s
-        helm # Helm package manager for Kubernetes
         cilium-cli # Cilium CNI and service mesh CLI
         # k3d # k3s in docker
         # k3s # lightweight k8s
