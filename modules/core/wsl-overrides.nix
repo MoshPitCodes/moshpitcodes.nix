@@ -1,8 +1,15 @@
-{ lib, ... }:
+{ lib, config, ... }:
 
 {
   # WSL manages its own DNS resolution
   networking.nameservers = lib.mkForce [ ];
+
+  # Make absolutely sure Wi-Fi is off in WSL
+  networking.wireless.enable = lib.mkForce false;
+
+  # (Optional but recommended)
+  # Prevent wpa_supplicant from ever existing
+  systemd.services.wpa_supplicant.enable = lib.mkForce false;
 
   boot = {
     # Enable DrvFs and 9p filesystem support for WSL drive mounting
