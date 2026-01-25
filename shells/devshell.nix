@@ -10,7 +10,7 @@ pkgs.mkShell {
 
     # Nix Tools
     nixd # Nix LSP
-    nixfmt-rfc-style # Nix formatter
+    nixfmt # Nix formatter
     nix-prefetch-github # Fetch GitHub repositories
     deadnix # Find dead Nix code
     statix # Lint Nix files
@@ -64,7 +64,7 @@ pkgs.mkShell {
     echo ""
     echo "🛠️  Available Tools:"
     echo "   • Version Control: git, gh"
-    echo "   • Nix Tools: nixd, nixfmt-rfc-style, deadnix, statix"
+    echo "   • Nix Tools: nixd, nixfmt, deadnix, statix"
     echo "   • Text Processing: jq, yq, ripgrep"
     echo "   • Build Tools: make, cmake, pkg-config"
     echo "   • Shell Tools: bash, zsh, shfmt"
@@ -72,7 +72,7 @@ pkgs.mkShell {
     echo "📝 Common Commands:"
     echo "   nix flake check              # Validate flake configuration"
     echo "   nix flake update             # Update flake inputs"
-    echo "   nixfmt-rfc-style **/*.nix    # Format Nix files"
+    echo "   nixfmt **/*.nix    # Format Nix files"
     echo "   deadnix .                    # Find dead Nix code"
     echo "   statix check .               # Lint Nix files"
     echo "   scripts/rebuild.sh [host]    # Rebuild system configuration"
@@ -80,13 +80,13 @@ pkgs.mkShell {
     echo "🎯 Quick Actions:"
     echo "   • Build WSL tarball: nix build .#wsl-distro"
     echo "   • Test configuration: nix eval .#nixosConfigurations.wsl.config.system.build.toplevel.drvPath"
-    echo "   • Format all files: find . -name '*.nix' -exec nixfmt-rfc-style {} +"
+    echo "   • Format all files: find . -name '*.nix' -exec nixfmt {} +"
     echo ""
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo ""
 
     # Set up helpful aliases
-    alias nix-fmt="find . -name '*.nix' -exec nixfmt-rfc-style {} +"
+    alias nix-fmt="find . -name '*.nix' -exec nixfmt {} +"
     alias nix-check="nix flake check --show-trace"
     alias nix-update="nix flake update"
     alias rebuild="scripts/rebuild.sh"

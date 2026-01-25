@@ -17,7 +17,7 @@
 
         # Nix
         nixd # nix lsp
-        nixfmt-rfc-style # nix formatter
+        nixfmt # nix formatter
         nix-prefetch-github # fetch GitHub repositories
         inputs.alejandra.defaultPackage.${pkgs.stdenv.hostPlatform.system} # alejandra formatter
 
@@ -26,7 +26,7 @@
 
         # CLI Agents
         claude-code # Anthropic's Claude Code CLI
-        gemini-cli # Google Gemini CLI
+        # gemini-cli # Google Gemini CLI
         opencode # OpenCode CLI for AI-assisted development
 
         # Cloud CLIs
@@ -107,7 +107,7 @@
 
         # Java
         # corretto21 # Amazon Corretto 21 (OpenJDK 21)
-        gradle # Gradle build tool for Java
+        gradle_9 # Gradle build tool for Java
         maven # Maven build tool for Java
         openjdk25
 
@@ -197,11 +197,26 @@
       };
 
       # OpenCode configuration file
-      # API key is set via ANTHROPIC_API_KEY environment variable
-      # Model format: provider/model (e.g., anthropic/claude-opus-4-5-20251101)
+      # API key is set via OPENAI_API_KEY environment variable
+      # Model format: provider/model (e.g., gpt-oss:20b-cloud)
       ".config/opencode/config.json".text = builtins.toJSON {
         "$schema" = "https://opencode.ai/config.json";
-        model = "anthropic/claude-opus-4-5-20251101";
+        model = "gpt-oss:20b-cloud";
+        "theme" = "rosepine";
+        "autoupdate" = false;
+
+        # MCP Servers
+        mcp = {
+          discord = {
+            type = "local";
+            command = [
+              "bash"
+              "-c"
+              "cd ~/.opencode/mcp-servers/discord_mcp && nix develop --command python discord_mcp.py"
+            ];
+            enabled = true;
+          };
+        };
       };
     };
 

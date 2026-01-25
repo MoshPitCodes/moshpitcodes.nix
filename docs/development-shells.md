@@ -9,7 +9,7 @@ This repository includes specialized development environments using Nix shells. 
 General-purpose development environment for NixOS configuration management.
 
 **Features:**
-- Complete Nix toolchain (nixd, nixfmt-rfc-style, deadnix, statix)
+- Complete Nix toolchain (nixd, nixfmt, deadnix, statix)
 - Version control (git, gh)
 - Text processing utilities (jq, yq, ripgrep)
 - Build tools (make, cmake, pkg-config)
@@ -49,7 +49,7 @@ nix develop .#devshell
 ```bash
 nix flake check              # Validate flake configuration
 nix flake update             # Update flake inputs
-nixfmt-rfc-style **/*.nix    # Format Nix files
+nixfmt **/*.nix    # Format Nix files
 deadnix .                    # Find dead Nix code
 statix check .               # Lint Nix files
 scripts/rebuild.sh [host]    # Rebuild system configuration

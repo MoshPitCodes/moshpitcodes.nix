@@ -198,7 +198,7 @@
         default = pkgs.mkShell {
           buildInputs = with pkgs; [
             treefmt
-            nixfmt-rfc-style
+            nixfmt
             shfmt
             deadnix
             statix
@@ -208,7 +208,7 @@
             echo "Available commands:"
             echo "  treefmt        - Format all files"
             echo "  treefmt --fail-on-change - Check if files are formatted"
-            echo "  nixfmt-rfc-style - Format Nix files"
+            echo "  nixfmt - Format Nix files"
             echo "  shfmt          - Format shell scripts"
             echo "  deadnix        - Find dead Nix code"
             echo "  statix         - Lint Nix files"

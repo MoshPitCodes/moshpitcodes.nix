@@ -9,10 +9,10 @@
 
   programs.nvf = {
     enable = true;
-    
+
     settings.vim.extraPackages = with pkgs; [
       nixd # Nix language server
-      nixfmt-rfc-style # Nix formatter
+      nixfmt # Nix formatter
     ];
 
     settings.vim = {

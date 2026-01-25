@@ -380,7 +380,7 @@ in
 
         # Nix
         nix = {
-          formatterPath = "${pkgs.nixfmt-rfc-style}/bin/nixfmt-rfc-style";
+          formatterPath = "${pkgs.nixfmt}/bin/nixfmt";
           enableLanguageServer = true;
           enableNixShellIntegration = {
             enable = true;
@@ -391,7 +391,7 @@ in
           serverSettings = {
             nixd = {
               formatting = {
-                command = [ "nixfmt-rfc-style" ];
+                command = [ "nixfmt" ];
               };
               options = {
                 nixos = {
