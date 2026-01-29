@@ -14,7 +14,7 @@ buildGoModule rec {
     owner = "moshpitcodes";
     repo = "reposync";
     rev = "main";
-    hash = "sha256-KOQSpFHvog/0q53z0hXuspUI4SR/Evg+fCzQjMrJS9Q=";
+    hash = "sha256-M/WQFkXb6e2k3k8rNgNThV6BT//neH2iS/cJn+hV7iw=";
   };
 
   vendorHash = "sha256-OMmNgun7bbutlfs3g5zXfykDQUIA8TAfaVhYfprtK2w=";

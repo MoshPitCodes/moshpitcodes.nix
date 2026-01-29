@@ -19,6 +19,7 @@
     ./micro.nix # nano replacement
     ./nvim.nix # neovim editor
     ./oh-my-posh/oh-my-posh.nix # zsh prompt theme
+    ./packages.nix # additional packages (includes reposync)
     ./scripts/scripts.nix # personal scripts
     ./starship.nix # shell prompt
     ./tmux # terminal multiplexer
@@ -35,46 +36,44 @@
   ];
 
   # WSL-specific packages that don't require their own module
-  home.packages =
-    with inputs.nixpkgs.legacyPackages.x86_64-linux;
-    [
-      # CLI improvements
-      eza # Modern replacement for ls (required by ll alias)
+  home.packages = with inputs.nixpkgs.legacyPackages.x86_64-linux; [
+    # CLI improvements
+    eza # Modern replacement for ls (required by ll alias)
 
-      # Common WSL utilities
-      wget
-      curl
-      htop
-      iftop
-      iotop
-      tree
-      unzip
-      zip
-      file
-      which
+    # Common WSL utilities
+    wget
+    curl
+    htop
+    iftop
+    iotop
+    tree
+    unzip
+    zip
+    file
+    which
 
-      # Network tools
-      netcat
-      nmap
-      tcpdump
-      traceroute
-      bind # includes dig, nslookup
+    # Network tools
+    netcat
+    nmap
+    tcpdump
+    traceroute
+    bind # includes dig, nslookup
 
-      # Text processing
-      gnused
-      gawk
-      gnugrep
+    # Text processing
+    gnused
+    gawk
+    gnugrep
 
-      # Container tools (useful in WSL)
-      podman
-      podman-compose
-      docker-compose
+    # Container tools (useful in WSL)
+    podman
+    podman-compose
+    docker-compose
 
-      # Monitoring and observability
-      # prometheus conflicts with go-migrate (both have 'migrate' binary)
-      # grafana is typically run as a service, not needed in CLI
+    # Monitoring and observability
+    # prometheus conflicts with go-migrate (both have 'migrate' binary)
+    # grafana is typically run as a service, not needed in CLI
 
-      # Additional cloud tools
-      awscli2
-    ];
+    # Additional cloud tools
+    awscli2
+  ];
 }
