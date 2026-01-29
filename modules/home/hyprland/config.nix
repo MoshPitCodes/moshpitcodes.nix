@@ -37,8 +37,9 @@ _:
         };
       };
 
+      "$mainMod" = "SUPER";
+
       general = {
-        "$mainMod" = "SUPER";
         layout = "dwindle";
         gaps_in = 4;
         gaps_out = 8;
@@ -287,8 +288,8 @@ _:
         "$mainMod, mouse:273, resizewindow"
       ];
 
-      # windowrulev2 - new syntax for Hyprland v0.48+
-      windowrulev2 = [
+      # windowrule - window rules for Hyprland
+      windowrule = [
         "float,class:^(Viewnior)$"
         "float,class:^(imv)$"
         "float,class:^(mpv)$"
@@ -304,14 +305,14 @@ _:
         "move 40 55%,title:^(Volume Control)$"
 
         "float,title:^(Picture-in-Picture)$"
-        "opacity 1.0 override 1.0 override,title:^(Picture-in-Picture)$"
+        "opacity 1.0 1.0,title:^(Picture-in-Picture)$"
         "pin,title:^(Picture-in-Picture)$"
-        "opacity 1.0 override 1.0 override,title:^(.*imv.*)$"
-        "opacity 1.0 override 1.0 override,title:^(.*mpv.*)$"
-        "opacity 1.0 override 1.0 override,class:^(Aseprite)$"
-        "opacity 1.0 override 1.0 override,class:^(Unity)$"
-        "opacity 1.0 override 1.0 override,class:^(zen)$"
-        "opacity 1.0 override 1.0 override,class:^(evince)$"
+        "opacity 1.0 1.0,title:^(.*imv.*)$"
+        "opacity 1.0 1.0,title:^(.*mpv.*)$"
+        "opacity 1.0 1.0,class:^(Aseprite)$"
+        "opacity 1.0 1.0,class:^(Unity)$"
+        "opacity 1.0 1.0,class:^(zen)$"
+        "opacity 1.0 1.0,class:^(evince)$"
         "workspace 1,class:^(zen)$"
         "workspace 3,class:^(evince)$"
         "workspace 4,class:^(Gimp-2.10)$"
@@ -345,7 +346,7 @@ _:
         "float,title:^(Confirm to replace files)$"
         "float,title:^(File Operation Progress)$"
 
-        "opacity 0.0 override,class:^(xwaylandvideobridge)$"
+        "opacity 0.0 0.0,class:^(xwaylandvideobridge)$"
         "noanim,class:^(xwaylandvideobridge)$"
         "noinitialfocus,class:^(xwaylandvideobridge)$"
         "maxsize 1 1,class:^(xwaylandvideobridge)$"
@@ -357,8 +358,8 @@ _:
         "noblur,class:^()$,title:^()$"
       ];
 
-      # windowrulev2
-      # windowrulev2 = [
+      # windowrule
+      # windowrule = [
       #   "workspace=1,monitor:eDP-1"
       #   "workspace=2,monitor:DP-5"
       #   "workspace=3,monitor:DP-6"
