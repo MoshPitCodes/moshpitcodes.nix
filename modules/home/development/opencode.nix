@@ -1,5 +1,9 @@
-{ pkgs, ... }:
-
+{ lib, pkgs, customsecrets, ... }:
+let
+  # Extract API keys from secrets with fallback to empty string
+  anthropicApiKey = customsecrets.apiKeys.anthropic or "";
+  openrouterApiKey = customsecrets.apiKeys.openrouter or "";
+in
 {
   home = {
     packages = with pkgs; [
@@ -11,8 +15,12 @@
       ".config/opencode/.gitkeep".text = "";
 
       # OpenCode configuration file
-      # API key is set via ANTHROPIC_API_KEY environment variable
-      # Model format: provider/model (e.g., anthropic/claude-sonnet-4-5-20250929)
+      # API keys are set via environment variables:
+      #   - ANTHROPIC_API_KEY for Anthropic models
+      #   - OPENROUTER_API_KEY for OpenRouter models
+      # Model format: provider/model
+      #   - Anthropic: anthropic/claude-sonnet-4-5-20250929
+      #   - OpenRouter: openrouter/anthropic/claude-sonnet-4-5-20250929
       ".config/opencode/config.json".text = builtins.toJSON {
         "$schema" = "https://opencode.ai/config.json";
         model = "anthropic/claude-sonnet-4-5-20250929";
@@ -33,6 +41,15 @@
         };
       };
     };
+
+    # Set environment variables for OpenCode
+    sessionVariables = lib.optionalAttrs (anthropicApiKey != "") {
+      # Set Anthropic API key if available from secrets
+      ANTHROPIC_API_KEY = anthropicApiKey;
+    } // lib.optionalAttrs (openrouterApiKey != "") {
+      # Set OpenRouter API key if available from secrets
+      OPENROUTER_API_KEY = openrouterApiKey;
+    };
   };
 
   # Shell aliases for OpenCode with Doppler integration
@@ -42,7 +59,9 @@
       echo "Setting up OpenCode with Doppler..."
       echo "Fetching API keys from Doppler..."
       export ANTHROPIC_API_KEY=$(doppler secrets get ANTHROPIC_API_KEY --plain)
-      echo "Claude API keys loaded from Doppler"
+      export OPENROUTER_API_KEY=$(doppler secrets get OPENROUTER_API_KEY --plain)
+      echo "✓ Anthropic API key loaded from Doppler"
+      echo "✓ OpenRouter API key loaded from Doppler"
     '';
 
     # Run opencode with Doppler directly
@@ -54,7 +73,9 @@
       echo "Setting up OpenCode with Doppler..."
       echo "Fetching API keys from Doppler..."
       export ANTHROPIC_API_KEY=$(doppler secrets get ANTHROPIC_API_KEY --plain)
-      echo "Claude API keys loaded from Doppler"
+      export OPENROUTER_API_KEY=$(doppler secrets get OPENROUTER_API_KEY --plain)
+      echo "✓ Anthropic API key loaded from Doppler"
+      echo "✓ OpenRouter API key loaded from Doppler"
     '';
 
     opencode-doppler = "doppler run -- opencode";

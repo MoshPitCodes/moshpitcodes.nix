@@ -1,7 +1,8 @@
 { lib, pkgs, customsecrets, ... }:
 let
-  # Extract API key from secrets with fallback to empty string
+  # Extract API keys from secrets with fallback to empty string
   anthropicApiKey = customsecrets.apiKeys.anthropic or "";
+  openrouterApiKey = customsecrets.apiKeys.openrouter or "";
 
   # Global settings.json content for ~/.claude/settings.json
   globalSettings = {
@@ -97,6 +98,9 @@ in
   } // lib.optionalAttrs (anthropicApiKey != "") {
     # Set Anthropic API key if available from secrets
     ANTHROPIC_API_KEY = anthropicApiKey;
+  } // lib.optionalAttrs (openrouterApiKey != "") {
+    # Set OpenRouter API key if available from secrets
+    OPENROUTER_API_KEY = openrouterApiKey;
   };
 
   # Create activation script to set up credentials if API key exists
@@ -144,7 +148,9 @@ in
     claude-code-load-secrets = ''
       echo "Loading Claude Code secrets from Doppler..."
       export ANTHROPIC_API_KEY=$(doppler secrets get ANTHROPIC_API_KEY --plain)
+      export OPENROUTER_API_KEY=$(doppler secrets get OPENROUTER_API_KEY --plain)
       echo "✓ Anthropic API key loaded from Doppler"
+      echo "✓ OpenRouter API key loaded from Doppler"
     '';
   };
 
