@@ -1,5 +1,9 @@
 { pkgs, host, customsecrets, lib, config, ... }:
 
+let
+  # Check if WSL module is loaded and enabled
+  isWsl = config ? wsl && config.wsl.enable;
+in
 {
   networking = {
     hostName = host;
@@ -7,10 +11,10 @@
     networkmanager.enable = true;
 
     # Explicitly disable Wi-Fi in WSL
-    wireless.enable = !config.wsl.enable;
+    wireless.enable = !isWsl;
 
     # Only define Wi-Fi networks on non-WSL systems
-    wireless.networks = lib.mkIf (!config.wsl.enable) (
+    wireless.networks = lib.mkIf (!isWsl) (
       if customsecrets.network.wifiSSID != "" then {
         "${customsecrets.network.wifiSSID}" = {
           psk = customsecrets.network.wifiPassword;

@@ -38,15 +38,6 @@ let
       };
     };
 
-    geminicodeassist = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
-      mktplcRef = {
-        name = "geminicodeassist";
-        publisher = "Google";
-        version = "2.38.0";
-        hash = "sha256-B9YgvSAjvVc0CMt4JPkj0BqJdDG2Ie+DXC7Mv4O/ia8=";
-      };
-    };
-
     vscode-mermaid-chart = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
       mktplcRef = {
         name = "vscode-mermaid-chart";
@@ -63,7 +54,6 @@ let
     # Custom built extensions
     customExtensions.makefile-tools
     customExtensions.claude-code
-    customExtensions.geminicodeassist
     customExtensions.vscode-mermaid-chart
     customExtensions.vscode-zig
     customExtensions.gruvbox-material-icon-theme

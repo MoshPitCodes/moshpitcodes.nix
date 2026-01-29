@@ -24,11 +24,6 @@
         # API Testing
         bruno # API testing tool
 
-        # CLI Agents
-        claude-code # Anthropic's Claude Code CLI
-        # gemini-cli # Google Gemini CLI
-        opencode # OpenCode CLI for AI-assisted development
-
         # Cloud CLIs
         # awscli
         # aws-vault
@@ -171,102 +166,5 @@
       ]
       # Conditionally include vscode for non-WSL hosts (managed by vscode.nix)
       ++ lib.optionals (host != "nixos-wsl") [ pkgs.vscode ];
-
-    # Create configuration directories for AI Coding Agents
-    file = {
-      ".config/opencode/.gitkeep".text = "";
-      ".config/claude-code/.gitkeep".text = "";
-
-      # Claude Code configuration for Claude Pro
-      ".config/claude-code/config.json".text = builtins.toJSON {
-        # Use Claude Pro subscription model
-        model = "claude-4-sonnet-20250514";
-        # Claude Pro doesn't require API key - uses web authentication
-        auth_method = "web";
-
-        # Optional settings
-        max_tokens = 8192;
-        temperature = 0.7;
-
-        # Enable features available with Claude Pro
-        features = {
-          code_execution = true;
-          file_uploads = true;
-          web_search = true;
-        };
-      };
-
-      # OpenCode configuration file
-      # API key is set via OPENAI_API_KEY environment variable
-      # Model format: provider/model (e.g., gpt-oss:20b-cloud)
-      ".config/opencode/config.json".text = builtins.toJSON {
-        "$schema" = "https://opencode.ai/config.json";
-        model = "gpt-oss:20b-cloud";
-        "theme" = "rosepine";
-        "autoupdate" = false;
-
-        # MCP Servers
-        mcp = {
-          discord = {
-            type = "local";
-            command = [
-              "bash"
-              "-c"
-              "cd ~/.opencode/mcp-servers/discord_mcp && nix develop --command python discord_mcp.py"
-            ];
-            enabled = true;
-          };
-        };
-      };
-    };
-
-    # Environment variables for API keys
-    # Option 1: Set them in your shell configuration
-    # WARNING: NOT RECOMMENDED if you are using a public repository
-    sessionVariables = {
-      # Uncomment and set your actual API keys here, or use a secrets manager
-      # ANTHROPIC_API_KEY = "your-claude-api-key";
-      # OPENAI_API_KEY = "your-openai-api-key";
-    };
-  };
-
-  # Option 2: If using zsh with Doppler
-  programs.zsh.shellAliases = {
-    # opencode configuration with Doppler
-    opencode-setup = ''
-      echo "Setting up OpenCode with Doppler..."
-      echo "Fetching API keys from Doppler..."
-      export ANTHROPIC_API_KEY=$(doppler secrets get ANTHROPIC_API_KEY --plain)
-      echo "Claude API keys loaded from Doppler"
-    '';
-
-    # Alternative: Run opencode with Doppler directly
-    opencode-doppler = "doppler run -- opencode";
-
-    # gemini-cli configuration with Doppler
-    gemini-setup = ''
-      echo "Setting up Gemini CLI with Doppler..."
-      export GEMINI_API_KEY=$(doppler secrets get GEMINI_API_KEY --plain)
-      echo "Gemini API key loaded from Doppler"
-    '';
-
-    # Alternative: Run gemini-cli with Doppler directly
-    gemini-doppler = "doppler run -- gemini";
-
-    # claude-code configuration with Claude Pro
-    claude-code-setup = ''
-      echo "Setting up Claude Code with Claude Pro..."
-      echo "Run 'claude-code auth' to authenticate with your Claude Pro account"
-    '';
-
-    # Option 3: Use a shell alias to set API keys from a secure source
-    # programs.bash.shellAliases = {
-    #   opencode-setup = ''
-    #     echo "Setting up OpenCode..."
-    #     echo "Please set your API keys:"
-    #     echo "export ANTHROPIC_API_KEY='your-key-here'"
-    #     echo "export OPENAI_API_KEY='your-key-here'"
-    #   '';
-    # };
   };
 }
