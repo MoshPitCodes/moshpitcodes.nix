@@ -49,6 +49,11 @@ let
   };
 in
 {
+  # Install Claude Code package
+  home.packages = with pkgs; [
+    claude-code # Anthropic's Claude Code CLI
+  ];
+
   # Create ~/.claude directory and configuration files
   home.file = {
     # Global settings.json
@@ -73,6 +78,9 @@ in
 
     # Create agents directory
     ".claude/agents/.gitkeep".text = "";
+
+    # Create config directory
+    ".config/claude-code/.gitkeep".text = "";
   };
 
   # Set environment variables for Claude Code
