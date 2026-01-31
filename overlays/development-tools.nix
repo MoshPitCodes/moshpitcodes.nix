@@ -71,6 +71,23 @@ _final: prev: {
     }
   );
 
+  # Gradle 9.3.1
+  # Pinned for stability across all hosts
+  # Source: https://github.com/gradle/gradle/releases/tag/v9.3.1
+  gradle_9 = prev.gradle_9.overrideAttrs (
+    finalAttrs: prevAttrs: {
+      version = "9.3.1";
+      src = prev.fetchurl {
+        url = "https://services.gradle.org/distributions/gradle-${finalAttrs.version}-bin.zip";
+        hash = "sha256-smbV/2uQ6tptw7IMsJDjcxMC5VOifF0+TfHw12vq/wY=";
+      };
+
+      meta = prevAttrs.meta // {
+        changelog = "https://github.com/gradle/gradle/releases/tag/v${finalAttrs.version}";
+      };
+    }
+  );
+
   # RepoSync - Repository synchronization TUI
   # Modern CLI tool for repository synchronization with interactive TUI
   # Source: https://github.com/moshpitcodes/reposync

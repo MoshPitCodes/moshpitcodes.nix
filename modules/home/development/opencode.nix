@@ -1,4 +1,9 @@
-{ lib, pkgs, customsecrets, ... }:
+{
+  lib,
+  pkgs,
+  customsecrets,
+  ...
+}:
 let
   # Extract API keys from secrets with fallback to empty string
   anthropicApiKey = customsecrets.apiKeys.anthropic or "";
@@ -34,7 +39,17 @@ in
             command = [
               "bash"
               "-c"
-              "cd ~/.opencode/mcp-servers/discord_mcp && nix develop --command python discord_mcp.py"
+              "cd ~/Development/mcp-discord && bun run src/index.ts"
+            ];
+            enabled = true;
+          };
+
+          linear = {
+            type = "local";
+            command = [
+              "bash"
+              "-c"
+              "cd ~/Development/mcp-linearapp && bun run src/index.ts"
             ];
             enabled = true;
           };
@@ -43,13 +58,15 @@ in
     };
 
     # Set environment variables for OpenCode
-    sessionVariables = lib.optionalAttrs (anthropicApiKey != "") {
-      # Set Anthropic API key if available from secrets
-      ANTHROPIC_API_KEY = anthropicApiKey;
-    } // lib.optionalAttrs (openrouterApiKey != "") {
-      # Set OpenRouter API key if available from secrets
-      OPENROUTER_API_KEY = openrouterApiKey;
-    };
+    sessionVariables =
+      lib.optionalAttrs (anthropicApiKey != "") {
+        # Set Anthropic API key if available from secrets
+        ANTHROPIC_API_KEY = anthropicApiKey;
+      }
+      // lib.optionalAttrs (openrouterApiKey != "") {
+        # Set OpenRouter API key if available from secrets
+        OPENROUTER_API_KEY = openrouterApiKey;
+      };
   };
 
   # Shell aliases for OpenCode with Doppler integration
