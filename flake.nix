@@ -39,6 +39,14 @@
       url = "github:SergioRibera/s4rchiso-plymouth-theme";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    mcp-discord = {
+      url = "github:MoshPitLabs/mcp-discord";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    mcp-linearapp = {
+      url = "github:MoshPitLabs/mcp-linearapp";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
