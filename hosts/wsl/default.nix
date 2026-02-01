@@ -1,4 +1,9 @@
-{ pkgs, inputs, username, ... }:
+{
+  pkgs,
+  inputs,
+  username,
+  ...
+}:
 
 {
   # NOTE: WSL dmesg will still show a warning about wsl-generator being world-writable.
@@ -25,8 +30,14 @@
     # FHS compatibility for WSL init
     # Fixes: execv(/bin/mount) failed with 2
     extraBin = [
-      { src = "${pkgs.util-linux}/bin/mount"; name = "mount"; }
-      { src = "${pkgs.util-linux}/bin/umount"; name = "umount"; }
+      {
+        src = "${pkgs.util-linux}/bin/mount";
+        name = "mount";
+      }
+      {
+        src = "${pkgs.util-linux}/bin/umount";
+        name = "umount";
+      }
     ];
 
     # Windows interoperability
@@ -87,6 +98,45 @@
   system.stateVersion = "25.05";
 
   # User setup is handled by modules/core/user.nix
+
+  # UGREEN NAS SMB/CIFS network mount
+  # IMPORTANT: Replace "personal_folder" with your actual share name if different
+  # To find available shares, run: nix-shell -p samba --run "smbclient -L //192.168.178.144 -U username"
+  # Common UGREEN NAS share names: "Public", "personal_folder", "media", etc.
+  fileSystems."/mnt/ugreen-nas" = {
+    device = "//192.168.178.144/personal_folder";
+    fsType = "cifs";
+    options = [
+      # Authentication
+      "credentials=/root/.secrets/samba-credentials"
+      "sec=ntlmssp" # Use NTLMv2 authentication
+
+      # User/Group mapping - adjust UID/GID to match your user
+      "uid=1000"
+      "gid=100"
+
+      # File and directory permissions
+      "file_mode=0755"
+      "dir_mode=0755"
+
+      # Network and reliability options
+      "x-systemd.automount" # Automount on access
+      "x-systemd.idle-timeout=300" # Unmount after 5 minutes of inactivity
+      "x-systemd.mount-timeout=30" # Timeout for mount attempts
+      "x-systemd.requires=network-online.target" # Wait for network
+      "noauto" # Don't mount at boot, use automount instead
+
+      # Performance and compatibility
+      "vers=3.0" # SMB protocol version (3.0, supports 2.0, 2.1, 3.0)
+      "cache=loose" # Better performance, less strict consistency
+      "rsize=130048" # Read buffer size (128KB)
+      "wsize=130048" # Write buffer size (128KB)
+
+      # Reliability options
+      "_netdev" # Network device, don't mount until network is up
+      "nofail" # Don't fail boot if mount fails
+    ];
+  };
 
   # WSL-specific environment variables
   environment.sessionVariables = {
@@ -149,20 +199,22 @@
         serviceConfig = {
           Type = "oneshot";
           RemainAfterExit = true;
-          ExecStart = let
-            mountScript = pkgs.writeShellScript "wsl-mount-drives" ''
-              # Wait for Plan 9 server to be ready
-              sleep 2
+          ExecStart =
+            let
+              mountScript = pkgs.writeShellScript "wsl-mount-drives" ''
+                # Wait for Plan 9 server to be ready
+                sleep 2
 
-              # Mount each Windows drive if not already mounted
-              for drive in C D E F G; do
-                mnt="/mnt/$(echo $drive | tr '[:upper:]' '[:lower:]')"
-                if [ -d "$mnt" ] && ! ${pkgs.util-linux}/bin/mountpoint -q "$mnt"; then
-                  ${pkgs.util-linux}/bin/mount -t drvfs "$drive:" "$mnt" -o metadata,uid=1000,gid=1000 2>/dev/null || true
-                fi
-              done
-            '';
-          in "${mountScript}";
+                # Mount each Windows drive if not already mounted
+                for drive in C D E F G; do
+                  mnt="/mnt/$(echo $drive | tr '[:upper:]' '[:lower:]')"
+                  if [ -d "$mnt" ] && ! ${pkgs.util-linux}/bin/mountpoint -q "$mnt"; then
+                    ${pkgs.util-linux}/bin/mount -t drvfs "$drive:" "$mnt" -o metadata,uid=1000,gid=1000 2>/dev/null || true
+                  fi
+                done
+              '';
+            in
+            "${mountScript}";
         };
       };
     };

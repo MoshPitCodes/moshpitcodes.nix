@@ -39,14 +39,6 @@
       url = "github:SergioRibera/s4rchiso-plymouth-theme";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    mcp-discord = {
-      url = "github:MoshPitLabs/mcp-discord";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    mcp-linearapp = {
-      url = "github:MoshPitLabs/mcp-linearapp";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs =
@@ -94,15 +86,26 @@
       };
 
       # Validate that secrets have all required keys (including nested structures)
-      validateSecrets = secrets:
+      validateSecrets =
+        secrets:
         let
-          requiredKeys = [ "username" "hashedPassword" "git" "network" ];
+          requiredKeys = [
+            "username"
+            "hashedPassword"
+            "git"
+            "network"
+          ];
           missingKeys = builtins.filter (k: !(builtins.hasAttr k secrets)) requiredKeys;
           # Validate nested git keys
-          requiredGitKeys = [ "userName" "userEmail" ];
-          missingGitKeys = if builtins.hasAttr "git" secrets
-            then builtins.filter (k: !(builtins.hasAttr k secrets.git)) requiredGitKeys
-            else requiredGitKeys;
+          requiredGitKeys = [
+            "userName"
+            "userEmail"
+          ];
+          missingGitKeys =
+            if builtins.hasAttr "git" secrets then
+              builtins.filter (k: !(builtins.hasAttr k secrets.git)) requiredGitKeys
+            else
+              requiredGitKeys;
         in
         if missingKeys != [ ] then
           throw "secrets.nix missing required keys: ${builtins.toString missingKeys}"
@@ -123,7 +126,7 @@
         let
           basePath = if flakeRoot != "" then flakeRoot else pwdPath;
         in
-          if basePath != "" then /. + basePath + "/secrets.nix" else null;
+        if basePath != "" then /. + basePath + "/secrets.nix" else null;
 
       customsecrets =
         if secretsPath != null && builtins.pathExists secretsPath then
@@ -147,7 +150,12 @@
           ];
           specialArgs = {
             host = "desktop";
-            inherit self inputs username customsecrets;
+            inherit
+              self
+              inputs
+              username
+              customsecrets
+              ;
           };
         };
         laptop = nixpkgs.lib.nixosSystem {
@@ -159,7 +167,12 @@
           ];
           specialArgs = {
             host = "laptop";
-            inherit self inputs username customsecrets;
+            inherit
+              self
+              inputs
+              username
+              customsecrets
+              ;
           };
         };
         vm = nixpkgs.lib.nixosSystem {
@@ -171,7 +184,12 @@
           ];
           specialArgs = {
             host = "vm";
-            inherit self inputs username customsecrets;
+            inherit
+              self
+              inputs
+              username
+              customsecrets
+              ;
           };
         };
         vmware-guest = nixpkgs.lib.nixosSystem {
@@ -183,7 +201,12 @@
           ];
           specialArgs = {
             host = "nixos-vmware";
-            inherit self inputs username customsecrets;
+            inherit
+              self
+              inputs
+              username
+              customsecrets
+              ;
           };
         };
         wsl = nixpkgs.lib.nixosSystem {
@@ -195,7 +218,12 @@
           ];
           specialArgs = {
             host = "nixos-wsl";
-            inherit self inputs username customsecrets;
+            inherit
+              self
+              inputs
+              username
+              customsecrets
+              ;
           };
         };
       };
