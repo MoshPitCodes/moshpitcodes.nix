@@ -1,4 +1,10 @@
-{ pkgs, lib, config, customsecrets, ... }:
+{
+  pkgs,
+  lib,
+  config,
+  customsecrets,
+  ...
+}:
 
 {
   # Enable CIFS/SMB filesystem support
@@ -6,7 +12,7 @@
 
   # Install required packages for CIFS/SMB mounting
   environment.systemPackages = with pkgs; [
-    cifs-utils  # Tools for mounting CIFS/SMB shares
+    cifs-utils # Tools for mounting CIFS/SMB shares
   ];
 
   # Open firewall ports for Samba/CIFS (optional, only if hosting)
@@ -36,21 +42,17 @@
   # This keeps credentials secure and out of the Nix store
   system.activationScripts.sambaCredentials = lib.mkIf (customsecrets ? samba) {
     text = ''
-      # Create credentials directory if it doesn't exist
-      mkdir -p /root/.secrets
-      chmod 700 /root/.secrets
+            # Create credentials directory if it doesn't exist
+            mkdir -p /root/.secrets
+            chmod 700 /root/.secrets
 
-      # Write credentials file securely
-      # For CIFS mounts, the credentials file format should have:
-      # - username without domain prefix
-      # - domain on separate line
-      # - password
-      cat > /root/.secrets/samba-credentials << EOF
-username=${builtins.elemAt (builtins.split "\\\\" (customsecrets.samba.username or "")) 2}
-domain=${builtins.elemAt (builtins.split "\\\\" (customsecrets.samba.username or "WORKGROUP")) 0}
-password=${customsecrets.samba.password or ""}
-EOF
-      chmod 600 /root/.secrets/samba-credentials
+            # Write credentials file securely
+            cat > /root/.secrets/samba-credentials << EOF
+      username=${customsecrets.samba.username or ""}
+      password=${customsecrets.samba.password or ""}
+      domain=${customsecrets.samba.domain or "WORKGROUP"}
+      EOF
+            chmod 600 /root/.secrets/samba-credentials
     '';
   };
 }

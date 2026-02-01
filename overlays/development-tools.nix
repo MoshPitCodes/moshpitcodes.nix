@@ -5,19 +5,19 @@
 _final: prev: {
   # Infrastructure as Code Tools
 
-  # Terraform 1.14.0
+  # Terraform 1.14.4
   # Pinned for stability across all hosts
-  # Source: https://github.com/hashicorp/terraform/releases/tag/v1.14.0
+  # Source: https://github.com/hashicorp/terraform/releases/tag/v1.14.4
   terraform = prev.terraform.overrideAttrs (
     finalAttrs: prevAttrs: {
-      version = "1.14.0";
+      version = "1.14.4";
       src = prev.fetchFromGitHub {
         owner = "hashicorp";
         repo = "terraform";
         rev = "v${finalAttrs.version}";
-        hash = "sha256-G9GyrwELOuzQqTMimC+z2GJUjq+c5YJDoE313JSsX5w=";
+        hash = "sha256-fEuIAKmR+shKHNldUlU6qvel9tjYFdKnc25JWtxRPHs=";
       };
-      vendorHash = "sha256-T6baxFk5lrmhyeJgcn7s5cF+utaogSQOD9S5omEKTZg=";
+      vendorHash = "sha256-NDtBLa8vokrSRDCNX10lQyfMDzTrodoEj5zbDanL4bk=";
 
       meta = prevAttrs.meta // {
         changelog = "https://github.com/hashicorp/terraform/releases/tag/v${finalAttrs.version}";

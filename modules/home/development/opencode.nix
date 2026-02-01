@@ -12,36 +12,70 @@ let
   openrouterApiKey = customsecrets.apiKeys.openrouter or "";
   githubPat = customsecrets.apiKeys.github or "";
 
-  # MCP Server packages from flake inputs
-  discord-mcp = inputs.mcp-discord.packages.${pkgs.system}.default;
-  linear-mcp = inputs.mcp-linearapp.packages.${pkgs.system}.default;
+  # Local MCP server directories (contain their own .env and config files)
+  discordMcpDir = "${config.home.homeDirectory}/Development/mcp-discord";
+  linearMcpDir = "${config.home.homeDirectory}/Development/mcp-linearapp";
 
-  # Create wrapper scripts that change to the correct directory before running
+  # Check if local MCP servers exist
+  discordMcpExists = builtins.pathExists discordMcpDir;
+  linearMcpExists = builtins.pathExists linearMcpDir;
+
+  # Create wrapper scripts that run from local directories
+  # Local directories contain their own .env and webhooks.json files
   discord-mcp-wrapper = pkgs.writeShellScript "discord-mcp-wrapper" ''
-    cd ${config.home.homeDirectory}/Development/mcp-discord || exit 1
-    exec ${discord-mcp}/bin/discord-mcp "$@"
+    cd ${discordMcpDir} || exit 1
+    exec ${pkgs.bun}/bin/bun run ${discordMcpDir}/src/index.ts "$@"
   '';
 
   linear-mcp-wrapper = pkgs.writeShellScript "linear-mcp-wrapper" ''
-    cd ${config.home.homeDirectory}/Development/mcp-linearapp || exit 1
-    exec ${linear-mcp}/bin/linear-mcp "$@"
+    cd ${linearMcpDir} || exit 1
+    exec ${pkgs.bun}/bin/bun run ${linearMcpDir}/src/index.ts "$@"
   '';
+
+  # Build MCP server configuration dynamically
+  mcpServers = {
+    github = {
+      type = "local";
+      command = [
+        "docker"
+        "run"
+        "--rm"
+        "-i"
+        "-e"
+        "GITHUB_PERSONAL_ACCESS_TOKEN"
+        "ghcr.io/github/github-mcp-server"
+      ];
+      environment = {
+        GITHUB_PERSONAL_ACCESS_TOKEN = "\${GITHUB_PERSONAL_ACCESS_TOKEN}";
+      };
+      enabled = true;
+    };
+  }
+  // lib.optionalAttrs discordMcpExists {
+    discord = {
+      type = "local";
+      command = [ "${discord-mcp-wrapper}" ];
+      enabled = true;
+    };
+  }
+  // lib.optionalAttrs linearMcpExists {
+    linear = {
+      type = "local";
+      command = [ "${linear-mcp-wrapper}" ];
+      enabled = true;
+    };
+  };
 in
 {
   home = {
     packages = with pkgs; [
       opencode # OpenCode CLI for AI-assisted development
-      discord-mcp # Discord MCP Server
-      linear-mcp # Linear MCP Server
+      bun # Bun runtime for local MCP servers
     ];
 
     # Create configuration directory for OpenCode
     file = {
       ".config/opencode/.gitkeep".text = "";
-
-      # Symlink MCP servers to ~/.opencode/mcp-servers
-      ".opencode/mcp-servers/discord-mcp".source = "${discord-mcp}/bin/discord-mcp";
-      ".opencode/mcp-servers/linear-mcp".source = "${linear-mcp}/bin/linear-mcp";
 
       # OpenCode configuration file
       # API keys are set via environment variables:
@@ -57,36 +91,7 @@ in
         autoupdate = false;
 
         # MCP Servers
-        mcp = {
-          discord = {
-            type = "local";
-            command = [ "${discord-mcp-wrapper}" ];
-            enabled = true;
-          };
-
-          linear = {
-            type = "local";
-            command = [ "${linear-mcp-wrapper}" ];
-            enabled = true;
-          };
-
-          github = {
-            type = "local";
-            command = [
-              "docker"
-              "run"
-              "--rm"
-              "-i"
-              "-e"
-              "GITHUB_PERSONAL_ACCESS_TOKEN"
-              "ghcr.io/github/github-mcp-server"
-            ];
-            environment = {
-              GITHUB_PERSONAL_ACCESS_TOKEN = "\${GITHUB_PERSONAL_ACCESS_TOKEN}";
-            };
-            enabled = true;
-          };
-        };
+        mcp = mcpServers;
       };
     };
 
