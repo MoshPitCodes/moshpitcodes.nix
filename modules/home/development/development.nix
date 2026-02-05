@@ -35,6 +35,7 @@
         ripgrep # fast text search tool
         shfmt # bash formatter
         pre-commit # Framework for managing pre-commit hooks
+        inputs.beads.packages.${pkgs.stdenv.hostPlatform.system}.default # Beads issue tracker for AI agents
 
         # Configuration Management
         # salt
