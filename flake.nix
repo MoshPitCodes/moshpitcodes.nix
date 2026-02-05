@@ -39,10 +39,11 @@
       url = "github:SergioRibera/s4rchiso-plymouth-theme";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    beads = {
-      url = "github:steveyegge/beads";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # TEMPORARILY DISABLED: beads requires go >= 1.25.6, nixpkgs currently has 1.25.5
+    # beads = {
+    #   url = "github:steveyegge/beads";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
   };
 
   outputs =
