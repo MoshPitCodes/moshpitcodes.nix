@@ -35,6 +35,8 @@
         ripgrep # fast text search tool
         shfmt # bash formatter
         pre-commit # Framework for managing pre-commit hooks
+        # TEMPORARILY DISABLED: beads requires go >= 1.25.6, nixpkgs currently has 1.25.5
+        # inputs.beads.packages.${pkgs.stdenv.hostPlatform.system}.default # Beads issue tracker for AI agents
 
         # Configuration Management
         # salt
