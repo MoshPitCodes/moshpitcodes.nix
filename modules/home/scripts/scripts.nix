@@ -3,7 +3,10 @@ let
   # wall-change uses swww for wallpaper management with transition effects
   wall-change = pkgs.writeShellApplication {
     name = "wall-change";
-    runtimeInputs = with pkgs; [ swww procps ];
+    runtimeInputs = with pkgs; [
+      swww
+      procps
+    ];
     text = builtins.readFile ./scripts/wall-change.sh;
   };
   wallpaper-picker = pkgs.writeShellScriptBin "wallpaper-picker" (

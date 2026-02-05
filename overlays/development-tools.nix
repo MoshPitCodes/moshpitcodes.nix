@@ -25,22 +25,22 @@ _final: prev: {
     }
   );
 
-  # OpenCode v1.1.42 (latest)
+  # OpenCode v1.1.48 (latest)
   # AI coding agent built for the terminal
-  # Source: https://github.com/sst/opencode/releases/tag/v1.1.42
+  # Source: https://github.com/sst/opencode/releases/tag/v1.1.48
   opencode = prev.opencode.overrideAttrs (
     finalAttrs: prevAttrs: {
-      version = "1.1.42";
+      version = "1.1.48";
       src = prev.fetchFromGitHub {
         owner = "sst";
         repo = "opencode";
         tag = "v${finalAttrs.version}";
-        hash = "sha256-zLOnLuMzoyR/jBDKi3qxN6gId5KgI+MrTPjX21g7X2o=";
+        hash = "sha256-zKkeJSsxEuhucQkWBHxLR7tCTu86q2p6neRST2g/1hA=";
       };
 
       node_modules = prevAttrs.node_modules.overrideAttrs {
         inherit (finalAttrs) version src;
-        outputHash = "sha256-bjSPHxPTyzhMOztd7HjUl/lvMZYVk944xPj8ADDn5Y4=";
+        outputHash = "sha256-aQScGeakRanvH1LxizXrWA17YOmJJfRuypX4Jau4zQw=";
       };
 
       env = (prevAttrs.env or { }) // {
@@ -53,16 +53,16 @@ _final: prev: {
     }
   );
 
-  # Claude Code v2.1.23 (latest)
+  # Claude Code v2.1.29 (latest)
   # Agentic coding tool from Anthropic
-  # Source: https://github.com/anthropics/claude-code/releases/tag/v2.1.23
+  # Source: https://github.com/anthropics/claude-code/releases/tag/v2.1.29
   claude-code = prev.claude-code.overrideAttrs (
     finalAttrs: prevAttrs: {
-      version = "2.1.23";
+      version = "2.1.29";
 
       src = prev.fetchzip {
         url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${finalAttrs.version}.tgz";
-        hash = "sha256-Cl/lwk1ffwrc+v1ncdShjeheNnkoocmXSDUDOCRHJgQ=";
+        hash = "sha256-bRXULCl5F87SWEcsD9S8ZaBrEK2QtK/GEhpEFR1CMWQ=";
       };
 
       meta = prevAttrs.meta // {

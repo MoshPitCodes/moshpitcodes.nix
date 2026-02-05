@@ -45,6 +45,7 @@
     { nixpkgs, self, ... }@inputs:
     let
       system = "x86_64-linux";
+      lib = nixpkgs.lib;
 
       # Import custom overlays for package version overrides
       overlays = import ./overlays { inherit inputs; };
@@ -55,176 +56,209 @@
         config.allowUnfree = true;
       };
 
-      # Load secrets with fallback defaults for CI/testing environments
-      defaultSecrets = {
+      # ====================
+      # Configuration Loading Strategy
+      # ====================
+      # Priority order:
+      #   1. config.nix (pure, committable) - PREFERRED
+      #   2. secrets.nix (impure, git-ignored) - BACKWARDS COMPATIBILITY
+      #   3. defaultConfig - CI/TESTING ONLY
+      #
+      # Secret values (hashedPassword, API keys) are loaded at RUNTIME
+      # from external files specified in config.nix, NOT at evaluation time.
+      # This allows pure evaluation without --impure flag for most operations.
+
+      # Default configuration for CI/testing environments
+      # WARNING: These values are INSECURE and must never be used in production
+      defaultConfig = {
         username = "testuser";
-        # INSECURE: CI/test-only hash - DO NOT use in production
-        # Generate a real hash with: mkpasswd -m sha-512
-        hashedPassword = "$6$INSECURE.CI.TEST$DONOTUSE.THIS.IN.PRODUCTION";
         reponame = "moshpitcodes.nix";
         git = {
-          userName = "Test User";
-          userEmail = "test@example.com";
-          user.signingkey = "testkey";
+          userName = "CI Test User";
+          userEmail = "ci@example.com";
+          signingkey = "";
         };
         network = {
           wifiSSID = "";
-          wifiPassword = "";
+        };
+        samba = {
+          username = "guest";
+          domain = "WORKGROUP";
         };
         apiKeys = {
           anthropic = "";
           openai = "";
         };
+        external = {
+          secretsDir = "";
+          userPasswordFile = "";
+          sambaCredentials = "";
+          envSecrets = "";
+          sshKeysDir = "";
+          sshKeys = [ ];
+          gpgDir = "";
+          ghConfigDir = "";
+        };
+        # CI-only password hash - NEVER use in production
+        _ciHashedPassword = "$6$rounds=10000$CI.INSECURE$NEVER.USE.IN.PRODUCTION.SYSTEMS";
+      };
+
+      # Load config.nix (pure, preferred)
+      # Falls back to secrets.nix for backwards compatibility
+      loadConfiguration =
+        let
+          configPath = ./config.nix;
+          secretsPath = ./secrets.nix;
+        in
+        if builtins.pathExists configPath then
+          let
+            config = import configPath;
+          in
+          # Merge with defaults to ensure all keys exist
+          lib.recursiveUpdate defaultConfig config
+        else if builtins.pathExists secretsPath then
+          # Backwards compatibility: load secrets.nix
+          # This requires the file to be present (not git-ignored during evaluation)
+          let
+            secrets = import secretsPath;
+          in
+          lib.recursiveUpdate defaultConfig secrets
+        else
+          # CI/testing: use defaults
+          defaultConfig;
+
+      # The loaded configuration (paths only, no secret values)
+      mpcConfig = loadConfiguration;
+
+      # Extract username for convenience
+      inherit (mpcConfig) username;
+
+      # Build customsecrets for backwards compatibility with existing modules
+      # This structure matches what modules expect, but secret VALUES
+      # are loaded at runtime from external files, not embedded here
+      customsecrets = mpcConfig // {
+        # For user.nix: hashedPassword is read from external file at runtime
+        # We set a placeholder that's replaced by activation script
+        # If external.userPasswordFile is set, the actual hash is loaded at boot
+        hashedPassword =
+          if mpcConfig.external.userPasswordFile != "" then
+            # This is a marker - actual password is loaded from file by users.users.<name>.hashedPasswordFile
+            # We use initialHashedPassword as fallback for first boot
+            mpcConfig._ciHashedPassword or defaultConfig._ciHashedPassword
+          else if mpcConfig ? hashedPassword then
+            # Backwards compatibility: direct hash in config (not recommended)
+            mpcConfig.hashedPassword
+          else
+            defaultConfig._ciHashedPassword;
+
+        # SSH keys configuration for backwards compatibility
         sshKeys = {
-          sourceDir = "";
-          keys = [
-            "id_ed25519"
-            "id_rsa"
-            "id_ecdsa"
-          ];
+          sourceDir = mpcConfig.external.sshKeysDir or "";
+          keys = mpcConfig.external.sshKeys or [ ];
+        };
+
+        # GPG directory for backwards compatibility
+        gpgDir = mpcConfig.external.gpgDir or "";
+
+        # GitHub CLI config for backwards compatibility
+        ghConfigDir = mpcConfig.external.ghConfigDir or "";
+
+        # Samba configuration with credentials file
+        samba = (mpcConfig.samba or { }) // {
+          credentialsFile = mpcConfig.external.sambaCredentials or "";
+          password = ""; # Never stored, loaded from credentialsFile
         };
       };
 
-      # Validate that secrets have all required keys (including nested structures)
-      validateSecrets =
-        secrets:
-        let
-          requiredKeys = [
-            "username"
-            "hashedPassword"
-            "git"
-            "network"
+      # Helper to create a NixOS system configuration
+      mkSystem =
+        {
+          host,
+          hostPath,
+          extraOverlays ? [ ],
+        }:
+        nixpkgs.lib.nixosSystem {
+          modules = [
+            { nixpkgs.hostPlatform = system; }
+            hostPath
+            ./modules/core/mpc-secrets.nix
+            { nixpkgs.overlays = overlays ++ extraOverlays; }
+            # Enable MPC secrets module with config from config.nix
+            {
+              mpc.secrets = lib.mkIf (mpcConfig.external.secretsDir != "") {
+                enable = true;
+                basePath = mpcConfig.external.secretsDir;
+                userPasswordFile =
+                  let
+                    fullPath = mpcConfig.external.userPasswordFile;
+                  in
+                  if fullPath != "" && lib.hasPrefix mpcConfig.external.secretsDir fullPath then
+                    lib.removePrefix "${mpcConfig.external.secretsDir}/" fullPath
+                  else
+                    null;
+                sambaCredentialsFile =
+                  let
+                    fullPath = mpcConfig.external.sambaCredentials;
+                  in
+                  if fullPath != "" && lib.hasPrefix mpcConfig.external.secretsDir fullPath then
+                    lib.removePrefix "${mpcConfig.external.secretsDir}/" fullPath
+                  else
+                    null;
+                envSecretsFile =
+                  let
+                    fullPath = mpcConfig.external.envSecrets;
+                  in
+                  if fullPath != "" && lib.hasPrefix mpcConfig.external.secretsDir fullPath then
+                    lib.removePrefix "${mpcConfig.external.secretsDir}/" fullPath
+                  else
+                    null;
+                sshKeysDir = mpcConfig.external.sshKeysDir;
+                sshKeys = mpcConfig.external.sshKeys;
+                gpgDir = mpcConfig.external.gpgDir;
+                ghConfigDir = mpcConfig.external.ghConfigDir;
+              };
+            }
           ];
-          missingKeys = builtins.filter (k: !(builtins.hasAttr k secrets)) requiredKeys;
-          # Validate nested git keys
-          requiredGitKeys = [
-            "userName"
-            "userEmail"
-          ];
-          missingGitKeys =
-            if builtins.hasAttr "git" secrets then
-              builtins.filter (k: !(builtins.hasAttr k secrets.git)) requiredGitKeys
-            else
-              requiredGitKeys;
-        in
-        if missingKeys != [ ] then
-          throw "secrets.nix missing required keys: ${builtins.toString missingKeys}"
-        else if missingGitKeys != [ ] then
-          throw "secrets.nix git section missing required keys: ${builtins.toString missingGitKeys}"
-        else
-          secrets;
-
-      # Load secrets from git-ignored file using absolute path
-      # The flake copies sources to /nix/store, excluding git-ignored files
-      # So we use PWD or FLAKE_ROOT to find the original directory
-      # Requires --impure flag for builds: nix build .#wsl-distro --impure
-      flakeRoot = builtins.getEnv "FLAKE_ROOT";
-      pwdPath = builtins.getEnv "PWD";
-
-      # Try FLAKE_ROOT first, then PWD, construct path to secrets.nix
-      secretsPath =
-        let
-          basePath = if flakeRoot != "" then flakeRoot else pwdPath;
-        in
-        if basePath != "" then /. + basePath + "/secrets.nix" else null;
-
-      customsecrets =
-        if secretsPath != null && builtins.pathExists secretsPath then
-          validateSecrets (import secretsPath)
-        else if builtins.pathExists ./secrets.nix then
-          validateSecrets (import ./secrets.nix)
-        else
-          defaultSecrets;
-
-      inherit (customsecrets) username;
+          specialArgs = {
+            inherit
+              self
+              inputs
+              username
+              customsecrets
+              host
+              ;
+            mpcConfig = mpcConfig;
+          };
+        };
 
     in
     {
       nixosConfigurations = {
-        desktop = nixpkgs.lib.nixosSystem {
-          modules = [
-            { nixpkgs.hostPlatform = system; }
-            ./hosts/desktop
-            # Apply overlays to nixpkgs for this configuration
-            { nixpkgs.overlays = overlays ++ [ inputs.s4rchiso-plymouth.overlays.default ]; }
-          ];
-          specialArgs = {
-            host = "desktop";
-            inherit
-              self
-              inputs
-              username
-              customsecrets
-              ;
-          };
+        desktop = mkSystem {
+          host = "desktop";
+          hostPath = ./hosts/desktop;
+          extraOverlays = [ inputs.s4rchiso-plymouth.overlays.default ];
         };
-        laptop = nixpkgs.lib.nixosSystem {
-          modules = [
-            { nixpkgs.hostPlatform = system; }
-            ./hosts/laptop
-            # Apply overlays to nixpkgs for this configuration
-            { nixpkgs.overlays = overlays ++ [ inputs.s4rchiso-plymouth.overlays.default ]; }
-          ];
-          specialArgs = {
-            host = "laptop";
-            inherit
-              self
-              inputs
-              username
-              customsecrets
-              ;
-          };
+
+        laptop = mkSystem {
+          host = "laptop";
+          hostPath = ./hosts/laptop;
+          extraOverlays = [ inputs.s4rchiso-plymouth.overlays.default ];
         };
-        vm = nixpkgs.lib.nixosSystem {
-          modules = [
-            { nixpkgs.hostPlatform = system; }
-            ./hosts/vm
-            # Apply overlays to nixpkgs for this configuration
-            { nixpkgs.overlays = overlays; }
-          ];
-          specialArgs = {
-            host = "vm";
-            inherit
-              self
-              inputs
-              username
-              customsecrets
-              ;
-          };
+
+        vm = mkSystem {
+          host = "vm";
+          hostPath = ./hosts/vm;
         };
-        vmware-guest = nixpkgs.lib.nixosSystem {
-          modules = [
-            { nixpkgs.hostPlatform = system; }
-            ./hosts/vmware-guest
-            # Apply overlays to nixpkgs for this configuration
-            { nixpkgs.overlays = overlays; }
-          ];
-          specialArgs = {
-            host = "nixos-vmware";
-            inherit
-              self
-              inputs
-              username
-              customsecrets
-              ;
-          };
+
+        vmware-guest = mkSystem {
+          host = "nixos-vmware";
+          hostPath = ./hosts/vmware-guest;
         };
-        wsl = nixpkgs.lib.nixosSystem {
-          modules = [
-            { nixpkgs.hostPlatform = system; }
-            ./hosts/wsl
-            # Apply overlays to nixpkgs for this configuration
-            { nixpkgs.overlays = overlays; }
-          ];
-          specialArgs = {
-            host = "nixos-wsl";
-            inherit
-              self
-              inputs
-              username
-              customsecrets
-              ;
-          };
+
+        wsl = mkSystem {
+          host = "nixos-wsl";
+          hostPath = ./hosts/wsl;
         };
       };
 

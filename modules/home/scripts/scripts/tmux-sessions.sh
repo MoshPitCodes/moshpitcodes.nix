@@ -13,56 +13,24 @@ set -euo pipefail
 # =============================================================================
 # SESSION CONFIGURATION
 # =============================================================================
-# Sessions are auto-discovered from git repositories in $DEVELOPMENT_DIR
+# Two predefined sessions:
+#   1. dev - Development session with claude and terminal
+#   2. monitor - System monitoring session
 #
-# Standard sessions get 1 window with 2 panes:
-#   - Left pane: Shell in the project directory
-#   - Right pane: claude-code running in the project directory
-#
-# Special sessions (name contains "devops") get 1 window with 3 panes:
-#   - Left pane: Shell in the project directory
-#   - Top-right pane: gemini
-#   - Bottom-right pane: btop
-#
-# Format: "session_name|path"
 DEVELOPMENT_DIR="$HOME/Development"
 
 # =============================================================================
 # HELPER FUNCTIONS
 # =============================================================================
 
-discover_sessions() {
-    local -a sessions=()
-
-    # Check if development directory exists
-    if [[ ! -d "$DEVELOPMENT_DIR" ]]; then
-        echo "Warning: Development directory '$DEVELOPMENT_DIR' does not exist" >&2
-        return 0
-    fi
-
-    # Scan development directory for git repositories
-    while IFS= read -r -d '' dir; do
-        # Skip if not a directory
-        [[ ! -d "$dir" ]] && continue
-
-        # Check if it's a git repository
-        if [[ -d "$dir/.git" ]]; then
-            # Extract basename and convert dots to dashes for tmux compatibility
-            # (tmux interprets dots as target separators: session.window.pane)
-            local session_name
-            session_name=$(basename "$dir" | tr '.' '-')
-
-            # Add to sessions array in format "name|path"
-            sessions+=("${session_name}|${dir}")
-        fi
-    done < <(find "$DEVELOPMENT_DIR" -mindepth 1 -maxdepth 1 -type d -print0 2>/dev/null)
-
-    # Return the sessions array
-    printf '%s\n' "${sessions[@]}"
+get_sessions() {
+  # Return static list of 2 sessions
+  echo "dev|$DEVELOPMENT_DIR"
+  echo "nas|/mnt/ugreen-nas"
 }
 
 show_help() {
-    cat << 'EOF'
+  cat <<'EOF'
 tmux-sessions - Create and manage predefined tmux sessions
 
 USAGE:
@@ -75,120 +43,120 @@ OPTIONS:
 
 ARGUMENTS:
     SESSION_NAME    Optional session name to attach to after creation
+                    Available: dev, nas
 
 EXAMPLES:
-    tmux-sessions                  # Create all sessions, show list
-    tmux-sessions moshpitcodes-nix # Create all sessions, attach to session
-    tmux-sessions --list           # Show configured sessions
+    tmux-sessions           # Create all sessions, show list
+    tmux-sessions dev       # Create all sessions, attach to 'dev'
+    tmux-sessions nas       # Create all sessions, attach to 'nas'
+    tmux-sessions --list    # Show configured sessions
     tmux-sessions --create-only    # Create sessions without attaching
 
-NOTE:
-    Session names are derived from directory names with dots converted to
-    dashes (e.g., moshpitcodes.nix becomes moshpitcodes-nix) to avoid
-    conflicts with tmux's target separator syntax (session.window.pane)
-
 CONFIGURATION:
-    Sessions are auto-discovered from git repositories in ~/Development
+    Two predefined sessions are created:
 
-    Standard sessions are created with 1 window containing 2 panes:
-      - Left pane:  Shell in the project directory
-      - Right pane: claude-code running in the project directory
+    1. dev - Development session (in ~/Development)
+       - Left pane:  opencode running in ~/Development
+       - Right pane: Shell in ~/Development
 
-    Special sessions (name contains "devops") have 1 window with 3 panes:
-      - Left pane:       Shell in the project directory
-      - Top-right pane:  gemini
-      - Bottom-right:    btop
+    2. nas - NAS monitoring session (in /mnt/ugreen-nas)
+       - Left pane:  btop
+       - Right pane: Shell in /mnt/ugreen-nas
 EOF
 }
 
 list_sessions() {
-    echo "Configured sessions:"
-    echo "===================="
-    printf "%-25s %-50s %s\n" "SESSION" "PATH" "STATUS"
-    printf "%-25s %-50s %s\n" "-------" "----" "------"
+  echo "Configured sessions:"
+  echo "===================="
+  printf "%-25s %-50s %s\n" "SESSION" "PATH" "STATUS"
+  printf "%-25s %-50s %s\n" "-------" "----" "------"
 
-    # Get discovered sessions
-    local -a discovered_sessions
-    mapfile -t discovered_sessions < <(discover_sessions)
+  # Get static sessions
+  local -a sessions
+  mapfile -t sessions < <(get_sessions)
 
-    for entry in "${discovered_sessions[@]}"; do
-        IFS='|' read -r name path <<< "$entry"
-        # Expand tilde
-        path="${path/#\~/$HOME}"
+  for entry in "${sessions[@]}"; do
+    IFS='|' read -r name path <<<"$entry"
+    # Expand tilde
+    path="${path/#\~/$HOME}"
 
-        if tmux has-session -t "$name" 2>/dev/null; then
-            status="running"
-        else
-            status="stopped"
-        fi
+    if tmux has-session -t "$name" 2>/dev/null; then
+      status="running"
+    else
+      status="stopped"
+    fi
 
-        printf "%-25s %-50s %s\n" "$name" "$path" "$status"
-    done
+    printf "%-25s %-50s %s\n" "$name" "$path" "$status"
+  done
 
-    echo ""
-    echo "Active tmux sessions:"
-    echo "====================="
-    tmux list-sessions 2>/dev/null || echo "(none)"
+  echo ""
+  echo "Active tmux sessions:"
+  echo "====================="
+  tmux list-sessions 2>/dev/null || echo "(none)"
 }
 
 ensure_session() {
-    local name=$1
-    local path=$2
+  local name=$1
+  local path=$2
 
-    # Expand tilde in path
-    path="${path/#\~/$HOME}"
+  # Expand tilde in path
+  path="${path/#\~/$HOME}"
 
-    if ! tmux has-session -t "$name" 2>/dev/null; then
-        # Verify path exists
-        if [[ ! -d "$path" ]]; then
-            echo "Warning: Path '$path' does not exist for session '$name', using home directory"
-            path="$HOME"
-        fi
-
-        # Create session with a single window in the project directory
-        tmux new-session -d -s "$name" -c "$path"
-
-        # Special layout for devops sessions: 3 panes (shell left, gemini top-right, btop bottom-right)
-        if [[ "${name,,}" == *"devops"* ]]; then
-            # Split horizontally: left pane (shell), right pane
-            tmux split-window -h -t "${name}:1" -c "$path"
-            # Split right pane vertically: top (gemini), bottom (btop)
-            tmux split-window -v -t "${name}:1.2" -c "$path"
-            # Run gemini in top-right pane (pane 2)
-            tmux send-keys -t "${name}:1.2" "gemini" C-m
-            # Run btop in bottom-right pane (pane 3)
-            tmux send-keys -t "${name}:1.3" "btop" C-m
-            # Select left pane (shell) as active
-            tmux select-pane -t "${name}:1.1"
-            echo "Created session: $name (in $path) with panes: shell, gemini, btop"
-        else
-            # Standard layout: 2 panes (shell left, claude right)
-            # Split the window horizontally (left/right panes)
-            # Note: Using base-index 1 (configured in tmux.nix), so first window is :1
-            # Left pane (pane 1) is already the shell in the project directory
-            # Create right pane (pane 2) and run claude-code
-            tmux split-window -h -t "${name}:1" -c "$path"
-            tmux send-keys -t "${name}:1.2" "claude" C-m
-
-            # Select the left pane (shell) as the active pane
-            tmux select-pane -t "${name}:1.1"
-
-            echo "Created session: $name (in $path) with panes: shell, claude"
-        fi
-    else
-        echo "Session exists: $name"
+  if ! tmux has-session -t "$name" 2>/dev/null; then
+    # Verify path exists
+    if [[ ! -d "$path" ]]; then
+      echo "Warning: Path '$path' does not exist for session '$name', using home directory"
+      path="$HOME"
     fi
+
+    # Create session with a single window
+    tmux new-session -d -s "$name" -c "$path"
+
+    if [[ "$name" == "dev" ]]; then
+      # Dev session: 2 panes (opencode left, terminal right)
+      # Left pane (pane 1) runs opencode
+      tmux send-keys -t "${name}:1.1" "opencode" C-m
+
+      # Create right pane (pane 2) with shell (33% width, making left pane 67%)
+      tmux split-window -h -p 33 -t "${name}:1" -c "$path"
+
+      # Select the left pane (claude) as the active pane
+      tmux select-pane -t "${name}:1.1"
+
+      echo "Created session: $name (in $path) with panes: opencode, shell"
+    elif [[ "$name" == "nas" ]]; then
+      # NAS session: 4 panes (btop top-left, terminals in other 3)
+      # Top-left pane (pane 1) runs btop
+      tmux send-keys -t "${name}:1.1" "btop" C-m
+
+      # Create top-right pane (pane 2) with shell in ~/Development
+      tmux split-window -h -t "${name}:1" -c "$HOME/Development"
+
+      # Create bottom-left pane (pane 3) with shell in /mnt/ugreen-nas
+      tmux split-window -v -t "${name}:1.1" -c "/mnt/ugreen-nas"
+
+      # Create bottom-right pane (pane 4) with shell in ~/Development
+      tmux split-window -v -t "${name}:1.2" -c "$HOME/Development"
+
+      # Select the top-left pane (btop) as the active pane
+      tmux select-pane -t "${name}:1.1"
+
+      echo "Created session: $name (in $path) with panes: btop (top-left), bottom-left (/mnt/ugreen-nas), 2 terminals in ~/Development"
+    fi
+  else
+    echo "Session exists: $name"
+  fi
 }
 
 create_all_sessions() {
-    # Get discovered sessions
-    local -a discovered_sessions
-    mapfile -t discovered_sessions < <(discover_sessions)
+  # Get static sessions
+  local -a sessions
+  mapfile -t sessions < <(get_sessions)
 
-    for entry in "${discovered_sessions[@]}"; do
-        IFS='|' read -r name path <<< "$entry"
-        ensure_session "$name" "$path"
-    done
+  for entry in "${sessions[@]}"; do
+    IFS='|' read -r name path <<<"$entry"
+    ensure_session "$name" "$path"
+  done
 }
 
 # =============================================================================
@@ -196,62 +164,61 @@ create_all_sessions() {
 # =============================================================================
 
 main() {
-    local attach_to=""
-    local create_only=false
+  local attach_to=""
+  local create_only=false
 
-    # Parse arguments
-    while [[ $# -gt 0 ]]; do
-        case $1 in
-            --help|-h)
-                show_help
-                exit 0
-                ;;
-            --list|-l)
-                list_sessions
-                exit 0
-                ;;
-            --create-only)
-                create_only=true
-                shift
-                ;;
-            -*)
-                echo "Unknown option: $1"
-                show_help
-                exit 1
-                ;;
-            *)
-                # Convert dots to dashes in session name for consistency
-                attach_to="${1//\./-}"
-                shift
-                ;;
-        esac
-    done
+  # Parse arguments
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+    --help | -h)
+      show_help
+      exit 0
+      ;;
+    --list | -l)
+      list_sessions
+      exit 0
+      ;;
+    --create-only)
+      create_only=true
+      shift
+      ;;
+    -*)
+      echo "Unknown option: $1"
+      show_help
+      exit 1
+      ;;
+    *)
+      attach_to="$1"
+      shift
+      ;;
+    esac
+  done
 
-    # Create all configured sessions
-    create_all_sessions
+  # Create all configured sessions
+  create_all_sessions
 
-    echo ""
+  echo ""
 
-    # Handle attachment
-    if [[ -n "$attach_to" ]]; then
-        if tmux has-session -t "$attach_to" 2>/dev/null; then
-            if [[ -z "${TMUX:-}" ]]; then
-                exec tmux attach -t "$attach_to"
-            else
-                tmux switch-client -t "$attach_to"
-            fi
-        else
-            echo "Error: Session '$attach_to' does not exist"
-            echo "Available sessions:"
-            tmux list-sessions
-            exit 1
-        fi
-    elif [[ "$create_only" == false && -z "${TMUX:-}" ]]; then
-        echo "Available sessions:"
-        tmux list-sessions 2>/dev/null || echo "(none)"
-        echo ""
-        echo "Use 'tmux-sessions <name>' to attach to a session"
+  # Handle attachment
+  if [[ -n "$attach_to" ]]; then
+    if tmux has-session -t "$attach_to" 2>/dev/null; then
+      if [[ -z "${TMUX:-}" ]]; then
+        exec tmux attach -t "$attach_to"
+      else
+        tmux switch-client -t "$attach_to"
+      fi
+    else
+      echo "Error: Session '$attach_to' does not exist"
+      echo "Available sessions:"
+      tmux list-sessions
+      exit 1
     fi
+  elif [[ "$create_only" == false && -z "${TMUX:-}" ]]; then
+    echo "Available sessions:"
+    tmux list-sessions 2>/dev/null || echo "(none)"
+    echo ""
+    echo "Use 'tmux-sessions <name>' to attach to a session"
+  fi
 }
 
 main "$@"

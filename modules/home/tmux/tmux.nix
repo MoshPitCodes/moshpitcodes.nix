@@ -384,15 +384,21 @@
       tmux_conf_urlscan_options="--compact --dedupe"
 
 
-      # -- user customizations -------------------------------------------------------
+       # -- user customizations -------------------------------------------------------
 
-      # this is the place to override or undo settings
+       # this is the place to override or undo settings
 
-      # increase history size
-      #set -g history-limit 10000
+       # increase history size
+       #set -g history-limit 10000
 
-      # start with mouse mode enabled
-      set -g mouse on
+       # start with mouse mode enabled
+       set -g mouse on
+
+       # Clipboard support
+       set -g set-clipboard on
+
+       # Allow passthrough for improved integration
+       set -g allow-passthrough all
 
       # SSH agent forwarding - update SSH_AUTH_SOCK when attaching to sessions
       set -g update-environment "SSH_AUTH_SOCK SSH_AGENT_PID DISPLAY"

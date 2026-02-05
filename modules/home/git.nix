@@ -1,4 +1,17 @@
-{ lib, pkgs, customsecrets, ... }:
+{
+  lib,
+  pkgs,
+  customsecrets,
+  mpcConfig ? { },
+  ...
+}:
+let
+  # Get git config from mpcConfig (preferred) or customsecrets
+  gitConfig = mpcConfig.git or customsecrets.git or { };
+
+  # Signing key can be in git.signingkey (new) or git.user.signingkey (legacy)
+  signingKey = gitConfig.signingkey or gitConfig.user.signingkey or "";
+in
 {
   programs = {
     git = {
@@ -6,9 +19,9 @@
 
       settings = {
         user = {
-          name = customsecrets.git.userName;
-          email = customsecrets.git.userEmail;
-          inherit (customsecrets.git.user) signingkey;
+          name = gitConfig.userName or "User";
+          email = gitConfig.userEmail or "user@example.com";
+          signingkey = signingKey;
         };
         init.defaultBranch = "main";
         credential.helper = "${pkgs.git}/lib/git-core/git-credential-libsecret";
@@ -67,11 +80,16 @@
 
   # Copy GitHub CLI config from backup directory during activation
   home.activation.copyGhConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    sourceDir="${customsecrets.ghConfigDir or ""}"
+    # Get ghConfigDir from mpcConfig (preferred) or customsecrets
+    sourceDir="${mpcConfig.external.ghConfigDir or customsecrets.ghConfigDir or ""}"
     if [[ -n "$sourceDir" && -d "$sourceDir" ]]; then
+      echo "Copying GitHub CLI config from: $sourceDir"
       $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.config/gh
       $DRY_RUN_CMD cp -r $VERBOSE_ARG "$sourceDir"/* ~/.config/gh/
       $DRY_RUN_CMD chmod $VERBOSE_ARG 600 ~/.config/gh/hosts.yml 2>/dev/null || true
+      echo "GitHub CLI config copied successfully"
+    elif [[ -n "$sourceDir" ]]; then
+      echo "WARNING: GitHub CLI config not found at: $sourceDir"
     fi
   '';
 }

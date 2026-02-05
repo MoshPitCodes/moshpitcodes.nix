@@ -90,6 +90,13 @@ in
         theme = "rosepine";
         autoupdate = false;
 
+        # TUI Settings
+        tui = {
+          scroll_acceleration = {
+            enabled = true;
+          };
+        };
+
         # MCP Servers
         mcp = mcpServers;
       };

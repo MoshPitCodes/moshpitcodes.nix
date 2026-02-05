@@ -1,5 +1,6 @@
 {
   inputs,
+  pkgs,
   ...
 }:
 {
@@ -14,6 +15,8 @@
     ./fastfetch.nix # fetch tool
     ./fzf.nix # fuzzy finder
     ./git.nix # version control
+    ./gpg.nix # GPG key management
+    ./key-backup.nix # Automated SSH/GPG key backup to NAS
     ./lazygit.nix # terminal git client
     ./openssh.nix # ssh client
     ./micro.nix # nano replacement
@@ -21,6 +24,7 @@
     ./oh-my-posh/oh-my-posh.nix # zsh prompt theme
     ./packages.nix # additional packages (includes reposync)
     ./scripts/scripts.nix # personal scripts
+    ./secrets-loader.nix # Load external secrets from NAS
     ./starship.nix # shell prompt
     ./tmux # terminal multiplexer
     ./vivid.nix # Rose Pine LS_COLORS for directory listings
@@ -36,7 +40,7 @@
   ];
 
   # WSL-specific packages that don't require their own module
-  home.packages = with inputs.nixpkgs.legacyPackages.x86_64-linux; [
+  home.packages = with pkgs; [
     # CLI improvements
     eza # Modern replacement for ls (required by ll alias)
 
@@ -75,5 +79,8 @@
 
     # Additional cloud tools
     awscli2
+
+    # 1Password CLI for credential management
+    _1password-cli
   ];
 }

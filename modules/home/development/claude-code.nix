@@ -1,6 +1,18 @@
-{ lib, pkgs, customsecrets, ... }:
+{
+  lib,
+  pkgs,
+  customsecrets,
+  mpcConfig ? { },
+  ...
+}:
 let
-  # Extract API keys from secrets with fallback to empty string
+  # API keys are now loaded from external file at shell startup
+  # See: modules/home/secrets-loader.nix
+  # The env-secrets.sh file should contain:
+  #   export ANTHROPIC_API_KEY="sk-ant-..."
+  #   export OPENROUTER_API_KEY="sk-..."
+  #
+  # We keep these for backwards compatibility only - they should be empty
   anthropicApiKey = customsecrets.apiKeys.anthropic or "";
   openrouterApiKey = customsecrets.apiKeys.openrouter or "";
 
@@ -85,6 +97,8 @@ in
   };
 
   # Set environment variables for Claude Code
+  # NOTE: API keys (ANTHROPIC_API_KEY, OPENROUTER_API_KEY) are loaded from
+  # external secrets file at shell startup. See modules/home/secrets-loader.nix
   home.sessionVariables = {
     # Privacy and telemetry settings - disable all non-essential traffic
     CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = "1";
@@ -95,13 +109,15 @@ in
     CLAUDE_CODE_MAX_OUTPUT_TOKENS = "8000";
     DISABLE_NON_ESSENTIAL_MODEL_CALLS = "1";
     DISABLE_COST_WARNINGS = "1";
-  } // lib.optionalAttrs (anthropicApiKey != "") {
-    # Set Anthropic API key if available from secrets
-    ANTHROPIC_API_KEY = anthropicApiKey;
-  } // lib.optionalAttrs (openrouterApiKey != "") {
-    # Set OpenRouter API key if available from secrets
-    OPENROUTER_API_KEY = openrouterApiKey;
   };
+  # DEPRECATED: Direct API key embedding from secrets.nix
+  # API keys should be in external env-secrets.sh file instead
+  # Kept for backwards compatibility only - remove when migration complete
+  # } // lib.optionalAttrs (anthropicApiKey != "") {
+  #   ANTHROPIC_API_KEY = anthropicApiKey;
+  # } // lib.optionalAttrs (openrouterApiKey != "") {
+  #   OPENROUTER_API_KEY = openrouterApiKey;
+  # };
 
   # Create activation script to set up credentials if API key exists
   # This mimics the structure of the existing .credentials.json file
