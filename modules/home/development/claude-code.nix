@@ -11,6 +11,7 @@ let
   anthropicApiKey = customsecrets.apiKeys.anthropic or "";
   openrouterApiKey = customsecrets.apiKeys.openrouter or "";
   githubPat = customsecrets.apiKeys.github-pat or "";
+  linearApiKey = customsecrets.apiKeys.linear or "";
 
   # Extract Discord webhooks from secrets with fallback to empty strings
   discordWebhooks =
@@ -52,7 +53,9 @@ let
       type = "stdio";
       command = "${linear-mcp-wrapper}";
       args = [ ];
-      env = { };
+      env = lib.optionalAttrs (linearApiKey != "") {
+        LINEAR_API_KEY = linearApiKey;
+      };
     };
   };
 
@@ -163,6 +166,10 @@ in
   // lib.optionalAttrs (githubPat != "") {
     # Set GitHub PAT if available from secrets
     GITHUB_PERSONAL_ACCESS_TOKEN = githubPat;
+  }
+  // lib.optionalAttrs (linearApiKey != "") {
+    # Set Linear API key if available from secrets
+    LINEAR_API_KEY = linearApiKey;
   };
 
   # Create activation script to set up credentials if API key exists
@@ -184,6 +191,39 @@ in
       fi
     ''
   );
+
+  # Register MCP servers with Claude Code using activation script
+  # Claude Code stores MCP servers in ~/.claude.json, not ~/.claude/settings.json
+  home.activation.claudeCodeMcpServers = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    # Function to add MCP server if not already registered
+    add_mcp_server() {
+      local name="$1"
+      local command="$2"
+      shift 2
+      local env_args=("$@")
+      
+      # Check if server is already registered at user scope
+      if ! ${pkgs.claude-code}/bin/claude mcp get "$name" --scope user &>/dev/null; then
+        echo "Registering MCP server: $name (user scope)"
+        ${pkgs.claude-code}/bin/claude mcp add "$name" --scope user "''${env_args[@]}" -- "$command"
+      else
+        echo "MCP server already registered: $name"
+      fi
+    }
+
+    # Register Discord MCP server
+    add_mcp_server "discord" "${discordMcpServer}/bin/discord-mcp-server"
+
+    # Register Linear MCP server with API key if available
+    ${
+      if linearApiKey != "" then
+        ''add_mcp_server "linear" "${linear-mcp-wrapper}" -e LINEAR_API_KEY="${linearApiKey}"''
+      else
+        ''add_mcp_server "linear" "${linear-mcp-wrapper}"''
+    }
+
+    echo "MCP servers configured for Claude Code"
+  '';
 
   # Add shell aliases for Claude Code with Doppler integration
   programs.zsh.shellAliases = {
@@ -212,9 +252,11 @@ in
       export ANTHROPIC_API_KEY=$(doppler secrets get ANTHROPIC_API_KEY --plain)
       export OPENROUTER_API_KEY=$(doppler secrets get OPENROUTER_API_KEY --plain)
       export GITHUB_PERSONAL_ACCESS_TOKEN=$(doppler secrets get GITHUB_PERSONAL_ACCESS_TOKEN --plain)
+      export LINEAR_API_KEY=$(doppler secrets get LINEAR_API_KEY --plain)
       echo "✓ Anthropic API key loaded from Doppler"
       echo "✓ OpenRouter API key loaded from Doppler"
       echo "✓ GitHub PAT loaded from Doppler"
+      echo "✓ Linear API key loaded from Doppler"
     '';
   };
 
