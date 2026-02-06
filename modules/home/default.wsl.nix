@@ -12,6 +12,7 @@
     ./bat.nix # better cat command
     ./btop.nix # resources monitor
     ./fastfetch.nix # fetch tool
+    ./fonts-wsl.nix # essential fonts for terminal (includes Nerd Font symbols)
     ./fzf.nix # fuzzy finder
     ./git.nix # version control
     ./lazygit.nix # terminal git client
