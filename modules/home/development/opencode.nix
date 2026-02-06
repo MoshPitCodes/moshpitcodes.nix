@@ -38,26 +38,27 @@ let
     exec ${pkgs.bun}/bin/bun run ${linearMcpDir}/src/index.ts "$@"
   '';
 
-  # GitHub MCP server from Nix flake (no Docker required)
-  githubMcpServer = inputs.mcp-github.packages.${pkgs.system}.github-mcp-server;
+  # Disabled: GitHub MCP server from Nix flake (no Docker required)
+  # githubMcpServer = inputs.mcp-github.packages.${pkgs.system}.github-mcp-server;
 
   # Build MCP server configuration
   # All servers are always defined - wrappers handle missing directories at runtime
   mcpServers = {
-    github = {
-      type = "local";
-      command = [
-        "${githubMcpServer}/bin/github-mcp-server"
-        "stdio"
-      ];
-      enabled = true;
-    }
-    // lib.optionalAttrs (githubPat != "" || githubPatOrg != "") {
-      env = lib.filterAttrs (_: v: v != "") {
-        GITHUB_PERSONAL_ACCESS_TOKEN = githubPat;
-        GITHUB_PERSONAL_ACCESS_TOKEN_ORG = githubPatOrg;
-      };
-    };
+    # Disabled: GitHub MCP server
+    # github = {
+    #   type = "local";
+    #   command = [
+    #     "${githubMcpServer}/bin/github-mcp-server"
+    #     "stdio"
+    #   ];
+    #   enabled = true;
+    # }
+    # // lib.optionalAttrs (githubPat != "" || githubPatOrg != "") {
+    #   env = lib.filterAttrs (_: v: v != "") {
+    #     GITHUB_PERSONAL_ACCESS_TOKEN = githubPat;
+    #     GITHUB_PERSONAL_ACCESS_TOKEN_ORG = githubPatOrg;
+    #   };
+    # };
     discord = {
       type = "local";
       command = [ "${discord-mcp-wrapper}" ];
