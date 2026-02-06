@@ -139,7 +139,6 @@
       # SSH agent socket discovery (ordered by preference):
       # 1. gpg-agent SSH socket (WSL: enableSSHSupport=true in wsl-overrides.nix)
       # 2. gcr-ssh-agent socket (Desktop: GNOME Keyring with graphical session)
-      # Keys are auto-loaded on first use via AddKeysToAgent=yes in openssh.nix
       if [[ -z "$SSH_AUTH_SOCK" ]]; then
         _gpg_ssh_sock="$(gpgconf --list-dirs agent-ssh-socket 2>/dev/null)"
         if [[ -S "$_gpg_ssh_sock" ]]; then
@@ -148,6 +147,19 @@
           export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gcr/ssh"
         fi
         unset _gpg_ssh_sock
+      fi
+
+      # Auto-load SSH keys on first interactive login if the agent has none.
+      # This prompts for the passphrase once (via pinentry-gnome3 on WSL,
+      # seahorse on desktop) and caches the key for the configured TTL
+      # (8 hours in wsl-overrides.nix). Subsequent shells skip the prompt.
+      if [[ -o interactive ]] && [[ -n "$SSH_AUTH_SOCK" ]]; then
+        if ! ssh-add -l &>/dev/null; then
+          for _keyfile in ~/.ssh/id_ed25519_*; do
+            [[ -f "$_keyfile" && ! "$_keyfile" == *.pub ]] && ssh-add "$_keyfile" 2>/dev/null
+          done
+          unset _keyfile
+        fi
       fi
 
       # Use fd (https://github.com/sharkdp/fd) for listing path candidates.
