@@ -54,6 +54,7 @@
       };
 
       automount = {
+        enabled = false; # Disable built-in automount to avoid early boot errors
         root = "/mnt";
         # Enable metadata support with explicit uid/gid for write access
         options = "metadata,uid=1000,gid=1000";
