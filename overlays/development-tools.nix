@@ -51,16 +51,16 @@ _final: prev: {
     }
   );
 
-  # Claude Code v2.1.23 (latest)
+  # Claude Code v2.1.34 (latest)
   # Agentic coding tool from Anthropic
-  # Source: https://github.com/anthropics/claude-code/releases/tag/v2.1.23
+  # Source: https://github.com/anthropics/claude-code/releases/tag/v2.1.34
   claude-code = prev.claude-code.overrideAttrs (
     finalAttrs: prevAttrs: {
-      version = "2.1.23";
+      version = "2.1.34";
 
       src = prev.fetchzip {
         url = "https://registry.npmjs.org/@anthropic-ai/claude-code/-/claude-code-${finalAttrs.version}.tgz";
-        hash = "sha256-Cl/lwk1ffwrc+v1ncdShjeheNnkoocmXSDUDOCRHJgQ=";
+        hash = "sha256-J3kltFY5nR3PsRWbW310VqD/6hhfMbVSvynv0eaIi3M=";
       };
 
       meta = prevAttrs.meta // {

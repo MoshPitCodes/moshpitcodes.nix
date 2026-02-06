@@ -1,3 +1,5 @@
+# OpenCode Configuration
+
 This file provides context and instructions for AI assistants working in this repository.
 
 ---
@@ -114,15 +116,16 @@ Git operations (branching, commits, PRs, releases) are managed by the `git-flow-
 
 Slash commands provide structured workflows and processes. Invoke with `/command-name`.
 
-| Command | Description |
-|---------|-------------|
-| `/contemplation` | Expert guide for contemplation and problem-solving |
-| `/create-architecture` | Generate architecture documentation with diagrams |
-| `/diagnosis` | Issue diagnosis and root cause analysis |
-| `/refactor-code` | Code refactoring assistance |
-| `/reflection` | Expert guide for reflection techniques |
-| `/structured-thinking` | Reflection and problem-solving framework |
-| `/ultrathink` | Deep analysis and complex problem solving |
+**Common Commands:**
+- `/contemplation` - Expert guide for contemplation and problem-solving
+- `/create-architecture` - Generate architecture documentation with diagrams
+- `/diagnosis` - Issue diagnosis and root cause analysis
+- `/refactor-code` - Code refactoring assistance
+- `/reflection` - Expert guide for reflection techniques
+- `/structured-thinking` - Reflection and problem-solving framework
+- `/ultrathink` - Deep analysis and complex problem solving
+
+**Reference:** See `.opencode/AGENTS_INDEX.md` for complete command list.
 
 ### Specialized Agents
 
@@ -165,6 +168,13 @@ Agents provide domain-specific expertise. Reference the agent name when requesti
 - **Quality**: Code review, architecture review, security, testing
 - **Meta**: Agent creation, command creation, prompt engineering
 
+**Model Selection:**
+- Agents use different AI models based on task complexity
+- See `.opencode/docs/model-selection-guide.md` for rationale
+- Haiku (fast), Sonnet (balanced), Opus (complex reasoning)
+
+**Reference:** See `.opencode/AGENTS_INDEX.md` for complete agent catalog.
+
 ### Skills
 
 Skills bundle resources, scripts, and guides for specific tasks.
@@ -178,6 +188,8 @@ Skills bundle resources, scripts, and guides for specific tasks.
 | theme-factory | Apply professional themes to artifacts (10 presets) |
 
 **Usage:** Skills are loaded dynamically when needed for specific tasks.
+
+**Reference:** See `.opencode/AGENTS_INDEX.md` for complete skill list.
 
 ---
 
@@ -346,9 +358,13 @@ Command content with workflow instructions...
 skill-name/
 ├── SKILL.md              # Main skill file with YAML frontmatter
 ├── scripts/              # Executable scripts
+│   ├── init.sh
+│   └── validate.py
 ├── reference/            # Reference documentation
-├── assets/               # Static assets
-└── LICENSE.txt           # License information
+│   └── api-docs.md
+├── assets/              # Static assets
+│   └── template.json
+└── LICENSE.txt          # License information
 ```
 
 ---
