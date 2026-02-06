@@ -1,5 +1,6 @@
 {
   inputs,
+  lib,
   ...
 }:
 {
@@ -37,17 +38,17 @@
     ./vscode-remote.nix
   ];
 
-  # GNOME Keyring for SSH agent and secrets management
-  # Required to unlock passphrase-protected SSH keys
-  # Desktop uses gnome.nix which bundles this with GUI apps;
-  # WSL only needs the keyring service itself
-  services.gnome-keyring = {
-    enable = true;
-    components = [
-      "secrets"
-      "ssh"
-    ];
-  };
+  # NOTE: GNOME Keyring is intentionally NOT enabled here.
+  # It requires graphical-session-pre.target which never activates in WSL.
+  # SSH agent: handled by gpg-agent with enableSSHSupport (see wsl-overrides.nix)
+  #   - NixOS gnupg module sets SSH_AUTH_SOCK via environment.extraInit
+  #   - SSH key passphrases prompted via pinentry-curses
+  # Git credentials: use gh CLI instead of libsecret (which requires D-Bus secrets service)
+
+  # Override git credential helper for WSL
+  # Desktop uses git-credential-libsecret (requires org.freedesktop.secrets D-Bus service
+  # from GNOME Keyring). In WSL, that service is dead, so use GitHub CLI instead.
+  programs.git.settings.credential.helper = lib.mkForce "!/usr/bin/env gh auth git-credential";
 
   # WSL-specific packages that don't require their own module
   home.packages = with inputs.nixpkgs.legacyPackages.x86_64-linux; [

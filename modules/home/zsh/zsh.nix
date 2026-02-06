@@ -117,11 +117,18 @@
       # Set GPG_TTY for GPG agent (required for commit signing)
       export GPG_TTY=$(tty)
 
-      # Use gcr-ssh-agent (GNOME Keyring's SSH agent)
-      # The agent is started by gnome-keyring service, we just need to set the socket
+      # SSH agent socket discovery (ordered by preference):
+      # 1. gpg-agent SSH socket (WSL: enableSSHSupport=true in wsl-overrides.nix)
+      # 2. gcr-ssh-agent socket (Desktop: GNOME Keyring with graphical session)
       # Keys are auto-loaded on first use via AddKeysToAgent=yes in openssh.nix
-      if [[ -S "$XDG_RUNTIME_DIR/gcr/ssh" ]]; then
-        export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gcr/ssh"
+      if [[ -z "$SSH_AUTH_SOCK" ]]; then
+        _gpg_ssh_sock="$(gpgconf --list-dirs agent-ssh-socket 2>/dev/null)"
+        if [[ -S "$_gpg_ssh_sock" ]]; then
+          export SSH_AUTH_SOCK="$_gpg_ssh_sock"
+        elif [[ -S "$XDG_RUNTIME_DIR/gcr/ssh" ]]; then
+          export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gcr/ssh"
+        fi
+        unset _gpg_ssh_sock
       fi
 
       # Use fd (https://github.com/sharkdp/fd) for listing path candidates.
