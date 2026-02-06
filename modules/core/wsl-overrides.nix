@@ -1,4 +1,9 @@
-{ lib, config, ... }:
+{
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 
 {
   # WSL manages its own DNS resolution
@@ -13,7 +18,11 @@
 
   boot = {
     # Enable DrvFs and 9p filesystem support for WSL drive mounting
-    supportedFilesystems = [ "drvfs" "9p" "9pnet_virtio" ];
+    supportedFilesystems = [
+      "drvfs"
+      "9p"
+      "9pnet_virtio"
+    ];
 
     # Disable bootloader configuration - WSL doesn't use traditional bootloaders
     loader = {
@@ -40,6 +49,27 @@
 
     # Disable Steam and gaming-related packages
     steam.enable = lib.mkForce false;
+
+    # Enable GPG agent SSH support in WSL
+    # Desktop uses GNOME Keyring for SSH; WSL has no graphical session so
+    # gnome-keyring never starts. GPG agent is already running, so we enable
+    # its SSH socket as the SSH agent backend.
+    # NixOS gnupg module automatically sets SSH_AUTH_SOCK via environment.extraInit.
+    gnupg.agent = {
+      enableSSHSupport = lib.mkForce true;
+      # Use curses pinentry for CLI passphrase prompts (no GUI in WSL)
+      pinentryPackage = lib.mkForce pkgs.pinentry-curses;
+      settings = {
+        # Cache SSH key passphrases for 8 hours (development sessions)
+        default-cache-ttl-ssh = 28800;
+        max-cache-ttl-ssh = 28800;
+        # Cache GPG passphrases for 8 hours (commit signing)
+        default-cache-ttl = 28800;
+        max-cache-ttl = 28800;
+        # Allow loopback pinentry for non-interactive contexts (scripts, IDEs)
+        allow-loopback-pinentry = true;
+      };
+    };
   };
 
   services = {

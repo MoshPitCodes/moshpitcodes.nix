@@ -148,6 +148,9 @@
     CLAUDE_CODE_ENABLE_TELEMETRY = "false";
     # Set OTEL protocol to work around Claude Code enterprise metrics bug
     OTEL_EXPORTER_OTLP_PROTOCOL = "http/protobuf";
+    # Explicitly unset SSH_ASKPASS in WSL to prevent "ssh_askpass: exec(): No such file
+    # or directory" errors. GPG agent handles SSH key passphrases via pinentry-curses.
+    SSH_ASKPASS = "";
   };
 
   # Additional packages useful in WSL
