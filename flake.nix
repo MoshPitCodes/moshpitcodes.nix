@@ -93,7 +93,6 @@
           anthropic = "";
           openai = "";
           github-pat = "";
-          github-pat-org = "";
         };
         sshKeys = {
           sourceDir = "";
