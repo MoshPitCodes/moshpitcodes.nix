@@ -66,8 +66,6 @@
         # Cache GPG passphrases for 8 hours (commit signing)
         default-cache-ttl = 28800;
         max-cache-ttl = 28800;
-        # Allow loopback pinentry for non-interactive contexts (scripts, IDEs)
-        allow-loopback-pinentry = true;
       };
     };
   };
