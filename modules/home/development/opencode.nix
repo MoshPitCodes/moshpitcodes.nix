@@ -38,22 +38,21 @@ let
     exec ${pkgs.bun}/bin/bun run ${linearMcpDir}/src/index.ts "$@"
   '';
 
+  # GitHub MCP server from Nix flake (no Docker required)
+  githubMcpServer = inputs.mcp-github.packages.${pkgs.system}.github-mcp-server;
+
   # Build MCP server configuration
   # All servers are always defined - wrappers handle missing directories at runtime
   mcpServers = {
     github = {
       type = "local";
       command = [
-        "docker"
-        "run"
-        "--rm"
-        "-i"
-        "-e"
-        "GITHUB_PERSONAL_ACCESS_TOKEN"
-        "ghcr.io/github/github-mcp-server"
+        "${githubMcpServer}/bin/github-mcp-server"
+        "stdio"
       ];
       environment = {
         GITHUB_PERSONAL_ACCESS_TOKEN = "\${GITHUB_PERSONAL_ACCESS_TOKEN}";
+        GITHUB_PERSONAL_ACCESS_TOKEN_ORG = "\${GITHUB_PERSONAL_ACCESS_TOKEN_ORG}";
       };
       enabled = true;
     };
