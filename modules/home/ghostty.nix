@@ -52,6 +52,9 @@ in
     term = ghostty
     clipboard-paste-protection = false
 
+    # Working Directory
+    working-directory = /home/moshpitcodes/Development
+
     keybind = shift+end=unbind
     keybind = shift+home=unbind
     keybind = ctrl+shift+left=unbind
