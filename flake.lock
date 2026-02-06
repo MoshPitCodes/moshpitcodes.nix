@@ -833,16 +833,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1770410255,
+        "lastModified": 1770410557,
         "narHash": "sha256-1OtirK6tdb+AdDmCYgdTkCLN0Q0aRkNHNvHYmcl91dg=",
         "owner": "MoshPitLabs",
         "repo": "mcp-discord",
-        "rev": "45f7a04d74f62e0182477f1d2302c19f4d1d97a5",
+        "rev": "5c9688a2ebe82140f3da69a7d02fc302075d3863",
         "type": "github"
       },
       "original": {
         "owner": "MoshPitLabs",
-        "ref": "feat/docker-nix-builds",
         "repo": "mcp-discord",
         "type": "github"
       }

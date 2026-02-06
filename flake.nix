@@ -58,7 +58,7 @@
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
     mcp-discord = {
-      url = "github:MoshPitLabs/mcp-discord/feat/docker-nix-builds";
+      url = "github:MoshPitLabs/mcp-discord";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
