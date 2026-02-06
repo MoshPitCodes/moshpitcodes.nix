@@ -42,7 +42,7 @@
   # It requires graphical-session-pre.target which never activates in WSL.
   # SSH agent: handled by gpg-agent with enableSSHSupport (see wsl-overrides.nix)
   #   - NixOS gnupg module sets SSH_AUTH_SOCK via environment.extraInit
-  #   - SSH key passphrases prompted via pinentry-curses
+  #   - Passphrases prompted via pinentry-gnome3 (graphical dialog via WSLg)
   # Git credentials: use gh CLI instead of libsecret (which requires D-Bus secrets service)
 
   # Override git credential helper for WSL

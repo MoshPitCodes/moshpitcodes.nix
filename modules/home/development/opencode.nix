@@ -75,9 +75,18 @@ in
       bun # Bun runtime for local MCP servers
     ];
 
-    # Create configuration directory for OpenCode
+    # Create configuration directory and subdirectories for OpenCode
+    # OpenCode looks for agents, commands, plugins, etc. in ~/.config/opencode/
+    # Reference: https://opencode.ai/docs/config#locations
     file = {
       ".config/opencode/.gitkeep".text = "";
+      ".config/opencode/agents/.gitkeep".text = "";
+      ".config/opencode/commands/.gitkeep".text = "";
+      ".config/opencode/modes/.gitkeep".text = "";
+      ".config/opencode/plugins/.gitkeep".text = "";
+      ".config/opencode/skills/.gitkeep".text = "";
+      ".config/opencode/themes/.gitkeep".text = "";
+      ".config/opencode/tools/.gitkeep".text = "";
 
       # OpenCode configuration file
       # API keys are set via environment variables:
@@ -98,6 +107,7 @@ in
     };
 
     # Set environment variables for OpenCode
+    # Global config is at ~/.config/opencode/ by default (no env var needed)
     sessionVariables =
       lib.optionalAttrs (anthropicApiKey != "") {
         # Set Anthropic API key if available from secrets

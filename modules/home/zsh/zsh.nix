@@ -105,6 +105,21 @@
       export ALSA_CARD=0
       export SDL_AUDIODRIVER=dummy
 
+      # WSL-specific fixes for Windows Terminal compatibility
+      if [[ -n "$WSL_DISTRO_NAME" ]]; then
+        # Disable zsh-autosuggestions async mode to prevent
+        # "No handler installed for fd N" errors caused by file descriptor
+        # races during rapid prompt redraws (oh-my-posh hooks + zoxide cd).
+        unset ZSH_AUTOSUGGEST_USE_ASYNC
+
+        # Explicitly disable mouse tracking modes that Windows Terminal may
+        # activate but not properly consume, causing raw escape sequence spam
+        # (e.g. "35,71;45M..." floods on directory change).
+        # Disable: X10 (9), VT200 (1000), button-event (1002), any-event (1003),
+        #          SGR extended (1006)
+        printf '\e[?9l\e[?1000l\e[?1002l\e[?1003l\e[?1006l'
+      fi
+
       setopt sharehistory
       setopt hist_ignore_space
       setopt hist_ignore_all_dups
@@ -116,6 +131,10 @@
 
       # Set GPG_TTY for GPG agent (required for commit signing)
       export GPG_TTY=$(tty)
+
+      # Tell the running gpg-agent about the current TTY so pinentry
+      # can attach to it (fallback when GUI pinentry is unavailable)
+      gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1 || true
 
       # SSH agent socket discovery (ordered by preference):
       # 1. gpg-agent SSH socket (WSL: enableSSHSupport=true in wsl-overrides.nix)
@@ -158,8 +177,14 @@
       }
 
       # Make sure that the terminal is in application mode when zle is active, since
-      # only then values from $terminfo are valid
-      if (( ''${+terminfo[smkx]} )) && (( ''${+terminfo[rmkx]} )); then
+      # only then values from $terminfo are valid.
+      #
+      # IMPORTANT: Skip this in WSL / Windows Terminal. The smkx (application keypad
+      # mode) capability under WSL can trigger mouse-tracking reports that flood the
+      # terminal with raw escape sequences (e.g. "35,71;45M..." spam on every cd).
+      # Windows Terminal already sends correct key sequences without application mode,
+      # so the guard is safe to skip there.
+      if [[ -z "$WSL_DISTRO_NAME" ]] && (( ''${+terminfo[smkx]} )) && (( ''${+terminfo[rmkx]} )); then
         function zle-line-init() {
           echoti smkx
         }
