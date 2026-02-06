@@ -247,38 +247,38 @@ in
     lib.hm.dag.entryAfter [ "writeBoundary" ] (
       if hasWebhooks then
         ''
-          $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.config/discord_mcp
+                    $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.config/discord_mcp
 
-          # Create webhooks.json with ISO 8601 timestamp (shared with OpenCode)
-          if [ ! -f ~/.config/discord_mcp/webhooks.json ]; then
-            cat > ~/.config/discord_mcp/webhooks.json <<'WEBHOOKS_JSON'
-            {
-              "messages": {
-                "url": "${discordWebhooks.messages or ""}",
-                "description": "General messages (discord_send_message)",
-                "added_at": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
-              },
-              "releases": {
-                "url": "${discordWebhooks.releases or ""}",
-                "description": "Release announcements (discord_send_announcement)",
-                "added_at": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
-              },
-              "teasers": {
-                "url": "${discordWebhooks.teasers or ""}",
-                "description": "Teaser announcements (discord_send_teaser)",
-                "added_at": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
-              },
-              "changelog": {
-                "url": "${discordWebhooks.changelog or ""}",
-                "description": "Changelog posts (discord_send_changelog)",
-                "added_at": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
-              }
+                    # Create webhooks.json with ISO 8601 timestamp (shared with OpenCode)
+                    if [ ! -f ~/.config/discord_mcp/webhooks.json ]; then
+                      cat > ~/.config/discord_mcp/webhooks.json <<'WEBHOOKS_JSON'
+          {
+            "messages": {
+              "url": "${discordWebhooks.messages or ""}",
+              "description": "General messages (discord_send_message)",
+              "added_at": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
+            },
+            "releases": {
+              "url": "${discordWebhooks.releases or ""}",
+              "description": "Release announcements (discord_send_announcement)",
+              "added_at": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
+            },
+            "teasers": {
+              "url": "${discordWebhooks.teasers or ""}",
+              "description": "Teaser announcements (discord_send_teaser)",
+              "added_at": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
+            },
+            "changelog": {
+              "url": "${discordWebhooks.changelog or ""}",
+              "description": "Changelog posts (discord_send_changelog)",
+              "added_at": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
             }
-            WEBHOOKS_JSON
+          }
+          WEBHOOKS_JSON
 
-            $DRY_RUN_CMD chmod $VERBOSE_ARG 600 ~/.config/discord_mcp/webhooks.json
-            echo "Discord MCP webhooks configured in ~/.config/discord_mcp/webhooks.json"
-          fi
+                      $DRY_RUN_CMD chmod $VERBOSE_ARG 600 ~/.config/discord_mcp/webhooks.json
+                      echo "Discord MCP webhooks configured in ~/.config/discord_mcp/webhooks.json"
+                    fi
         ''
       else
         ''
