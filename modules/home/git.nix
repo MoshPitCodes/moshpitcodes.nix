@@ -89,13 +89,16 @@
     libsecret
   ]; # pkgs.git-lfs
 
-  # Copy GitHub CLI config from backup directory during activation
-  home.activation.copyGhConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    sourceDir="${customsecrets.ghConfigDir or ""}"
-    if [[ -n "$sourceDir" && -d "$sourceDir" ]]; then
-      $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.config/gh
-      $DRY_RUN_CMD cp -r $VERBOSE_ARG "$sourceDir"/* ~/.config/gh/
-      $DRY_RUN_CMD chmod $VERBOSE_ARG 600 ~/.config/gh/hosts.yml 2>/dev/null || true
-    fi
-  '';
+  # Authenticate gh CLI using GitHub PAT from secrets
+  home.activation.ghAuth =
+    let
+      githubPat = customsecrets.apiKeys.github-pat or "";
+    in
+    lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+      token="${githubPat}"
+      if [[ -n "$token" ]]; then
+        $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.config/gh
+        echo "$token" | ${pkgs.gh}/bin/gh auth login --hostname github.com --git-protocol ssh --with-token 2>/dev/null || true
+      fi
+    '';
 }
