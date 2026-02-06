@@ -80,6 +80,12 @@
       glol = "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset'";
       glola = "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --all";
       glols = "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --stat";
+      # Backup gh CLI config to the backup directory
+      gh-backup = "test -d ${customsecrets.ghConfigDir or ""} && mkdir -p ${
+        customsecrets.ghConfigDir or ""
+      } && cp -f ~/.config/gh/hosts.yml ${
+        customsecrets.ghConfigDir or ""
+      }/hosts.yml && echo 'gh config backed up' || echo 'Backup directory not configured'";
     };
   };
 
@@ -89,16 +95,31 @@
     libsecret
   ]; # pkgs.git-lfs
 
-  # Authenticate gh CLI using GitHub PAT from secrets
+  # Restore gh CLI configuration from backup or authenticate with PAT
   home.activation.ghAuth =
     let
       githubPat = customsecrets.apiKeys.github-pat or "";
+      ghConfigDir = customsecrets.ghConfigDir or "";
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      token="${githubPat}"
-      if [[ -n "$token" ]]; then
+      # First, try to restore from backup if it exists
+      if [[ -n "${ghConfigDir}" && -d "${ghConfigDir}" ]]; then
         $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.config/gh
-        echo "$token" | ${pkgs.gh}/bin/gh auth login --hostname github.com --git-protocol ssh --with-token 2>/dev/null || true
+        if [[ -f "${ghConfigDir}/hosts.yml" ]]; then
+          $DRY_RUN_CMD cp $VERBOSE_ARG -f "${ghConfigDir}/hosts.yml" ~/.config/gh/hosts.yml
+          $DRY_RUN_CMD chmod $VERBOSE_ARG 600 ~/.config/gh/hosts.yml
+          echo "Restored gh CLI authentication from backup"
+        fi
+      fi
+
+      # If no backup or restoration failed, and we're not already authenticated, use PAT
+      if ! ${pkgs.gh}/bin/gh auth status >/dev/null 2>&1; then
+        token="${githubPat}"
+        if [[ -n "$token" ]]; then
+          $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.config/gh
+          echo "$token" | ${pkgs.gh}/bin/gh auth login --hostname github.com --git-protocol ssh --with-token 2>/dev/null || true
+          echo "Authenticated gh CLI with GitHub PAT"
+        fi
       fi
     '';
 }
