@@ -163,6 +163,7 @@
 
         # Python
         python3 # Python 3 interpreter
+        uv # Astral UV - fast Python package and project manager
 
         # Secrets Management
         doppler # secrets management

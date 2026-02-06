@@ -105,6 +105,21 @@
       export ALSA_CARD=0
       export SDL_AUDIODRIVER=dummy
 
+      # WSL-specific fixes for Windows Terminal compatibility
+      if [[ -n "$WSL_DISTRO_NAME" ]]; then
+        # Disable zsh-autosuggestions async mode to prevent
+        # "No handler installed for fd N" errors caused by file descriptor
+        # races during rapid prompt redraws (oh-my-posh hooks + zoxide cd).
+        unset ZSH_AUTOSUGGEST_USE_ASYNC
+
+        # Explicitly disable mouse tracking modes that Windows Terminal may
+        # activate but not properly consume, causing raw escape sequence spam
+        # (e.g. "35,71;45M..." floods on directory change).
+        # Disable: X10 (9), VT200 (1000), button-event (1002), any-event (1003),
+        #          SGR extended (1006)
+        printf '\e[?9l\e[?1000l\e[?1002l\e[?1003l\e[?1006l'
+      fi
+
       setopt sharehistory
       setopt hist_ignore_space
       setopt hist_ignore_all_dups
@@ -117,10 +132,13 @@
       # Set GPG_TTY for GPG agent (required for commit signing)
       export GPG_TTY=$(tty)
 
+      # Tell the running gpg-agent about the current TTY so pinentry
+      # can attach to it (fallback when GUI pinentry is unavailable)
+      gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1 || true
+
       # SSH agent socket discovery (ordered by preference):
       # 1. gpg-agent SSH socket (WSL: enableSSHSupport=true in wsl-overrides.nix)
       # 2. gcr-ssh-agent socket (Desktop: GNOME Keyring with graphical session)
-      # Keys are auto-loaded on first use via AddKeysToAgent=yes in openssh.nix
       if [[ -z "$SSH_AUTH_SOCK" ]]; then
         _gpg_ssh_sock="$(gpgconf --list-dirs agent-ssh-socket 2>/dev/null)"
         if [[ -S "$_gpg_ssh_sock" ]]; then
@@ -129,6 +147,19 @@
           export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gcr/ssh"
         fi
         unset _gpg_ssh_sock
+      fi
+
+      # Auto-load SSH keys on first interactive login if the agent has none.
+      # This prompts for the passphrase once (via pinentry-gnome3 on WSL,
+      # seahorse on desktop) and caches the key for the configured TTL
+      # (8 hours in wsl-overrides.nix). Subsequent shells skip the prompt.
+      if [[ -o interactive ]] && [[ -n "$SSH_AUTH_SOCK" ]]; then
+        if ! ssh-add -l &>/dev/null; then
+          for _keyfile in ~/.ssh/id_ed25519_*; do
+            [[ -f "$_keyfile" && ! "$_keyfile" == *.pub ]] && ssh-add "$_keyfile" 2>/dev/null
+          done
+          unset _keyfile
+        fi
       fi
 
       # Use fd (https://github.com/sharkdp/fd) for listing path candidates.
@@ -158,8 +189,14 @@
       }
 
       # Make sure that the terminal is in application mode when zle is active, since
-      # only then values from $terminfo are valid
-      if (( ''${+terminfo[smkx]} )) && (( ''${+terminfo[rmkx]} )); then
+      # only then values from $terminfo are valid.
+      #
+      # IMPORTANT: Skip this in WSL / Windows Terminal. The smkx (application keypad
+      # mode) capability under WSL can trigger mouse-tracking reports that flood the
+      # terminal with raw escape sequences (e.g. "35,71;45M..." spam on every cd).
+      # Windows Terminal already sends correct key sequences without application mode,
+      # so the guard is safe to skip there.
+      if [[ -z "$WSL_DISTRO_NAME" ]] && (( ''${+terminfo[smkx]} )) && (( ''${+terminfo[rmkx]} )); then
         function zle-line-init() {
           echoti smkx
         }

@@ -1,7 +1,8 @@
+<!-- DO NOT TOUCH THIS SECTION#1: START -->
 <h1 align="center">
    <img src="./.github/assets/logo/nixos-logo.png  " width="100px" />
    <br>
-      My NixOS Configuration
+      moshpitcodes.nix | My NixOS Configuration
    <br>
       <img src="./.github/assets/pallet/pallet-0.png" width="800px" /> <br>
 
@@ -32,7 +33,9 @@
       </a>
    </div>
 </h1>
+
 <br/>
+<!-- DO NOT TOUCH THIS SECTION#1: END -->
 
 # Overview
 
@@ -62,23 +65,24 @@ My personal NixOS system configuration. This is something I have been working on
 
 ## Project Structure
 
--   [./flake.nix](flake.nix) Entry point to the configuration
--   [./hosts/](hosts) Per-host configurations
-    - [../desktop/](hosts/desktop/) Desktop configuration
-    - [../laptop/](hosts/laptop/) Laptop configuration
-    - [../vm/](hosts/vm/) QEMU/KVM configuration
-    - [../vmware-guest/](hosts/vmware-guest/) VMWare configuration
-    - [../wsl/](hosts/wsl/) WSL2 configuration
--   [./modules/](modules) Modularized NixOS configurations
-    -   [../core/](modules/core/) Core NixOS configuration
-    -   [../home/](modules/home/) [Home Manager](https://github.com/nix-community/home-manager) user configurations
--   [./overlays/](overlays) Nixpkgs overlays
--   [./shells/](shells) Development shell environments
--   [./scripts/](scripts) Utility scripts
--   [./pkgs/](pkgs) Custom packages
--   [./wallpapers/](wallpapers) Wallpapers collection
+- [./flake.nix](flake.nix) Entry point to the configuration
+- [./hosts/](hosts) Per-host configurations
+  - [../desktop/](hosts/desktop/) Desktop configuration
+  - [../laptop/](hosts/laptop/) Laptop configuration
+  - [../vm/](hosts/vm/) QEMU/KVM configuration
+  - [../vmware-guest/](hosts/vmware-guest/) VMWare configuration
+  - [../wsl/](hosts/wsl/) WSL2 configuration
+- [./modules/](modules) Modularized NixOS configurations
+  - [../core/](modules/core/) Core NixOS configuration
+  - [../home/](modules/home/) [Home Manager](https://github.com/nix-community/home-manager) user configurations
+- [./overlays/](overlays) Nixpkgs overlays
+- [./shells/](shells) Development shell environments
+- [./scripts/](scripts) Utility scripts
+- [./pkgs/](pkgs) Custom packages
+- [./wallpapers/](wallpapers) Wallpapers collection
+- [./docs/](docs) Project documentation
 
->[!TIP]
+> [!TIP]
 > If you open this `README.md` file in [VSCode][VSCode] or [VSCodium][VSCodium], you can `Ctrl + LMB` the links above.
 
 <br/>
@@ -96,7 +100,7 @@ My personal NixOS system configuration. This is something I have been working on
 | **Terminal Emulator**       | [Ghostty][Ghostty]                                                                  |
 | **Shell**                   | [zsh][zsh] + [Oh-My-Posh][Oh-My-Posh]                                               |
 | **Text Editor**             | [VSCodium][VSCodium] + [VSCode][VSCode] + [Neovim][Neovim]                          |
-| **AI Editor**               | [CursorAI][CursorAI]                                                                |
+| **AI Development**          | [Claude Code][Claude Code] + [OpenCode][OpenCode]                                   |
 | **Network Management Tool** | [NetworkManager][NetworkManager] + [network-manager-applet][network-manager-applet] |
 | **System Resource Monitor** | [Btop][Btop]                                                                        |
 | **File Manager**            | [nemo][nemo] + [yazi][yazi]                                                         |
@@ -119,51 +123,190 @@ My personal NixOS system configuration. This is something I have been working on
 
 <br/>
 
-## Key Features
+# Architecture
 
-### Modular Architecture
+```
+                                 flake.nix
+                                    |
+                     +--------------+--------------+
+                     |                             |
+                  inputs                       outputs
+                     |                             |
+        +------------+----------+      +-----------+-----------+
+        |   nixpkgs (unstable)  |      |  nixosConfigurations  |
+        |   home-manager        |      |                       |
+        |   hyprland            |      |  desktop  laptop  vm  |
+        |   spicetify-nix       |      |  vmware-guest   wsl   |
+        |   zen-browser         |      |                       |
+        |   ghostty             |      +-----------+-----------+
+        |   nvf (neovim)        |                  |
+        |   nixos-wsl           |      +-----------+-----------+
+        |   nix-flatpak         |      |                       |
+        |   ...                 |      |  specialArgs:          |
+        +------------+----------+      |    customsecrets       |
+                                       |    inputs              |
+                                       |                       |
+                                       +----------++-----------+
+                                                  ||
+                          +-----------------------++-------------------+
+                          |                                            |
+                    modules/core/                              modules/home/
+                          |                                            |
+            +-------------+-------------+            +-----------------+----------------+
+            | bootloader  network       |            | git       zsh        hyprland     |
+            | hardware    security      |            | gpg       tmux       waybar       |
+            | services    wayland       |            | openssh   starship   rofi         |
+            | user        samba         |            | ghostty   bat        swaync       |
+            | pipewire    virtualization|            | development/                      |
+            | system      flatpak       |            |   claude-code.nix                 |
+            | steam       xserver       |            |   opencode.nix                    |
+            +---------------------------+            |   development.nix                 |
+                                                     | scripts/  discord/                |
+                                                     | vscode    browser    packages     |
+                                                     +----------------------------------+
+```
+
+```
+                            Secrets Flow
+
+    secrets.nix (git-ignored)  ──>  flake.nix (import + validate)
+                                         |
+                                    customsecrets
+                                    (specialArgs)
+                                         |
+                    +--------------------+--------------------+
+                    |                    |                    |
+              modules/core         modules/home         Runtime
+                    |                    |                    |
+              - hashedPassword     - git identity       Doppler CLI
+              - wifi credentials   - API keys             (shell
+              - samba credentials  - SSH keys from NAS     aliases)
+                                   - GPG keys from NAS
+                                   - gh config from NAS
+```
+
+<br/>
+
+# Getting Started
+
+> [!CAUTION]
+> Customizing system configurations, particularly those affecting operating systems, may lead to unforeseen effects and potentially disrupt your system's standard operations. Although I've personally tested these settings on my own hardware, they might not perform identically on your specific setup.
+> **I cannot assume responsibility for any problems that might result from implementing this configuration.**
+
+> [!WARNING]
+> You **must** examine the configuration details and adjust them according to your specific requirements before proceeding.
+
+<br/>
+
+## 1. Install NixOS
+
+First, install NixOS using an [official ISO image](https://nixos.org/download.html#nixos-iso).
+
+> [!NOTE]
+> This was tested with the following parameters:
+> - Graphical installer using the official GNOME ISO image
+> - `No desktop` or `GNOME` option during installation
+> - Intel 13th Gen desktop & mobile hardware (especially relevant regarding drivers!)
+> - VMWare Workstation or Player (v17+) on Microsoft Windows 11
+
+For now, this repository assumes an already installed NixOS system. See the [Installation Guide](docs/installation.md) for detailed instructions.
+
+<br/>
+
+## 2. Clone the Repository
+
+```bash
+nix-shell -p git
+git clone https://github.com/MoshPitCodes/moshpitcodes.nix
+cd moshpitcodes.nix
+```
+
+<br/>
+
+## 3. Configure Secrets
+
+> [!TIP]
+> To ensure you understand what you're executing, it's advisable to review the code base or at minimum consult the documentation thoroughly prior to running the installer.
+
+### Create Your Secrets File
+
+```bash
+cp secrets.nix.example secrets.nix
+# Edit secrets.nix with your values (username, passwords, API keys, etc.)
+```
+
+See the [Secrets Guide](SECRETS.md) for detailed instructions on configuring credentials, API keys, and external secret storage.
+
+### Run the Installer
+
+```bash
+./scripts/install.sh
+```
+
+### Rebuild Manually
+
+```bash
+# Standard rebuild
+sudo nixos-rebuild switch --flake . --impure
+
+# With Doppler secrets
+doppler run -- sudo nixos-rebuild switch --flake .
+
+# Test build without switching
+nix build .#nixosConfigurations.desktop.config.system.build.toplevel
+```
+
+<br/>
+
+# Key Features
+
+<details>
+<summary>
+Modular Architecture
+</summary>
+
 - **Flexible Host Configurations**: Separate configurations for desktop, laptop, VM, VMware guest, and WSL2
 - **Reusable Modules**: Core system modules and Home Manager user configurations
 - **Custom Overlays**: Package version overrides through Nixpkgs overlays
 
-### Development Tools
+</details>
+
+<details>
+<summary>
+Development Tools
+</summary>
+
 - **Multiple Dev Shells**: Specialized environments for different workflows (default, devshell, claude-flow)
-- **AI Development**: Claude Flow integration for AI-assisted development workflows
+- **AI Development**: Claude Code and OpenCode integration with MCP servers (Discord, Linear, GitHub)
 - **Full DevOps Stack**: kubectl, terraform, ansible, Docker/Podman, and more
 
-### System Management
+</details>
+
+<details>
+<summary>
+System Management
+</summary>
+
 - **Interactive Installation**: Step-by-step guided setup with `install.sh`
 - **Smart Rebuilds**: Rebuild script with cache clearing, garbage collection, and dry-run options
 - **Automated Scripts**: 20+ user scripts for common tasks
 
-### Cross-Platform
+</details>
+
+<details>
+<summary>
+Cross-Platform
+</summary>
+
 - **WSL2 Integration**: Full WSL2 support with systemd, Docker, and Windows interop
 - **VM Support**: Optimized configurations for QEMU/KVM and VMware
 - **Consistent Experience**: Same tools and workflows across all platforms
 
-<br/>
-
-## Quick Start
-
-```bash
-# Clone the repository
-nix-shell -p git
-git clone https://github.com/MoshPitCodes/moshpitcodes.nix
-cd moshpitcodes.nix
-
-# Configure secrets
-cp secrets.nix.example secrets.nix
-# Edit secrets.nix with your values
-
-# Run the installer
-./install.sh
-```
-
-See the [Installation Guide](docs/installation.md) for detailed instructions.
+</details>
 
 <br/>
 
-## Gallery
+# Gallery
 
 <p align="center">
    <img src="./.github/assets/screenshots/Screenshot_2025_12_13_at_15h46m13s.png" style="margin-bottom: 15px;"/> <br>
@@ -204,6 +347,8 @@ Other dotfiles that have inspired me greatly:
 
 <br/>
 
+<!-- DO NOT TOUCH THIS SECTION#2: START -->
+
 <p align="center"><img src="https://api.star-history.com/svg?repos=MoshPitCodes/moshpitcodes.nix&type=Timeline&theme=dark" /></p>
 
 <br/>
@@ -213,11 +358,12 @@ Other dotfiles that have inspired me greatly:
 <div align="right">
   <a href="#readme">Back to the Top</a>
 </div>
+<!-- DO NOT TOUCH THIS SECTION#2: END -->
 
 <!-- Links -->
 [Wayland]: https://wayland.freedesktop.org/
 [Hyprland]: https://github.com/hyprwm/Hyprland
-[Waypaper]:https://github.com/anufrievroman/waypaper
+[Waypaper]: https://github.com/anufrievroman/waypaper
 [Hyprpaper]: https://github.com/hyprwm/hyprpaper
 [Ghostty]: https://ghostty.org/
 [Oh-My-Posh]: https://ohmyposh.dev/
@@ -231,10 +377,11 @@ Other dotfiles that have inspired me greatly:
 [Hyprlock]: https://github.com/hyprwm/hyprlock
 [audacious]: https://audacious-media-player.org/
 [mpv]: https://github.com/mpv-player/mpv
-[VSCodium]:https://vscodium.com/
+[VSCodium]: https://vscodium.com/
 [VSCode]: https://code.visualstudio.com/
 [Neovim]: https://github.com/neovim/neovim
-[CursorAI]: https://www.cursor.com/
+[Claude Code]: https://docs.anthropic.com/en/docs/claude-code
+[OpenCode]: https://opencode.ai/
 [grimblast]: https://github.com/hyprwm/contrib
 [Rose Pine]: https://rosepinetheme.com/
 [hyprpicker]: https://github.com/hyprwm/hyprpicker

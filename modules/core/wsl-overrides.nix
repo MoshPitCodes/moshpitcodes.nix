@@ -57,8 +57,9 @@
     # NixOS gnupg module automatically sets SSH_AUTH_SOCK via environment.extraInit.
     gnupg.agent = {
       enableSSHSupport = lib.mkForce true;
-      # Use curses pinentry for CLI passphrase prompts (no GUI in WSL)
-      pinentryPackage = lib.mkForce pkgs.pinentry-curses;
+      # Use GNOME pinentry for graphical passphrase prompts via WSLg
+      # WSLg provides X11/Wayland forwarding, so GTK3 dialogs work natively
+      pinentryPackage = lib.mkForce pkgs.pinentry-gnome3;
       settings = {
         # Cache SSH key passphrases for 8 hours (development sessions)
         default-cache-ttl-ssh = 28800;
