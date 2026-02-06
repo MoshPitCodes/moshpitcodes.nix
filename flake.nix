@@ -52,10 +52,11 @@
       url = "github:SergioRibera/s4rchiso-plymouth-theme";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    mcp-github = {
-      url = "github:MoshPitLabs/mcp-github";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # Disabled: GitHub MCP server build
+    # mcp-github = {
+    #   url = "github:MoshPitLabs/mcp-github";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
   };
 
   outputs =
