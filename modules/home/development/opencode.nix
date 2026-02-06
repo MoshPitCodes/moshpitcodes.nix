@@ -10,7 +10,8 @@ let
   # Extract API keys from secrets with fallback to empty string
   anthropicApiKey = customsecrets.apiKeys.anthropic or "";
   openrouterApiKey = customsecrets.apiKeys.openrouter or "";
-  githubPat = customsecrets.apiKeys.github or "";
+  githubPat = customsecrets.apiKeys.github-pat or "";
+  githubPatOrg = customsecrets.apiKeys.github-pat-org or "";
 
   # Local MCP server directories (contain their own .env and config files)
   discordMcpDir = "${config.home.homeDirectory}/Development/mcp-discord";
@@ -120,6 +121,10 @@ in
       // lib.optionalAttrs (githubPat != "") {
         # Set GitHub PAT if available from secrets
         GITHUB_PERSONAL_ACCESS_TOKEN = githubPat;
+      }
+      // lib.optionalAttrs (githubPatOrg != "") {
+        # Set GitHub org PAT if available from secrets
+        GITHUB_PERSONAL_ACCESS_TOKEN_ORG = githubPatOrg;
       };
   };
 
@@ -132,9 +137,11 @@ in
       export ANTHROPIC_API_KEY=$(doppler secrets get ANTHROPIC_API_KEY --plain)
       export OPENROUTER_API_KEY=$(doppler secrets get OPENROUTER_API_KEY --plain)
       export GITHUB_PERSONAL_ACCESS_TOKEN=$(doppler secrets get GITHUB_PERSONAL_ACCESS_TOKEN --plain)
+      export GITHUB_PERSONAL_ACCESS_TOKEN_ORG=$(doppler secrets get GITHUB_PERSONAL_ACCESS_TOKEN_ORG --plain)
       echo "✓ Anthropic API key loaded from Doppler"
       echo "✓ OpenRouter API key loaded from Doppler"
       echo "✓ GitHub PAT loaded from Doppler"
+      echo "✓ GitHub org PAT loaded from Doppler"
     '';
 
     # Run opencode with Doppler directly
@@ -148,9 +155,11 @@ in
       export ANTHROPIC_API_KEY=$(doppler secrets get ANTHROPIC_API_KEY --plain)
       export OPENROUTER_API_KEY=$(doppler secrets get OPENROUTER_API_KEY --plain)
       export GITHUB_PERSONAL_ACCESS_TOKEN=$(doppler secrets get GITHUB_PERSONAL_ACCESS_TOKEN --plain)
+      export GITHUB_PERSONAL_ACCESS_TOKEN_ORG=$(doppler secrets get GITHUB_PERSONAL_ACCESS_TOKEN_ORG --plain)
       echo "✓ Anthropic API key loaded from Doppler"
       echo "✓ OpenRouter API key loaded from Doppler"
       echo "✓ GitHub PAT loaded from Doppler"
+      echo "✓ GitHub org PAT loaded from Doppler"
     '';
 
     opencode-doppler = "doppler run -- opencode";
