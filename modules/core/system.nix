@@ -1,6 +1,5 @@
 {
   pkgs,
-  inputs,
   ...
 }:
 {
@@ -14,19 +13,19 @@
 
       flake-registry = builtins.toFile "null-flake-registry.json" ''{"flakes":[],"version":2}'';
 
-      # Binary caches for faster builds
+      # Binary caches for faster builds (supplements default cache.nixos.org)
       # nix-community: Home-manager, NUR, community packages
       # nix-gaming: Gaming optimizations, Proton, Wine
       # hyprland: Hyprland compositor pre-built binaries
       # ghostty: Ghostty terminal emulator
-      substituters = [
+      extra-substituters = [
         "https://nix-community.cachix.org"
         "https://nix-gaming.cachix.org"
         "https://hyprland.cachix.org"
         "https://ghostty.cachix.org"
       ];
 
-      trusted-public-keys = [
+      extra-trusted-public-keys = [
         "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
         "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
         "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
@@ -38,24 +37,12 @@
       warn-dirty = false;
     };
   };
-  nixpkgs = {
-    overlays = [ inputs.nur.overlays.default ];
-  };
+  # NUR overlay is applied centrally via overlays/default.nix
 
   # Note: security.sudo.enable is set in security.nix
 
   environment.systemPackages = with pkgs; [
     git
-    nixfmt-tree
-    openjdk25
-    openh264
-    # batgrep tests fail in Nix sandbox due to filesystem restrictions
-    (bat-extras.batgrep.overrideAttrs (_oldAttrs: {
-      doCheck = false;
-    }))
-    # Nix utilities for monitoring builds and generation diffs
-    nix-output-monitor
-    nvd
   ];
 
   time.timeZone = "Europe/Berlin";

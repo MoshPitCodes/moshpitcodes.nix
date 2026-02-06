@@ -13,7 +13,7 @@ buildGoModule rec {
   src = fetchFromGitHub {
     owner = "moshpitcodes";
     repo = "reposync";
-    rev = "main";
+    rev = "fb47cb8a47d9b475fafa66b9ff2b3159e296878b";
     hash = "sha256-M/WQFkXb6e2k3k8rNgNThV6BT//neH2iS/cJn+hV7iw=";
   };
 

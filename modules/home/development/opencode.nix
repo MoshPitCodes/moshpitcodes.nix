@@ -16,23 +16,29 @@ let
   discordMcpDir = "${config.home.homeDirectory}/Development/mcp-discord";
   linearMcpDir = "${config.home.homeDirectory}/Development/mcp-linearapp";
 
-  # Check if local MCP servers exist
-  discordMcpExists = builtins.pathExists discordMcpDir;
-  linearMcpExists = builtins.pathExists linearMcpDir;
-
   # Create wrapper scripts that run from local directories
+  # Wrappers check for directory existence at runtime (not build time)
   # Local directories contain their own .env and webhooks.json files
   discord-mcp-wrapper = pkgs.writeShellScript "discord-mcp-wrapper" ''
-    cd ${discordMcpDir} || exit 1
+    if [ ! -d "${discordMcpDir}" ]; then
+      echo "Error: Discord MCP directory not found at ${discordMcpDir}" >&2
+      exit 1
+    fi
+    cd "${discordMcpDir}" || exit 1
     exec ${pkgs.bun}/bin/bun run ${discordMcpDir}/src/index.ts "$@"
   '';
 
   linear-mcp-wrapper = pkgs.writeShellScript "linear-mcp-wrapper" ''
-    cd ${linearMcpDir} || exit 1
+    if [ ! -d "${linearMcpDir}" ]; then
+      echo "Error: Linear MCP directory not found at ${linearMcpDir}" >&2
+      exit 1
+    fi
+    cd "${linearMcpDir}" || exit 1
     exec ${pkgs.bun}/bin/bun run ${linearMcpDir}/src/index.ts "$@"
   '';
 
-  # Build MCP server configuration dynamically
+  # Build MCP server configuration
+  # All servers are always defined - wrappers handle missing directories at runtime
   mcpServers = {
     github = {
       type = "local";
@@ -50,15 +56,11 @@ let
       };
       enabled = true;
     };
-  }
-  // lib.optionalAttrs discordMcpExists {
     discord = {
       type = "local";
       command = [ "${discord-mcp-wrapper}" ];
       enabled = true;
     };
-  }
-  // lib.optionalAttrs linearMcpExists {
     linear = {
       type = "local";
       command = [ "${linear-mcp-wrapper}" ];

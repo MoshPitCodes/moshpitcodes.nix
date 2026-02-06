@@ -9,6 +9,7 @@
     twemoji-color-font
     noto-fonts-color-emoji
     fantasque-sans-mono
+    adwaita-icon-theme # needed by virt-manager and GTK apps
     # monolisa
     # monolisa-nerd
     # maple-mono # do not use anymore

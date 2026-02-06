@@ -11,11 +11,18 @@
   home-manager = {
     useUserPackages = true;
     useGlobalPkgs = true;
-    extraSpecialArgs = { inherit inputs username host customsecrets; };
+    extraSpecialArgs = {
+      inherit
+        inputs
+        username
+        host
+        customsecrets
+        ;
+    };
     users.${username} = {
       imports =
         if (host == "desktop") then
-          [ ./../home/default.desktop.nix ]
+          [ ./../home ]
         else if (host == "vm" || host == "nixos-vmware") then
           [ ./../home/default.vm.nix ]
         else if (host == "nixos-wsl") then

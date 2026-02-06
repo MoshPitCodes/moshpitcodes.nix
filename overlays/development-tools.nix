@@ -1,6 +1,4 @@
-{
-  inputs ? null,
-}:
+{ }:
 
 _final: prev: {
   # Infrastructure as Code Tools
@@ -25,22 +23,22 @@ _final: prev: {
     }
   );
 
-  # OpenCode v1.1.42 (latest)
+  # OpenCode v1.1.52 (latest)
   # AI coding agent built for the terminal
-  # Source: https://github.com/sst/opencode/releases/tag/v1.1.42
+  # Source: https://github.com/sst/opencode/releases/tag/v1.1.52
   opencode = prev.opencode.overrideAttrs (
     finalAttrs: prevAttrs: {
-      version = "1.1.42";
+      version = "1.1.52";
       src = prev.fetchFromGitHub {
         owner = "sst";
         repo = "opencode";
         tag = "v${finalAttrs.version}";
-        hash = "sha256-zLOnLuMzoyR/jBDKi3qxN6gId5KgI+MrTPjX21g7X2o=";
+        hash = "sha256-H5D1uUi/5EUPheNZSPuRaRRcFF9n4MEcT7ToIejGESo=";
       };
 
       node_modules = prevAttrs.node_modules.overrideAttrs {
         inherit (finalAttrs) version src;
-        outputHash = "sha256-bjSPHxPTyzhMOztd7HjUl/lvMZYVk944xPj8ADDn5Y4=";
+        outputHash = "sha256-RiHlmCiapxevx9Z4KvyBKEjhCxxVgar/IyZ/lpYa6x4=";
       };
 
       env = (prevAttrs.env or { }) // {

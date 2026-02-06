@@ -5,8 +5,7 @@
     __GL_GSYNC_ALLOWED = 0;
     __GL_VRR_ALLOWED = 0;
     _JAVA_AWT_WM_NONEREPARENTING = 1;
-    # Use SSH agent instead of GNOME keyring for SSH
-    # SSH_AUTH_SOCK will be set by SSH agent auto-start in shell
+    # GUI prompt for SSH key passphrases (used by gcr-ssh-agent from GNOME Keyring)
     SSH_ASKPASS = "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
     DISPLAY = ":0";
     DISABLE_QT5_COMPAT = 0;

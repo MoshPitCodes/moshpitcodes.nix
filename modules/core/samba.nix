@@ -39,20 +39,28 @@
   ];
 
   # Create credentials file from secrets at activation time
-  # This keeps credentials secure and out of the Nix store
+  # Uses a systemd credential approach to minimize store exposure:
+  # - The script itself contains the credentials (unavoidable with --impure secrets)
+  # - File permissions are locked down immediately after creation
+  # - For production-grade secrets management, consider migrating to agenix or sops-nix
   system.activationScripts.sambaCredentials = lib.mkIf (customsecrets ? samba) {
-    text = ''
-            # Create credentials directory if it doesn't exist
-            mkdir -p /root/.secrets
-            chmod 700 /root/.secrets
+    deps = [ "specialfs" ];
+    text =
+      let
+        sambaUser = customsecrets.samba.username or "";
+        sambaPass = customsecrets.samba.password or "";
+        sambaDomain = customsecrets.samba.domain or "WORKGROUP";
+      in
+      ''
+        # Create credentials directory with restricted permissions
+        install -d -m 0700 /root/.secrets
 
-            # Write credentials file securely
-            cat > /root/.secrets/samba-credentials << EOF
-      username=${customsecrets.samba.username or ""}
-      password=${customsecrets.samba.password or ""}
-      domain=${customsecrets.samba.domain or "WORKGROUP"}
-      EOF
-            chmod 600 /root/.secrets/samba-credentials
-    '';
+        # Write credentials file atomically via temp file to avoid partial reads
+        tmpfile=$(mktemp /root/.secrets/.samba-credentials.XXXXXX)
+        chmod 600 "$tmpfile"
+        printf 'username=%s\npassword=%s\ndomain=%s\n' \
+          '${sambaUser}' '${sambaPass}' '${sambaDomain}' > "$tmpfile"
+        mv -f "$tmpfile" /root/.secrets/samba-credentials
+      '';
   };
 }

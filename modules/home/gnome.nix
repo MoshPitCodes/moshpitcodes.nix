@@ -1,18 +1,20 @@
 { pkgs, ... }:
 {
-  home.packages =
-    with pkgs;
-    [
-      evince # pdf
-      file-roller # archive
-      gnome-text-editor # gedit
-      gnome-keyring # keyring for credentials
-      ssh-askpass-fullscreen # GUI SSH password prompt
-    ];
+  home.packages = with pkgs; [
+    evince # pdf
+    file-roller # archive
+    gnome-text-editor # gedit
+  ];
 
+  # GNOME Keyring manages credentials (secrets) and SSH agent (gcr-ssh-agent)
+  # SSH_ASKPASS uses seahorse (configured in hyprland/variables.nix)
+  # AddKeysToAgent in openssh.nix auto-loads keys on first use
   services.gnome-keyring = {
     enable = true;
-    components = [ "secrets" "pkcs11" "ssh" ]; # Include SSH for gcr-ssh-agent
+    components = [
+      "secrets"
+      "ssh"
+    ];
   };
 
   dconf.settings = {
