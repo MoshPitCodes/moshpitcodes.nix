@@ -57,6 +57,10 @@
     #   url = "github:MoshPitLabs/mcp-github";
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
+    mcp-discord = {
+      url = "github:MoshPitLabs/mcp-discord";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -93,6 +97,14 @@
           anthropic = "";
           openai = "";
           github-pat = "";
+        };
+        discord = {
+          webhooks = {
+            messages = "";
+            releases = "";
+            teasers = "";
+            changelog = "";
+          };
         };
         sshKeys = {
           sourceDir = "";
