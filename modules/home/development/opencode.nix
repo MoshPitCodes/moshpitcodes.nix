@@ -50,11 +50,13 @@ let
         "${githubMcpServer}/bin/github-mcp-server"
         "stdio"
       ];
-      environment = {
-        GITHUB_PERSONAL_ACCESS_TOKEN = "\${GITHUB_PERSONAL_ACCESS_TOKEN}";
-        GITHUB_PERSONAL_ACCESS_TOKEN_ORG = "\${GITHUB_PERSONAL_ACCESS_TOKEN_ORG}";
-      };
       enabled = true;
+    }
+    // lib.optionalAttrs (githubPat != "" || githubPatOrg != "") {
+      env = lib.filterAttrs (_: v: v != "") {
+        GITHUB_PERSONAL_ACCESS_TOKEN = githubPat;
+        GITHUB_PERSONAL_ACCESS_TOKEN_ORG = githubPatOrg;
+      };
     };
     discord = {
       type = "local";
