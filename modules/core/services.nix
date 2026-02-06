@@ -4,9 +4,9 @@
     gvfs.enable = true;
     gnome = {
       tinysparql.enable = true;
-      gnome-keyring.enable = true;
+      # gnome-keyring is managed by home-manager (modules/home/gnome.nix)
     };
-    dbus.enable = true; # needed for gnome-keyring
+    dbus.enable = true; # needed for gnome-keyring and other D-Bus services
     fstrim.enable = true; # needed for SSDs
 
     # needed for GNOME services outside of GNOME Desktop

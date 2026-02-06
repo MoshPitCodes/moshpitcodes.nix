@@ -1,4 +1,9 @@
-{ lib, pkgs, customsecrets, ... }:
+{
+  lib,
+  pkgs,
+  customsecrets,
+  ...
+}:
 {
   programs = {
     git = {
@@ -28,6 +33,25 @@
         side-by-side = true;
         diff-so-fancy = true;
         navigate = true;
+
+        # Rose Pine color scheme
+        syntax-theme = "TwoDark"; # Fallback until bat rose-pine theme is built
+
+        # Rose Pine colors for diff highlighting
+        minus-style = "syntax #26233a"; # base with highlight background
+        minus-emph-style = "syntax #eb6f92"; # love for deletions
+        plus-style = "syntax #26233a"; # base with highlight background
+        plus-emph-style = "syntax #9ccfd8"; # foam for additions
+
+        # Line numbers with Rose Pine colors
+        line-numbers-minus-style = "#eb6f92"; # love
+        line-numbers-plus-style = "#9ccfd8"; # foam
+        line-numbers-zero-style = "#908caa"; # subtle
+
+        # Commit decoration colors
+        commit-decoration-style = "#f6c177 bold"; # gold
+        file-decoration-style = "#c4a7e7"; # iris
+        hunk-header-decoration-style = "#31748f"; # pine
       };
     };
 

@@ -1,4 +1,10 @@
-{ pkgs, host, customsecrets, lib, config, ... }:
+{
+  host,
+  customsecrets,
+  lib,
+  config,
+  ...
+}:
 
 let
   # Check if WSL module is loaded and enabled
@@ -15,11 +21,14 @@ in
 
     # Only define Wi-Fi networks on non-WSL systems
     wireless.networks = lib.mkIf (!isWsl) (
-      if customsecrets.network.wifiSSID != "" then {
-        "${customsecrets.network.wifiSSID}" = {
-          psk = customsecrets.network.wifiPassword;
-        };
-      } else {}
+      if customsecrets.network.wifiSSID != "" then
+        {
+          "${customsecrets.network.wifiSSID}" = {
+            psk = customsecrets.network.wifiPassword;
+          };
+        }
+      else
+        { }
     );
 
     nameservers = [
@@ -31,15 +40,13 @@ in
     firewall = {
       enable = true;
       allowedTCPPorts = [
-        22   # SSH
-        80   # HTTP
-        443  # HTTPS
+        22 # SSH
+        80 # HTTP
+        443 # HTTPS
       ];
       allowedUDPPorts = [ ];
     };
   };
 
-  environment.systemPackages = with pkgs; [
-    networkmanagerapplet
-  ];
+  # networkmanagerapplet is in home/hyprland/hyprland.nix (user-level GUI)
 }

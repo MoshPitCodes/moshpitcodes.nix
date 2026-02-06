@@ -32,7 +32,7 @@
     mimeo # open files based on mime type
     mpv # video player
     ncdu # disk space
-    nitch # systhem fetch util
+    nitch # system fetch util
     openssl # ssl utility
     onefetch # fetch utility for git repo
     pamixer # pulseaudio command line mixer
@@ -56,18 +56,8 @@
     xdg-utils # xdg utils
     xxd # hex viewer
 
-    ## Media support packages
-    libva # Video acceleration
-    libva-utils # Tools for VA-API
-    udev # Device management
-
-    # GStreamer and plugins (if not added in browser.nix)
-    gst_all_1.gstreamer
-    gst_all_1.gst-plugins-base
-    gst_all_1.gst-plugins-good
-    gst_all_1.gst-plugins-bad
-    gst_all_1.gst-plugins-ugly
-    gst_all_1.gst-libav
+    # GStreamer and plugins are defined in browser.nix
+    # VA-API drivers are configured in core/hardware.nix
 
     ## CLI
     cbonsai # terminal screensaver
@@ -75,6 +65,15 @@
     pipes # terminal screensaver
     sl # terminal train animation
     tty-clock # terminal clock
+
+    # batgrep tests fail in Nix sandbox due to filesystem restrictions
+    (bat-extras.batgrep.overrideAttrs (_oldAttrs: {
+      doCheck = false;
+    }))
+
+    ## Virtualization GUI
+    virt-manager # virtual machine manager
+    virt-viewer # virtual machine viewer
 
     ## GUI Apps
     audacity # audio editor

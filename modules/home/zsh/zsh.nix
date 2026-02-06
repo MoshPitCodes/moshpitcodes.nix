@@ -119,16 +119,9 @@
 
       # Use gcr-ssh-agent (GNOME Keyring's SSH agent)
       # The agent is started by gnome-keyring service, we just need to set the socket
+      # Keys are auto-loaded on first use via AddKeysToAgent=yes in openssh.nix
       if [[ -S "$XDG_RUNTIME_DIR/gcr/ssh" ]]; then
         export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gcr/ssh"
-      fi
-
-      # Auto-add SSH keys when agent is empty
-      # Keys are loaded once per agent session, gcr-ssh-agent handles persistence
-      if [[ -n "$SSH_AUTH_SOCK" ]] && [[ "$(ssh-add -l 2>&1)" == "The agent has no identities." ]]; then
-        for key in ~/.ssh/id_ed25519_*; do
-          [[ -f "$key" && "$key" != *.pub ]] && ssh-add "$key" 2>/dev/null
-        done
       fi
 
       # Use fd (https://github.com/sharkdp/fd) for listing path candidates.

@@ -19,6 +19,8 @@
         nixd # nix lsp
         nixfmt # nix formatter
         nix-prefetch-github # fetch GitHub repositories
+        nix-output-monitor # nix build output monitor
+        nvd # nix generation diff tool
         inputs.alejandra.defaultPackage.${pkgs.stdenv.hostPlatform.system} # alejandra formatter
 
         # API Testing
@@ -35,8 +37,6 @@
         ripgrep # fast text search tool
         shfmt # bash formatter
         pre-commit # Framework for managing pre-commit hooks
-        # TEMPORARILY DISABLED: beads requires go >= 1.25.6, nixpkgs currently has 1.25.5
-        # inputs.beads.packages.${pkgs.stdenv.hostPlatform.system}.default # Beads issue tracker for AI agents
 
         # Configuration Management
         # salt
@@ -45,9 +45,10 @@
         # ansible # Configuration management tool
         # ansible-lint # Ansible linter
 
-        # Containerization (installed in user.nix)
-        # docker # container management (configured in user.nix and virtualization.nix)
-        # docker-compose # docker compose tool (configured in user.nix and virtualization.nix)
+        # Containerization
+        # Docker daemon is enabled in core/virtualization.nix
+        docker-compose # docker compose tool
+        docker-credential-helpers # docker credential helpers
         # podman # container management
         # podman-compose # podman compose tool
         # portainer

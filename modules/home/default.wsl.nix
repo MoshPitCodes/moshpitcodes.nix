@@ -12,8 +12,10 @@
     ./bat.nix # better cat command
     ./btop.nix # resources monitor
     ./fastfetch.nix # fetch tool
+    ./fonts-wsl.nix # essential fonts for terminal (includes Nerd Font symbols)
     ./fzf.nix # fuzzy finder
     ./git.nix # version control
+    ./gpg.nix # GPG configuration for commit signing
     ./lazygit.nix # terminal git client
     ./openssh.nix # ssh client
     ./micro.nix # nano replacement
@@ -34,6 +36,18 @@
     # Generates extensions.json and helper scripts for Windows VSCode
     ./vscode-remote.nix
   ];
+
+  # GNOME Keyring for SSH agent and secrets management
+  # Required to unlock passphrase-protected SSH keys
+  # Desktop uses gnome.nix which bundles this with GUI apps;
+  # WSL only needs the keyring service itself
+  services.gnome-keyring = {
+    enable = true;
+    components = [
+      "secrets"
+      "ssh"
+    ];
+  };
 
   # WSL-specific packages that don't require their own module
   home.packages = with inputs.nixpkgs.legacyPackages.x86_64-linux; [

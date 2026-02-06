@@ -4,23 +4,22 @@
   ...
 }:
 {
-  home.packages =
-    with pkgs;
-    [
-      # Use stable versioned release instead of rolling twilight release
-      inputs.zen-browser.packages."${pkgs.stdenv.hostPlatform.system}".default
-      # inputs.zen-browser.packages."${pkgs.stdenv.hostPlatform.system}".twilight-official
-      # firefox
-      # pkgs.librewolf
+  home.packages = with pkgs; [
+    # Use stable versioned release instead of rolling twilight release
+    inputs.zen-browser.packages."${pkgs.stdenv.hostPlatform.system}".default
+    # inputs.zen-browser.packages."${pkgs.stdenv.hostPlatform.system}".twilight-official
+    # firefox
+    # pkgs.librewolf
 
-      # Add media support for Firefox-based browsers
-      gst_all_1.gstreamer
-      gst_all_1.gst-plugins-base
-      gst_all_1.gst-plugins-good
-      gst_all_1.gst-plugins-bad
-      gst_all_1.gst-plugins-ugly
-      gst_all_1.gst-libav
-    ];
+    # Media support for Firefox-based browsers
+    openh264 # H.264 codec
+    gst_all_1.gstreamer
+    gst_all_1.gst-plugins-base
+    gst_all_1.gst-plugins-good
+    gst_all_1.gst-plugins-bad
+    gst_all_1.gst-plugins-ugly
+    gst_all_1.gst-libav
+  ];
 
   # Firefox/Zen Browser configuration
   programs.firefox = {

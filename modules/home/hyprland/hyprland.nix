@@ -9,8 +9,7 @@
     wl-clip-persist
     cliphist
     wf-recorder
-    glib
-    wayland
+    networkmanagerapplet
     direnv
   ];
   systemd.user.targets.hyprland-session.Unit.Wants = [
