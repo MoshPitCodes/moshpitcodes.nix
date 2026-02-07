@@ -195,20 +195,24 @@ in
   # Register MCP servers with Claude Code using activation script
   # Claude Code stores MCP servers in ~/.claude.json, not ~/.claude/settings.json
   home.activation.claudeCodeMcpServers = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    # Function to add MCP server if not already registered
+    # Function to add MCP server, removing and re-adding if it exists
     add_mcp_server() {
       local name="$1"
       local command="$2"
       shift 2
       local env_args=("$@")
       
-      # Check if server is already registered at user scope
-      if ! ${pkgs.claude-code}/bin/claude mcp get "$name" --scope user &>/dev/null; then
-        echo "Registering MCP server: $name (user scope)"
-        ${pkgs.claude-code}/bin/claude mcp add "$name" --scope user "''${env_args[@]}" -- "$command"
-      else
-        echo "MCP server already registered: $name"
+      # Check if server exists at user scope
+      if ${pkgs.claude-code}/bin/claude mcp get "$name" --scope user &>/dev/null; then
+        echo "MCP server $name already exists, removing and re-adding to update configuration"
+        ${pkgs.claude-code}/bin/claude mcp remove "$name" --scope user &>/dev/null || true
       fi
+      
+      # Add the server
+      echo "Registering MCP server: $name (user scope)"
+      ${pkgs.claude-code}/bin/claude mcp add "$name" --scope user "''${env_args[@]}" -- "$command" || {
+        echo "Warning: Failed to register MCP server $name, it may already exist"
+      }
     }
 
     # Register Discord MCP server
