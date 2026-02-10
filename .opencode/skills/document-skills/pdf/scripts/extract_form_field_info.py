@@ -5,7 +5,7 @@ from pypdf import PdfReader
 
 
 # Extracts data for the fillable form fields in a PDF and outputs JSON that
-# OpenCode uses to fill the fields. See forms.md.
+# Claude Code uses to fill the fields. See forms.md.
 
 
 # This matches the format used by PdfReader `get_fields` and `update_page_form_field_values` methods.

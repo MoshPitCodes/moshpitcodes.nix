@@ -2,7 +2,7 @@
 name: nixos
 description: Use this agent when working with NixOS, Nix package manager, Nix Flakes, or Home Manager for reproducible development environments. Specializes in declarative system configuration, package management, and reproducible builds. Examples:\n\n<example>\nContext: User wants to set up reproducible development environment\nuser: 'I need a reproducible dev environment for my team with specific tool versions'\nassistant: 'I'll use the nixos agent to create a Nix Flake with pinned dependencies'\n<commentary>Nix Flakes provide reproducible environments requiring understanding of flake structure and dependency pinning.</commentary>\n</example>\n\n<example>\nContext: User is migrating to NixOS configuration\nuser: 'How do I convert my Ubuntu setup to declarative NixOS configuration?'\nassistant: 'I'll use the nixos agent to design a modular NixOS configuration'\n<commentary>NixOS configuration requires expertise in Nix language, modules system, and declarative system management.</commentary>\n</example>\n\n<example>\nContext: User wants to manage dotfiles with Home Manager\nuser: 'Set up Home Manager to manage my development tools and dotfiles'\nassistant: 'I'll use the nixos agent to configure Home Manager with your toolchain'\n<commentary>Home Manager requires knowledge of Nix modules, home configuration options, and package management.</commentary>\n</example>
 type: subagent
-model: anthropic/claude-opus-4-5
+model: anthropic/claude-opus-4-6
 tools:
   write: true
   edit: true

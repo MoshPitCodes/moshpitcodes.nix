@@ -1,0 +1,124 @@
+import type { Plugin } from "@opencode-ai/plugin"
+
+/**
+ * Notifications Plugin
+ *
+ * Sends system notifications for session events:
+ * - Session completion (idle state)
+ * - Session errors
+ * - Cross-platform support (macOS, Linux, Windows)
+ * - Automatically detects notification service availability
+ * - Silently skips notifications when service is unavailable
+ * 
+ * Requirements:
+ * - macOS: Built-in notification center (always available)
+ * - Linux: DISPLAY/WAYLAND_DISPLAY + notify-send + D-Bus notification service
+ * - Windows: Built-in notification center (always available)
+ * 
+ * Note: On Linux, even if DISPLAY is set, notifications will be skipped if
+ * the D-Bus notification service (org.freedesktop.Notifications) is not running.
+ * This is common in headless environments, WSL, Docker, or SSH sessions.
+ */
+export const NotificationsPlugin: Plugin = async ({ $ }) => {
+  // Check if notifications actually work on this system
+  const checkNotificationSupport = async () => {
+    const platform = process.platform
+    
+    if (platform === "darwin") {
+      // macOS always has notification center
+      return true
+    } else if (platform === "linux") {
+      // Check if DISPLAY is set AND notify-send works
+      if (!process.env.DISPLAY && !process.env.WAYLAND_DISPLAY) {
+        return false
+      }
+      
+      // Test if D-Bus notification service is available
+      try {
+        const result = await $`notify-send --version`.nothrow().quiet()
+        if (result.exitCode !== 0) return false
+        
+        // Try a dry-run to check if D-Bus service is available
+        const testResult = await $`dbus-send --session --print-reply --dest=org.freedesktop.DBus /org/freedesktop/DBus org.freedesktop.DBus.ListNames`.nothrow().quiet()
+        return testResult.exitCode === 0
+      } catch {
+        return false
+      }
+    } else if (platform === "win32") {
+      // Windows always has notification center
+      return true
+    }
+    
+    return false
+  }
+
+  const canNotify = await checkNotificationSupport()
+
+  const sendNotification = async (
+    title: string,
+    message: string,
+    type: "info" | "error" = "info",
+  ) => {
+    // Skip system notifications if no display environment
+    if (!canNotify) {
+      return // Silently skip - don't clutter console
+    }
+
+    try {
+      const platform = process.platform
+
+      if (platform === "darwin") {
+        const icon = type === "error" ? "⚠️" : "✅"
+        const fullTitle = `${icon} ${title}`
+        await $`osascript -e 'display notification ${message} with title ${fullTitle}'`.quiet()
+      } else if (platform === "linux") {
+        const urgency = type === "error" ? "critical" : "normal"
+        const iconName =
+          type === "error" ? "dialog-error" : "dialog-information"
+        await $`notify-send -u ${urgency} -i ${iconName} ${title} ${message}`.quiet()
+      } else if (platform === "win32") {
+        // Windows PowerShell toast notification
+        const script = `
+          [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime] | Out-Null
+          [Windows.Data.Xml.Dom.XmlDocument, Windows.Data.Xml.Dom.XmlDocument, ContentType = WindowsRuntime] | Out-Null
+          $template = [Windows.UI.Notifications.ToastNotificationManager]::GetTemplateContent([Windows.UI.Notifications.ToastTemplateType]::ToastText02)
+          $xml = [xml]$template.GetXml()
+          $xml.toast.visual.binding.text[0].InnerText = '${title}'
+          $xml.toast.visual.binding.text[1].InnerText = '${message}'
+          $xml = [Windows.Data.Xml.Dom.XmlDocument]::new()
+          $xml.LoadXml($template.GetXml())
+          $toast = [Windows.UI.Notifications.ToastNotification]::new($xml)
+          [Windows.UI.Notifications.ToastNotificationManager]::CreateToastNotifier('OpenCode').Show($toast)
+        `
+        await $`powershell -Command ${script}`.quiet()
+      }
+    } catch {
+      // Silently ignore notification errors
+      // (notification service not available, D-Bus error, etc.)
+    }
+  }
+
+  return {
+    event: async ({ event }) => {
+      if (event.type === "session.idle") {
+        const sessionID = event.properties.sessionID
+        await sendNotification(
+          "OpenCode Session Completed",
+          `Session ${sessionID.substring(0, 8)} has finished.`,
+          "info",
+        )
+      }
+
+      if (event.type === "session.error") {
+        const sessionID = event.properties.sessionID ?? "unknown"
+        await sendNotification(
+          "OpenCode Session Error",
+          `Session ${sessionID.substring(0, 8)} encountered an error.`,
+          "error",
+        )
+      }
+    },
+  }
+}
+
+export default NotificationsPlugin

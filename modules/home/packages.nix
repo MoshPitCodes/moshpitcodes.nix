@@ -8,17 +8,18 @@
     aoc-cli # Advent of Code command-line tool
     # binsider # binary analysis tool
     # bitwise # cli tool for bit / hex manipulation
-    caligula # User-friendly, lightweight TUI for disk imaging
+    # caligula # User-friendly, lightweight TUI for disk imaging
     chatterino7
     dconf-editor # GUI for dconf
     docfd # TUI multiline fuzzy document finder
     easyeffects # audio effects
     eza # ls replacement
-    entr # perform action when file change
+    # entr # perform action when file change
     fd # find replacement
     # ffmpeg # video / audio processing
     ffmpeg-full
     ffsend # file sharing
+    lazydocker # Docker management TUI
     # gtt # google translate TUI
     # gifsicle # gif utility
     gtrash # rm replacement, put deleted files in system trash
@@ -44,11 +45,11 @@
     tdf # cli pdf viewer
     treefmt # project formatter
     tldr # tldr pages
-    todo # cli todo list
+    # todo # cli todo list
     toipe # typing test in the terminal
     ttyper # cli typing test
     valgrind # c memory analyzer
-    watchman
+    # watchman  # watch files and run command when they change
     wavemon # monitoring for wireless network devices
     wl-clipboard # clipboard utils for wayland (wl-copy, wl-paste)
     woomer # wallpaper manager
@@ -78,12 +79,12 @@
     ## GUI Apps
     audacity # audio editor
     bleachbit # cache cleaner
-    discord
+    discord # chat client
     filezilla # ftp client
     gimp # image editor
     gnome-disk-utility
-    ldtk # 2D level editor
-    tiled # tile map editor
+    # ldtk # 2D level editor
+    # tiled # tile map editor
     libreoffice # office suite
     obs-studio # screen recording
     pavucontrol # pulseaudio volume controle (GUI)
@@ -99,6 +100,7 @@
 
     # Password Managers
     _1password-gui # 1password
+    _1password-cli
     # bitwarden # bitwarden
   ];
 }

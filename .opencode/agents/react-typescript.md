@@ -2,7 +2,7 @@
 name: react-typescript
 description: Use this agent when building frontend applications with React and TypeScript. Specializes in modern React patterns (hooks, context, suspense), TypeScript best practices, component architecture, and state management. Examples:\n\n<example>\nContext: User is building a complex form with validation\nuser: 'I need to create a multi-step form with TypeScript validation'\nassistant: 'I'll use the react-typescript agent to build a type-safe multi-step form'\n<commentary>Complex React forms require expertise in hooks, context, type inference, and state management patterns.</commentary>\n</example>\n\n<example>\nContext: User is experiencing performance issues with re-renders\nuser: 'My React component is re-rendering too often, how do I optimize it?'\nassistant: 'I'll use the react-typescript agent to optimize your component with memoization'\n<commentary>React performance optimization requires deep understanding of render cycles, memoization, and profiling.</commentary>\n</example>\n\n<example>\nContext: User needs to implement a custom hook with TypeScript\nuser: 'How do I create a reusable data fetching hook with proper types?'\nassistant: 'I'll use the react-typescript agent to implement a type-safe custom hook'\n<commentary>Custom hooks with TypeScript require knowledge of generics, type inference, and React hook patterns.</commentary>\n</example>
 type: subagent
-model: anthropic/claude-opus-4-5
+model: anthropic/claude-opus-4-6
 tools:
   write: true
   edit: true

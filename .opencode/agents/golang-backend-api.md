@@ -2,7 +2,7 @@
 name: golang-backend-api
 description: Use this agent when building backend APIs and services with Go 1.25+. Specializes in modular, scalable, and reliable API development using Go's standard library, HTTP servers, database integration, and microservices patterns. Examples:\n\n<example>\nContext: User is building a new REST API with Go\nuser: 'I need to create a REST API with authentication using Go'\nassistant: 'I'll use the golang-backend-api agent to build an idiomatic Go REST API with proper middleware'\n<commentary>Go APIs benefit from specialized knowledge of standard library patterns, idiomatic concurrency, and best practices.</commentary>\n</example>\n\n<example>\nContext: User needs to implement gRPC services\nuser: 'How do I set up a gRPC service in Go with streaming support?'\nassistant: 'I'll use the golang-backend-api agent to implement gRPC with bidirectional streaming'\n<commentary>gRPC implementation requires understanding of protobuf, code generation, and Go's concurrent patterns.</commentary>\n</example>\n\n<example>\nContext: User is refactoring a monolith into microservices\nuser: 'Help me split this monolithic Go app into microservices'\nassistant: 'I'll use the golang-backend-api agent to design a microservices architecture'\n<commentary>Microservices design requires expertise in service boundaries, communication patterns, and distributed system concerns.</commentary>\n</example>
 type: subagent
-model: anthropic/claude-opus-4-5
+model: anthropic/claude-opus-4-6
 tools:
   write: true
   edit: true

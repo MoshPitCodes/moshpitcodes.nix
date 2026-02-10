@@ -2,7 +2,7 @@
 name: sveltekit-frontend
 description: Use this agent when building frontend applications with Svelte 5 and SvelteKit. Specializes in Svelte reactivity, component composition, SvelteKit routing and layouts, transitions, and TypeScript integration. Examples:\n\n<example>\nContext: User is building a reactive UI with Svelte 5\nuser: 'I need to create a component with reactive state and computed values'\nassistant: 'I'll use the sveltekit-frontend agent to build reactive components with runes'\n<commentary>Svelte 5 reactivity requires understanding of runes ($state, $derived, $effect) and reactive patterns.</commentary>\n</example>\n\n<example>\nContext: User wants to implement page transitions\nuser: 'Add smooth page transitions between routes in my SvelteKit app'\nassistant: 'I'll use the sveltekit-frontend agent to implement view transitions'\n<commentary>SvelteKit transitions require knowledge of transition directives, View Transition API, and route lifecycle.</commentary>\n</example>\n\n<example>\nContext: User needs complex layout nesting\nuser: 'How do I create nested layouts with different navigation in SvelteKit?'\nassistant: 'I'll use the sveltekit-frontend agent to design nested layout groups'\n<commentary>SvelteKit layouts require understanding of route groups, layout inheritance, and data loading patterns.</commentary>\n</example>
 type: subagent
-model: anthropic/claude-opus-4-5
+model: anthropic/claude-opus-4-6
 tools:
   write: true
   edit: true

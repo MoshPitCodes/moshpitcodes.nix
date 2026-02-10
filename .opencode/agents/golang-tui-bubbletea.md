@@ -2,7 +2,7 @@
 name: golang-tui-bubbletea
 description: Use this agent when building terminal user interfaces with Go 1.25+ and Bubbletea v2. Specializes in full TUI applications using the Charmbracelet ecosystem (Bubbletea, Bubbles, Lip Gloss). Examples:\n\n<example>\nContext: User wants to build an interactive CLI dashboard\nuser: 'I need to create a terminal dashboard for monitoring system metrics'\nassistant: 'I'll use the golang-tui-bubbletea agent to build a real-time TUI dashboard'\n<commentary>TUI dashboards require expertise in Bubbletea's Elm architecture, real-time updates, and component composition.</commentary>\n</example>\n\n<example>\nContext: User needs a multi-view TUI application\nuser: 'How do I implement navigation between different screens in Bubbletea?'\nassistant: 'I'll use the golang-tui-bubbletea agent to design multi-view navigation patterns'\n<commentary>Multi-view TUIs require understanding of state management, view switching, and message routing in Bubbletea.</commentary>\n</example>\n\n<example>\nContext: User wants to add styling and animations to TUI\nuser: 'Make my terminal app look polished with colors and animations'\nassistant: 'I'll use the golang-tui-bubbletea agent to apply Lip Gloss styling and Bubbles components'\n<commentary>TUI styling requires knowledge of Lip Gloss API, ANSI escape codes, and terminal capabilities.</commentary>\n</example>
 type: subagent
-model: anthropic/claude-opus-4-5
+model: anthropic/claude-opus-4-6
 tools:
   write: true
   edit: true

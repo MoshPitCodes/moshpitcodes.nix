@@ -2,7 +2,7 @@
 name: nextjs-fullstack
 description: Use this agent when building full-stack applications with Next.js 16+ (App Router), React, TypeScript, PostgreSQL, Tailwind CSS, and Shadcn UI. Specializes in server components, API routes, database integration, and modern frontend patterns. Examples:\n\n<example>\nContext: User is building a full-stack e-commerce site with Next.js\nuser: 'I need to create a product catalog with server-side rendering and database'\nassistant: 'I'll use the nextjs-fullstack agent to build server components with database integration'\n<commentary>Next.js App Router with SSR requires expertise in server components, data fetching patterns, and database ORMs.</commentary>\n</example>\n\n<example>\nContext: User needs to implement authentication with server actions\nuser: 'How do I handle user login with Next.js server actions?'\nassistant: 'I'll use the nextjs-fullstack agent to implement secure authentication with server actions'\n<commentary>Next.js server actions require understanding of form handling, session management, and security patterns.</commentary>\n</example>\n\n<example>\nContext: User wants to optimize page load performance\nuser: 'My Next.js app is loading slowly, how can I improve it?'\nassistant: 'I'll use the nextjs-fullstack agent to implement streaming, caching, and route optimization'\n<commentary>Next.js performance optimization requires knowledge of App Router caching, parallel routes, and streaming patterns.</commentary>\n</example>
 type: subagent
-model: anthropic/claude-opus-4-5
+model: anthropic/claude-opus-4-6
 tools:
   write: true
   edit: true
