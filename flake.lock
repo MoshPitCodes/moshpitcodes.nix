@@ -1116,7 +1116,9 @@
         "nur": "nur",
         "nvf": "nvf",
         "s4rchiso-plymouth": "s4rchiso-plymouth",
+        "sidecar": "sidecar",
         "spicetify-nix": "spicetify-nix",
+        "td": "td",
         "yazi-plugins": "yazi-plugins",
         "zen-browser": "zen-browser",
         "zig": "zig_2"
@@ -1157,6 +1159,22 @@
       "original": {
         "owner": "SergioRibera",
         "repo": "s4rchiso-plymouth-theme",
+        "type": "github"
+      }
+    },
+    "sidecar": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1770651609,
+        "narHash": "sha256-+16m7qvBPSmjgkl+yXw/l/65f1RuO1GCdispaD8ch2A=",
+        "owner": "marcus",
+        "repo": "sidecar",
+        "rev": "fe978ee3937945813373c9dc1758ab15799cfc22",
+        "type": "github"
+      },
+      "original": {
+        "owner": "marcus",
+        "repo": "sidecar",
         "type": "github"
       }
     },
@@ -1298,6 +1316,22 @@
       "original": {
         "owner": "nix-systems",
         "repo": "default",
+        "type": "github"
+      }
+    },
+    "td": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1770610790,
+        "narHash": "sha256-GfidJOsWPFflUOyHIVi+2n8haGcNHXMxgCjADLrt3k0=",
+        "owner": "marcus",
+        "repo": "td",
+        "rev": "b11e2b2d0e1c9e246070aa321f2fb4fb36076174",
+        "type": "github"
+      },
+      "original": {
+        "owner": "marcus",
+        "repo": "td",
         "type": "github"
       }
     },

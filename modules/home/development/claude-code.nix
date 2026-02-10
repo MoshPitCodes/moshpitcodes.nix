@@ -38,7 +38,8 @@ let
   '';
 
   # MCP servers from Nix flakes (no Docker required)
-  discordMcpServer = inputs.mcp-discord.packages.${pkgs.system}.discord-mcp-server;
+  discordMcpServer =
+    inputs.mcp-discord.packages.${pkgs.stdenv.hostPlatform.system}.discord-mcp-server;
 
   # Build MCP server configuration
   # All servers are always defined - wrappers handle missing directories at runtime

@@ -23,6 +23,7 @@ let
 
   # Local MCP server directories (contain their own .env and config files)
   linearMcpDir = "${config.home.homeDirectory}/Development/mcp-linearapp";
+  elasticMcpDir = "${config.home.homeDirectory}/Development/mcp-elasticssearch";
 
   # Create wrapper scripts that run from local directories
   # Wrappers check for directory existence at runtime (not build time)
@@ -36,10 +37,30 @@ let
     exec ${pkgs.bun}/bin/bun run ${linearMcpDir}/src/index.ts "$@"
   '';
 
+  elastic-mcp-wrapper = pkgs.writeShellScript "elastic-mcp-wrapper" ''
+    if [ ! -d "${elasticMcpDir}" ]; then
+      echo "Error: Elastic Stack MCP directory not found at ${elasticMcpDir}" >&2
+      exit 1
+    fi
+    cd "${elasticMcpDir}" || exit 1
+
+    # Set environment variables for Elasticsearch and Kibana
+    export ES_URL="http://localhost:9200"
+    export ES_USERNAME="elastic"
+    export ES_PASSWORD="changeme"
+    export KIBANA_URL="http://localhost:5601"
+    export KIBANA_USERNAME="elastic"
+    export KIBANA_PASSWORD="changeme"
+    export LOG_LEVEL="info"
+
+    exec ${pkgs.nodejs}/bin/node ${elasticMcpDir}/dist/index.js "$@"
+  '';
+
   # MCP servers from Nix flakes (no Docker required)
   # Disabled: GitHub MCP server from Nix flake
-  # githubMcpServer = inputs.mcp-github.packages.${pkgs.system}.github-mcp-server;
-  discordMcpServer = inputs.mcp-discord.packages.${pkgs.system}.discord-mcp-server;
+  # githubMcpServer = inputs.mcp-github.packages.${pkgs.stdenv.hostPlatform.system}.github-mcp-server;
+  discordMcpServer =
+    inputs.mcp-discord.packages.${pkgs.stdenv.hostPlatform.system}.discord-mcp-server;
 
   # Build MCP server configuration
   # All servers are always defined - wrappers handle missing directories at runtime
@@ -66,6 +87,11 @@ let
     linear = {
       type = "local";
       command = [ "${linear-mcp-wrapper}" ];
+      enabled = true;
+    };
+    elastic-stack = {
+      type = "local";
+      command = [ "${elastic-mcp-wrapper}" ];
       enabled = true;
     };
   };
