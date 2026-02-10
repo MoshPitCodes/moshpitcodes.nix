@@ -48,7 +48,6 @@
         # Containerization
         # Docker daemon is enabled in core/virtualization.nix
         docker-compose # docker compose tool
-        docker-credential-helpers # docker credential helpers
         # podman # container management
         # podman-compose # podman compose tool
         # portainer

@@ -61,6 +61,14 @@
       url = "github:MoshPitLabs/mcp-discord";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    sidecar = {
+      url = "github:marcus/sidecar";
+      flake = false;
+    };
+    td = {
+      url = "github:marcus/td";
+      flake = false;
+    };
   };
 
   outputs =
