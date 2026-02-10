@@ -448,7 +448,7 @@ Always provide specific, actionable security recommendations with code examples.
 ### 5. Installation Command Result
 After creating the agent, users can install it with:
 ```bash
-npx claude-code-templates@latest --agent="frontend-security" --yes
+npx opencode-templates@latest --agent="frontend-security" --yes
 ```
 
 This will:

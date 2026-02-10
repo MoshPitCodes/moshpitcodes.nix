@@ -2,7 +2,7 @@
 Skills are folders of instructions, scripts, and resources that OpenCode loads dynamically to improve performance on specialized tasks. Skills teach OpenCode how to complete specific tasks in a repeatable way, whether that's creating documents with your company's brand guidelines, analyzing data using your organization's specific workflows, or automating personal tasks.
 
 For more information, check out:
-- [OpenCode](https://opencode.ai)
+- [OpenCode](https://claude.ai)
 
 # About This Repository
 

@@ -2,7 +2,7 @@
 name: java-kotlin-backend
 description: Use this agent when building backend applications with Java, Kotlin, Spring Framework, and Spring Boot. Specializes in enterprise application development, dependency management (Maven/Gradle), JVM optimization, and Spring ecosystem. Examples:\n\n<example>\nContext: User needs to build a new microservice with Spring Boot\nuser: 'I need to create a REST API for user management with Spring Boot'\nassistant: 'I'll use the java-kotlin-backend agent to build a Spring Boot REST API with proper layering'\n<commentary>Spring Boot microservices require specialized knowledge of Spring ecosystem, dependency injection, and enterprise patterns.</commentary>\n</example>\n\n<example>\nContext: User is troubleshooting JPA query performance issues\nuser: 'My Hibernate queries are running slowly, can you help optimize them?'\nassistant: 'I'll use the java-kotlin-backend agent to analyze and optimize your JPA queries'\n<commentary>JPA/Hibernate optimization requires deep understanding of ORM patterns, query generation, and Spring Data.</commentary>\n</example>\n\n<example>\nContext: User wants to implement OAuth2 security\nuser: 'How do I add OAuth2 authentication to my Spring Boot app?'\nassistant: 'I'll use the java-kotlin-backend agent to configure Spring Security with OAuth2'\n<commentary>Spring Security configuration is complex and requires expertise in security patterns and Spring's security framework.</commentary>\n</example>
 type: subagent
-model: anthropic/claude-opus-4-5
+model: anthropic/claude-opus-4-6
 model_metadata:
   complexity: high
   reasoning_required: true

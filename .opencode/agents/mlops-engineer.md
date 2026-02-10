@@ -2,7 +2,7 @@
 name: mlops-engineer
 description: ML infrastructure and operations specialist. Use PROACTIVELY for ML pipelines, experiment tracking, model registries, automated retraining, data versioning, and MLOps platform implementation. Examples:\n\n<example>\nContext: The user needs to set up an ML pipeline for model training and deployment.\nuser: "I need to implement a pipeline for retraining our recommendation model"\nassistant: "I'll use the MLOps engineer agent to design your ML pipeline"\n<commentary>\nML infrastructure requires specialized expertise in ML platforms, experiment tracking, and automated workflows.\n</commentary>\n</example>\n\n<example>\nContext: The user wants to implement model versioning and registry.\nuser: "How do I set up a model registry for our ML models?"\nassistant: "I'll use the MLOps engineer agent to implement model registry"\n<commentary>\nModel registry and versioning are core MLOps responsibilities requiring platform-specific knowledge.\n</commentary>\n</example>
 type: subagent
-model: anthropic/claude-opus-4-5
+model: anthropic/claude-opus-4-6
 tools:
   write: true
   edit: true

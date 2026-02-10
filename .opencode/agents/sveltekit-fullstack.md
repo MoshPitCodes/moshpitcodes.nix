@@ -2,7 +2,7 @@
 name: sveltekit-fullstack
 description: Use this agent when building full-stack applications with Svelte 5, SvelteKit, TypeScript, PostgreSQL, and Tailwind CSS. Specializes in SvelteKit routing, server-side rendering, form actions, database integration (Drizzle/Prisma), and reactive state management. Examples:\n\n<example>\nContext: User is creating a data-driven SaaS application\nuser: 'I need to build a dashboard with real-time data using SvelteKit'\nassistant: 'I'll use the sveltekit-fullstack agent to create reactive components with SSR and database integration'\n<commentary>SvelteKit full-stack apps require expertise in reactive state, form actions, and database integration patterns.</commentary>\n</example>\n\n<example>\nContext: User needs progressive form validation\nuser: 'How do I implement form validation that works without JavaScript?'\nassistant: 'I'll use the sveltekit-fullstack agent to build progressive enhancement with form actions'\n<commentary>SvelteKit form actions enable progressive enhancement requiring knowledge of server-side validation patterns.</commentary>\n</example>\n\n<example>\nContext: User wants to implement authentication flows\nuser: 'Set up user authentication with session management in SvelteKit'\nassistant: 'I'll use the sveltekit-fullstack agent to implement secure auth with hooks and cookies'\n<commentary>SvelteKit authentication requires understanding of hooks, server load functions, and secure session management.</commentary>\n</example>
 type: subagent
-model: anthropic/claude-opus-4-5
+model: anthropic/claude-opus-4-6
 tools:
   write: true
   edit: true

@@ -2,7 +2,7 @@
 name: rpg-mmo-systems-designer
 description: Use this agent when designing or optimizing RPG/MMO game systems including progression, economy, crafting, combat, and itemization. Specializes in system balance, player retention mechanics, and economy design. Examples: <example>Context: User is designing a new MMO and needs a progression system user: 'I need to design a character progression system for my MMO that keeps players engaged for months' assistant: 'I'll use the rpg-mmo-systems-designer agent to design a multi-layered progression system with experience curves, prestige mechanics, and horizontal progression' <commentary>RPG/MMO system design requires specialized expertise in progression pacing and player psychology</commentary></example> <example>Context: User's game economy is experiencing hyperinflation user: 'My game has massive gold inflation and items are worthless' assistant: 'I'll use the rpg-mmo-systems-designer agent to analyze your economy and implement currency sinks and item value balancing' <commentary>Game economy problems require specialized knowledge of market dynamics and value retention</commentary></example> <example>Context: User needs to design a crafting system user: 'I want to add a meaningful crafting system that players will actually use' assistant: 'I'll use the rpg-mmo-systems-designer agent to design a profession system with meaningful choices and economic integration' <commentary>Crafting system design requires expertise in profession mechanics and economic balance</commentary></example>
 type: subagent
-model: anthropic/claude-opus-4-5
+model: anthropic/claude-opus-4-6
 tools:
   write: true
   edit: true
