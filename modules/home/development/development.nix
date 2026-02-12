@@ -152,7 +152,7 @@
 
         # Zig
         zig # Zig programming language
-        zls # zig language server
+        # zls # zig language server - temporarily disabled due to build issues
 
         # Protobuf
         grpc
