@@ -19,9 +19,9 @@ in
       enable = true;
 
       # Declaratively configure WiFi networks
-      ensureProfiles = lib.mkIf (!isWsl && customsecrets.network.wifiSSID != "") {
-        environmentFiles = [
-          (pkgs.writeText "wifi-${customsecrets.network.wifiSSID}" ''
+      ensureProfiles = {
+        environmentFiles = lib.mkIf (!isWsl && customsecrets.network.wifiSSID != "") [
+          (pkgs.writeText "wifi-${customsecrets.network.wifiSSID}.nmconnection" ''
             [connection]
             id=${customsecrets.network.wifiSSID}
             type=wifi
