@@ -10,7 +10,6 @@ let
   # Extract API keys from secrets with fallback to empty string
   anthropicApiKey = customsecrets.apiKeys.anthropic or "";
   openrouterApiKey = customsecrets.apiKeys.openrouter or "";
-  githubPat = customsecrets.apiKeys.github-pat or "";
 
   # MCP servers from Nix flakes (no Docker required)
   tdSidecarMcpServer =
@@ -128,10 +127,6 @@ in
   // lib.optionalAttrs (openrouterApiKey != "") {
     # Set OpenRouter API key if available from secrets
     OPENROUTER_API_KEY = openrouterApiKey;
-  }
-  // lib.optionalAttrs (githubPat != "") {
-    # Set GitHub PAT if available from secrets
-    GITHUB_PERSONAL_ACCESS_TOKEN = githubPat;
   };
 
   # Create activation script to set up credentials if API key exists
@@ -253,10 +248,8 @@ in
       echo "Loading Claude Code secrets from Doppler..."
       export ANTHROPIC_API_KEY=$(doppler secrets get ANTHROPIC_API_KEY --plain)
       export OPENROUTER_API_KEY=$(doppler secrets get OPENROUTER_API_KEY --plain)
-      export GITHUB_PERSONAL_ACCESS_TOKEN=$(doppler secrets get GITHUB_PERSONAL_ACCESS_TOKEN --plain)
       echo "✓ Anthropic API key loaded from Doppler"
       echo "✓ OpenRouter API key loaded from Doppler"
-      echo "✓ GitHub PAT loaded from Doppler"
     '';
   };
 

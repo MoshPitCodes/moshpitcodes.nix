@@ -104,7 +104,6 @@
         apiKeys = {
           anthropic = "";
           openai = "";
-          github-pat = "";
         };
         discord = {
           webhooks = {
