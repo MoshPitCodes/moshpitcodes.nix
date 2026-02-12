@@ -825,7 +825,7 @@
         "type": "github"
       }
     },
-    "mcp-discord": {
+    "mcp-td-sidecar": {
       "inputs": {
         "flake-utils": "flake-utils_2",
         "nixpkgs": [
@@ -833,16 +833,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1770410557,
-        "narHash": "sha256-1OtirK6tdb+AdDmCYgdTkCLN0Q0aRkNHNvHYmcl91dg=",
+        "lastModified": 1770916225,
+        "narHash": "sha256-VwMrVNVoly/ff5v4RCb/oMum6erp09mN3yTxEc3EsZA=",
         "owner": "MoshPitLabs",
-        "repo": "mcp-discord",
-        "rev": "5c9688a2ebe82140f3da69a7d02fc302075d3863",
+        "repo": "mcp-td-sidecar",
+        "rev": "d0a16e1377bf6edf8d80870e886824ed4c6c194e",
         "type": "github"
       },
       "original": {
         "owner": "MoshPitLabs",
-        "repo": "mcp-discord",
+        "repo": "mcp-td-sidecar",
         "type": "github"
       }
     },
@@ -1108,7 +1108,7 @@
         "hypr-contrib": "hypr-contrib",
         "hyprland": "hyprland",
         "hyprpicker": "hyprpicker",
-        "mcp-discord": "mcp-discord",
+        "mcp-td-sidecar": "mcp-td-sidecar",
         "nix-flatpak": "nix-flatpak",
         "nix-gaming": "nix-gaming",
         "nixos-wsl": "nixos-wsl",

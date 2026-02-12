@@ -1,6 +1,5 @@
 {
   inputs,
-  lib,
   pkgs,
   ...
 }:
@@ -37,37 +36,30 @@
     # VSCode Remote-WSL extension management
     # Generates extensions.json and helper scripts for Windows VSCode
     ./vscode-remote.nix
-  ];
 
-  # NOTE: GNOME Keyring is intentionally NOT enabled here.
-  # It requires graphical-session-pre.target which never activates in WSL.
-  # SSH agent: handled by gpg-agent with enableSSHSupport (see wsl-overrides.nix)
-  #   - NixOS gnupg module sets SSH_AUTH_SOCK via environment.extraInit
-  #   - Passphrases prompted via pinentry-gnome3 (graphical dialog via WSLg)
-  # Git credentials: use gh CLI instead of libsecret (which requires D-Bus secrets service)
+    # GNOME Keyring for secrets + SSH agent (same approach as desktop)
+    # Desktop uses services.gnome-keyring via graphical-session-pre.target;
+    # WSL uses a custom systemd user service bound to default.target instead.
+    ./keyring-wsl.nix
+  ];
 
   # SSH_ASKPASS: When SSH needs a passphrase but has no TTY (e.g. in background
   # processes, IDE terminals, or AI coding tools), it falls back to SSH_ASKPASS.
-  # Desktop Hyprland uses seahorse; WSL uses lxqt-openssh-askpass which shows a
-  # lightweight Qt dialog via WSLg's X11/Wayland forwarding.
-  # Note: pinentry-gnome3 is NOT a valid SSH_ASKPASS (it uses GPG's Assuan protocol).
+  # We use seahorse on both desktop and WSL for a consistent experience.
+  # WSLg provides X11/Wayland forwarding so the GTK dialog works natively.
   # SSH_ASKPASS_REQUIRE=prefer tells OpenSSH to always try askpass first, even
   # when a TTY is available - this ensures the graphical prompt is used consistently.
   home.sessionVariables = {
-    SSH_ASKPASS = "${pkgs.lxqt.lxqt-openssh-askpass}/bin/lxqt-openssh-askpass";
+    SSH_ASKPASS = "${pkgs.seahorse}/libexec/seahorse/ssh-askpass";
     SSH_ASKPASS_REQUIRE = "prefer";
   };
 
-  # Override git credential helper for WSL
-  # Desktop uses git-credential-libsecret (requires org.freedesktop.secrets D-Bus service
-  # from GNOME Keyring). In WSL, that service is dead, so use GitHub CLI instead.
-  programs.git.settings.credential.helper = lib.mkForce "!/usr/bin/env gh auth git-credential";
+  # Git credential helper: use libsecret (same as desktop)
+  # GNOME Keyring provides the org.freedesktop.secrets D-Bus service
+  # via keyring-wsl.nix, so git-credential-libsecret works identically.
 
   # WSL-specific packages that don't require their own module
   home.packages = with inputs.nixpkgs.legacyPackages.x86_64-linux; [
-    # SSH askpass for graphical passphrase prompts via WSLg
-    lxqt.lxqt-openssh-askpass
-
     # CLI improvements
     eza # Modern replacement for ls (required by ll alias)
 

@@ -6,9 +6,14 @@
     gnome-text-editor # gedit
   ];
 
-  # GNOME Keyring manages credentials (secrets) and SSH agent (gcr-ssh-agent)
-  # SSH_ASKPASS uses seahorse (configured in hyprland/variables.nix)
-  # AddKeysToAgent in openssh.nix auto-loads keys on first use
+  # GNOME Keyring: secrets + SSH agent (unified across desktop and WSL)
+  #
+  # Desktop: home-manager's services.gnome-keyring starts via graphical-session-pre.target
+  #          (triggered by Hyprland). SSH_ASKPASS uses seahorse (hyprland/variables.nix).
+  # WSL:    keyring-wsl.nix starts the daemon via a plain systemd user service.
+  #         SSH_ASKPASS uses seahorse via WSLg (default.wsl.nix).
+  #
+  # Both use git-credential-libsecret (git.nix) and AddKeysToAgent (openssh.nix).
   services.gnome-keyring = {
     enable = true;
     components = [

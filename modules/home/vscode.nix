@@ -5,29 +5,7 @@ let
 
   # MCP configuration content
   mcpConfigContent = builtins.toJSON {
-    inputs = [
-      {
-        type = "promptString";
-        id = "github_token";
-        description = "GitHub Personal Access Token";
-        password = true;
-      }
-    ];
     servers = {
-      github = {
-        type = "stdio";
-        command = "docker";
-        args = [
-          "-i"
-          "--rm"
-          "-e"
-          "GITHUB_PERSONAL_ACCESS_TOKEN"
-          "ghcr.io/github/github-mcp-server"
-        ];
-        env = {
-          GITHUB_PERSONAL_ACCESS_TOKEN = "\${input:github_token}";
-        };
-      };
       fetch = {
         type = "stdio";
         command = "uvx";

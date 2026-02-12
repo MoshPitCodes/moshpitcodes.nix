@@ -95,14 +95,15 @@
     libsecret
   ]; # pkgs.git-lfs
 
-  # Restore gh CLI configuration from backup or authenticate with PAT
+  # Restore gh CLI configuration from backup
+  # NOTE: gh CLI uses SSH for git operations. If not authenticated, run:
+  #   gh auth login --hostname github.com --git-protocol ssh --web
   home.activation.ghAuth =
     let
-      githubPat = customsecrets.apiKeys.github-pat or "";
       ghConfigDir = customsecrets.ghConfigDir or "";
     in
     lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      # First, try to restore from backup if it exists
+      # Try to restore from backup if it exists
       if [[ -n "${ghConfigDir}" && -d "${ghConfigDir}" ]]; then
         $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.config/gh
         if [[ -f "${ghConfigDir}/hosts.yml" ]]; then
@@ -112,14 +113,9 @@
         fi
       fi
 
-      # If no backup or restoration failed, and we're not already authenticated, use PAT
+      # Check if gh is authenticated, provide helpful message if not
       if ! ${pkgs.gh}/bin/gh auth status >/dev/null 2>&1; then
-        token="${githubPat}"
-        if [[ -n "$token" ]]; then
-          $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.config/gh
-          echo "$token" | ${pkgs.gh}/bin/gh auth login --hostname github.com --git-protocol ssh --with-token 2>/dev/null || true
-          echo "Authenticated gh CLI with GitHub PAT"
-        fi
+        echo "gh CLI not authenticated. Run: gh auth login --hostname github.com --git-protocol ssh --web"
       fi
     '';
 }

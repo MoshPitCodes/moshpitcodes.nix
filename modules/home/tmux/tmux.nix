@@ -7,6 +7,9 @@
   programs.tmux = {
     enable = true;
 
+    # Set terminal type for proper color support
+    terminal = "tmux-256color";
+
     newSession = true;
     sensibleOnTop = true;
 
@@ -38,10 +41,14 @@
 
       # -- tmux configuration -------------------------------------------------------
 
-      # DO NOT set this manually, let tmux do it for you
-      # set -g default-terminal "ghostty"
+      # Enable true color (24-bit) support
+      # The terminal type is set via Home Manager's programs.tmux.terminal option
+      set -ga terminal-overrides ",*256col*:Tc"
+      set -ga terminal-overrides ",xterm-*:Tc"
+      set -as terminal-features ",*:RGB"
 
-      # DO NOT set this manually, let tmux do it for you
+      # DO NOT set default-terminal manually - it's managed by Home Manager
+      # DO NOT set default-shell manually, let tmux do it for you
       # set -g default-shell "$SHELL"
       # set -g default-command "$SHELL"
 
@@ -369,6 +376,10 @@
 
 
       # -- clipboard -----------------------------------------------------------------
+
+      # Enable clipboard integration
+      set -g set-clipboard on
+      set -g allow-passthrough all
 
       # in copy mode, copying selection also copies to the OS clipboard
       #   - true

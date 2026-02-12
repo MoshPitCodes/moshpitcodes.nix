@@ -136,23 +136,19 @@
       # can attach to it (fallback when GUI pinentry is unavailable)
       gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1 || true
 
-      # SSH agent socket discovery (ordered by preference):
-      # 1. gpg-agent SSH socket (WSL: enableSSHSupport=true in wsl-overrides.nix)
-      # 2. gcr-ssh-agent socket (Desktop: GNOME Keyring with graphical session)
+      # SSH agent socket discovery: GNOME Keyring (gcr-ssh-agent) on all hosts
+      # Desktop: started by graphical-session-pre.target (Hyprland)
+      # WSL:     started by keyring-wsl.nix systemd user service
       if [[ -z "$SSH_AUTH_SOCK" ]]; then
-        _gpg_ssh_sock="$(gpgconf --list-dirs agent-ssh-socket 2>/dev/null)"
-        if [[ -S "$_gpg_ssh_sock" ]]; then
-          export SSH_AUTH_SOCK="$_gpg_ssh_sock"
-        elif [[ -S "$XDG_RUNTIME_DIR/gcr/ssh" ]]; then
+        if [[ -S "$XDG_RUNTIME_DIR/gcr/ssh" ]]; then
           export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gcr/ssh"
         fi
-        unset _gpg_ssh_sock
       fi
 
       # Auto-load SSH keys on first interactive login if the agent has none.
-      # This prompts for the passphrase once (via pinentry-gnome3 on WSL,
-      # seahorse on desktop) and caches the key for the configured TTL
-      # (8 hours in wsl-overrides.nix). Subsequent shells skip the prompt.
+      # This prompts for the passphrase once (via seahorse on both desktop
+      # and WSL) and caches the key in GNOME Keyring. Subsequent shells
+      # skip the prompt.
       if [[ -o interactive ]] && [[ -n "$SSH_AUTH_SOCK" ]]; then
         if ! ssh-add -l &>/dev/null; then
           for _keyfile in ~/.ssh/id_ed25519_*; do
