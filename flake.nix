@@ -57,8 +57,8 @@
     #   url = "github:MoshPitLabs/mcp-github";
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
-    mcp-discord = {
-      url = "github:MoshPitLabs/mcp-discord";
+    mcp-td-sidecar = {
+      url = "github:MoshPitLabs/mcp-td-sidecar";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     sidecar = {

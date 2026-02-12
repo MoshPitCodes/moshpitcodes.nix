@@ -11,52 +11,18 @@ let
   anthropicApiKey = customsecrets.apiKeys.anthropic or "";
   openrouterApiKey = customsecrets.apiKeys.openrouter or "";
   githubPat = customsecrets.apiKeys.github-pat or "";
-  linearApiKey = customsecrets.apiKeys.linear or "";
-
-  # Extract Discord webhooks from secrets with fallback to empty strings
-  discordWebhooks =
-    customsecrets.discord.webhooks or {
-      messages = "";
-      releases = "";
-      teasers = "";
-      changelog = "";
-    };
-
-  # Local MCP server directories (contain their own .env and config files)
-  linearMcpDir = "${config.home.homeDirectory}/Development/mcp-linearapp";
-
-  # Create wrapper scripts that run from local directories
-  # Wrappers check for directory existence at runtime (not build time)
-  # Local directories contain their own .env and webhooks.json files
-  linear-mcp-wrapper = pkgs.writeShellScript "linear-mcp-wrapper" ''
-    if [ ! -d "${linearMcpDir}" ]; then
-      echo "Error: Linear MCP directory not found at ${linearMcpDir}" >&2
-      exit 1
-    fi
-    cd "${linearMcpDir}" || exit 1
-    exec ${pkgs.bun}/bin/bun run ${linearMcpDir}/src/index.ts "$@"
-  '';
 
   # MCP servers from Nix flakes (no Docker required)
-  discordMcpServer =
-    inputs.mcp-discord.packages.${pkgs.stdenv.hostPlatform.system}.discord-mcp-server;
+  tdSidecarMcpServer =
+    inputs.mcp-td-sidecar.packages.${pkgs.stdenv.hostPlatform.system}.td-sidecar-mcp-server;
 
   # Build MCP server configuration
-  # All servers are always defined - wrappers handle missing directories at runtime
   mcpServers = {
-    discord = {
+    td-sidecar = {
       type = "stdio";
-      command = "${discordMcpServer}/bin/discord-mcp-server";
+      command = "${tdSidecarMcpServer}/bin/td-sidecar-mcp-server";
       args = [ ];
       env = { };
-    };
-    linear = {
-      type = "stdio";
-      command = "${linear-mcp-wrapper}";
-      args = [ ];
-      env = lib.optionalAttrs (linearApiKey != "") {
-        LINEAR_API_KEY = linearApiKey;
-      };
     };
   };
 
@@ -112,7 +78,6 @@ in
   # Install Claude Code package
   home.packages = with pkgs; [
     claude-code # Anthropic's Claude Code CLI
-    bun # Bun runtime for local MCP servers (Linear)
   ];
 
   # Create ~/.claude directory and configuration files
@@ -167,10 +132,6 @@ in
   // lib.optionalAttrs (githubPat != "") {
     # Set GitHub PAT if available from secrets
     GITHUB_PERSONAL_ACCESS_TOKEN = githubPat;
-  }
-  // lib.optionalAttrs (linearApiKey != "") {
-    # Set Linear API key if available from secrets
-    LINEAR_API_KEY = linearApiKey;
   };
 
   # Create activation script to set up credentials if API key exists
@@ -195,39 +156,75 @@ in
 
   # Register MCP servers with Claude Code using activation script
   # Claude Code stores MCP servers in ~/.claude.json, not ~/.claude/settings.json
+  # This script reconciles on each rebuild: adds desired servers and removes any
+  # that are no longer declared in the Nix configuration
   home.activation.claudeCodeMcpServers = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+    CLAUDE_JSON="$HOME/.claude.json"
+    JQ="${pkgs.jq}/bin/jq"
+    CLAUDE="${pkgs.claude-code}/bin/claude"
+
+    # Desired MCP server names from Nix configuration
+    DESIRED_SERVERS=(${lib.concatMapStringsSep " " (name: ''"${name}"'') (builtins.attrNames mcpServers)})
+
+    is_desired() {
+      local name="$1"
+      for desired in "''${DESIRED_SERVERS[@]}"; do
+        [[ "$name" == "$desired" ]] && return 0
+      done
+      return 1
+    }
+
+    # Reconcile: remove MCP servers not declared in Nix configuration
+    if [ -f "$CLAUDE_JSON" ]; then
+      # Remove unmanaged servers from user scope
+      while IFS= read -r server; do
+        [ -z "$server" ] && continue
+        if ! is_desired "$server"; then
+          echo "Removing unmanaged MCP server: $server (user scope)"
+          $CLAUDE mcp remove "$server" --scope user 2>/dev/null || true
+        fi
+      done < <($JQ -r '.mcpServers // {} | keys[]' "$CLAUDE_JSON" 2>/dev/null)
+
+      # Remove Nix-managed servers from project scopes
+      # Only targets servers whose command points to /nix/store/ (installed via Nix)
+      $JQ -r '
+        .projects // {} | to_entries[] | .key as $p |
+        .value.mcpServers // {} | to_entries[] |
+        select(.value.command | test("^/nix/store/")) |
+        "\($p)\t\(.key)"
+      ' "$CLAUDE_JSON" 2>/dev/null | while IFS=$'\t' read -r project server; do
+        [ -z "$server" ] && continue
+        if ! is_desired "$server"; then
+          echo "Removing Nix-managed MCP server: $server (project: $project)"
+          $DRY_RUN_CMD $JQ --arg p "$project" --arg s "$server" \
+            'del(.projects[$p].mcpServers[$s])' "$CLAUDE_JSON" > "$CLAUDE_JSON.tmp" \
+            && mv "$CLAUDE_JSON.tmp" "$CLAUDE_JSON"
+        fi
+      done
+    fi
+
     # Function to add MCP server, removing and re-adding if it exists
     add_mcp_server() {
       local name="$1"
       local command="$2"
       shift 2
       local env_args=("$@")
-      
-      # Check if server exists at user scope
-      if ${pkgs.claude-code}/bin/claude mcp get "$name" --scope user &>/dev/null; then
-        echo "MCP server $name already exists, removing and re-adding to update configuration"
-        ${pkgs.claude-code}/bin/claude mcp remove "$name" --scope user &>/dev/null || true
+
+      if $CLAUDE mcp get "$name" --scope user &>/dev/null; then
+        echo "Updating MCP server: $name (user scope)"
+        $CLAUDE mcp remove "$name" --scope user &>/dev/null || true
       fi
-      
-      # Add the server
+
       echo "Registering MCP server: $name (user scope)"
-      ${pkgs.claude-code}/bin/claude mcp add "$name" --scope user "''${env_args[@]}" -- "$command" || {
-        echo "Warning: Failed to register MCP server $name, it may already exist"
+      $CLAUDE mcp add "$name" --scope user "''${env_args[@]}" -- "$command" || {
+        echo "Warning: Failed to register MCP server $name"
       }
     }
 
-    # Register Discord MCP server
-    add_mcp_server "discord" "${discordMcpServer}/bin/discord-mcp-server"
+    # Register desired MCP servers
+    add_mcp_server "td-sidecar" "${tdSidecarMcpServer}/bin/td-sidecar-mcp-server"
 
-    # Register Linear MCP server with API key if available
-    ${
-      if linearApiKey != "" then
-        ''add_mcp_server "linear" "${linear-mcp-wrapper}" -e LINEAR_API_KEY="${linearApiKey}"''
-      else
-        ''add_mcp_server "linear" "${linear-mcp-wrapper}"''
-    }
-
-    echo "MCP servers configured for Claude Code"
+    echo "MCP servers reconciled for Claude Code"
   '';
 
   # Add shell aliases for Claude Code with Doppler integration
@@ -257,11 +254,9 @@ in
       export ANTHROPIC_API_KEY=$(doppler secrets get ANTHROPIC_API_KEY --plain)
       export OPENROUTER_API_KEY=$(doppler secrets get OPENROUTER_API_KEY --plain)
       export GITHUB_PERSONAL_ACCESS_TOKEN=$(doppler secrets get GITHUB_PERSONAL_ACCESS_TOKEN --plain)
-      export LINEAR_API_KEY=$(doppler secrets get LINEAR_API_KEY --plain)
       echo "✓ Anthropic API key loaded from Doppler"
       echo "✓ OpenRouter API key loaded from Doppler"
       echo "✓ GitHub PAT loaded from Doppler"
-      echo "✓ Linear API key loaded from Doppler"
     '';
   };
 
@@ -280,56 +275,4 @@ in
 
     claude-code-doppler = "doppler run -- claude-code";
   };
-
-  # Create Discord MCP webhook configuration automatically
-  # This is shared between OpenCode and Claude Code
-  home.activation.discordWebhooksClaudeCode =
-    let
-      hasWebhooks =
-        (discordWebhooks.messages or "") != ""
-        || (discordWebhooks.releases or "") != ""
-        || (discordWebhooks.teasers or "") != ""
-        || (discordWebhooks.changelog or "") != "";
-    in
-    lib.hm.dag.entryAfter [ "writeBoundary" ] (
-      if hasWebhooks then
-        ''
-                    $DRY_RUN_CMD mkdir -p $VERBOSE_ARG ~/.config/discord_mcp
-
-                    # Create webhooks.json with ISO 8601 timestamp (shared with OpenCode)
-                    if [ ! -f ~/.config/discord_mcp/webhooks.json ]; then
-                      cat > ~/.config/discord_mcp/webhooks.json <<'WEBHOOKS_JSON'
-          {
-            "messages": {
-              "url": "${discordWebhooks.messages or ""}",
-              "description": "General messages (discord_send_message)",
-              "added_at": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
-            },
-            "releases": {
-              "url": "${discordWebhooks.releases or ""}",
-              "description": "Release announcements (discord_send_announcement)",
-              "added_at": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
-            },
-            "teasers": {
-              "url": "${discordWebhooks.teasers or ""}",
-              "description": "Teaser announcements (discord_send_teaser)",
-              "added_at": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
-            },
-            "changelog": {
-              "url": "${discordWebhooks.changelog or ""}",
-              "description": "Changelog posts (discord_send_changelog)",
-              "added_at": "$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
-            }
-          }
-          WEBHOOKS_JSON
-
-                      $DRY_RUN_CMD chmod $VERBOSE_ARG 600 ~/.config/discord_mcp/webhooks.json
-                      echo "Discord MCP webhooks configured in ~/.config/discord_mcp/webhooks.json"
-                    fi
-        ''
-      else
-        ''
-          echo "No Discord webhooks configured in secrets.nix - skipping webhook setup for Claude Code"
-        ''
-    );
 }

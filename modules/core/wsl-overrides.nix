@@ -50,25 +50,10 @@
     # Disable Steam and gaming-related packages
     steam.enable = lib.mkForce false;
 
-    # Enable GPG agent SSH support in WSL
-    # Desktop uses GNOME Keyring for SSH; WSL has no graphical session so
-    # gnome-keyring never starts. GPG agent is already running, so we enable
-    # its SSH socket as the SSH agent backend.
-    # NixOS gnupg module automatically sets SSH_AUTH_SOCK via environment.extraInit.
-    gnupg.agent = {
-      enableSSHSupport = lib.mkForce true;
-      # Use GNOME pinentry for graphical passphrase prompts via WSLg
-      # WSLg provides X11/Wayland forwarding, so GTK3 dialogs work natively
-      pinentryPackage = lib.mkForce pkgs.pinentry-gnome3;
-      settings = {
-        # Cache SSH key passphrases for 8 hours (development sessions)
-        default-cache-ttl-ssh = 28800;
-        max-cache-ttl-ssh = 28800;
-        # Cache GPG passphrases for 8 hours (commit signing)
-        default-cache-ttl = 28800;
-        max-cache-ttl = 28800;
-      };
-    };
+    # GPG agent: SSH support stays disabled (same as desktop).
+    # GNOME Keyring handles SSH via gcr-ssh-agent on both desktop and WSL.
+    # In WSL, keyring-wsl.nix starts the keyring daemon without graphical-session.target.
+    # GPG cache timeouts (8 hours) are set in modules/core/program.nix for all hosts.
   };
 
   services = {
@@ -88,6 +73,21 @@
 
     # Disable Flatpak - not typically needed in WSL
     flatpak.enable = lib.mkForce false;
+
+    # Add GNOME Keyring D-Bus service files so the secrets + SSH agent are
+    # discoverable on the session bus (same packages the desktop has in services.nix)
+    dbus.packages = with pkgs; [
+      gcr_4
+      gnome-keyring
+    ];
+  };
+
+  # Unlock GNOME Keyring automatically at login via PAM
+  # On desktop this happens through the display manager; in WSL we hook into
+  # the login and sshd PAM stacks instead.
+  security.pam.services = {
+    login.enableGnomeKeyring = true;
+    sshd.enableGnomeKeyring = true;
   };
 
   # Disable virtualization - WSL itself is already virtualized

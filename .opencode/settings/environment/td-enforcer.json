@@ -1,6 +1,0 @@
-{
-  "description": "Enables TD (Task-Driven Development) enforcer plugin. Integrates with TD CLI to enforce task-driven workflows, auto-link files to tasks, and monitor review states.",
-  "env": {
-    "OPENCODE_ENABLE_TD_ENFORCER": "1"
-  }
-}
