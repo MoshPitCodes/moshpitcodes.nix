@@ -2,7 +2,7 @@
 final: prev: {
   td = prev.buildGoModule rec {
     pname = "td";
-    version = "0.32.0";
+    version = "0.33.0";
 
     src = inputs.td;
 

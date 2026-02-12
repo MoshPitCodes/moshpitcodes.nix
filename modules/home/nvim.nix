@@ -52,7 +52,9 @@
         clang.enable = true;
         css.enable = true;
         go.enable = true;
-        html.enable = true;
+        # Temporarily disabled due to superhtml build failure
+        # https://github.com/NixOS/nixpkgs/issues/superhtml-symlink-issue
+        html.enable = false;
         java.enable = true;
         lua.enable = true;
         nix.enable = true;
@@ -60,7 +62,8 @@
         rust.enable = true;
         ts.enable = true;
         yaml.enable = true;
-        zig.enable = true;
+        # Temporarily disabled due to zls build failure (same /p symlink issue)
+        zig.enable = false;
 
       };
 

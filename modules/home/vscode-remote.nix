@@ -133,7 +133,7 @@ let
     "rust-analyzer.server.path" = "${pkgs.rust-analyzer}/bin/rust-analyzer";
     "python.defaultInterpreterPath" = "${pkgs.python3}/bin/python";
     "zig.path" = "${pkgs.zig}/bin/zig";
-    "zig.zls.path" = "${pkgs.zls}/bin/zls";
+    # "zig.zls.path" = "${pkgs.zls}/bin/zls"; # Temporarily disabled due to build issues
 
     # Nix IDE settings
     "nix.enableLanguageServer" = true;

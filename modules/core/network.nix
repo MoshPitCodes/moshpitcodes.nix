@@ -2,6 +2,7 @@
   host,
   customsecrets,
   lib,
+  pkgs,
   config,
   ...
 }:
@@ -14,22 +15,39 @@ in
   networking = {
     hostName = host;
 
-    networkmanager.enable = true;
+    networkmanager = {
+      enable = true;
 
-    # Explicitly disable Wi-Fi in WSL
-    wireless.enable = !isWsl;
+      # Declaratively configure WiFi networks
+      ensureProfiles = lib.mkIf (!isWsl && customsecrets.network.wifiSSID != "") {
+        environmentFiles = [
+          (pkgs.writeText "wifi-${customsecrets.network.wifiSSID}" ''
+            [connection]
+            id=${customsecrets.network.wifiSSID}
+            type=wifi
+            autoconnect=true
 
-    # Only define Wi-Fi networks on non-WSL systems
-    wireless.networks = lib.mkIf (!isWsl) (
-      if customsecrets.network.wifiSSID != "" then
-        {
-          "${customsecrets.network.wifiSSID}" = {
-            psk = customsecrets.network.wifiPassword;
-          };
-        }
-      else
-        { }
-    );
+            [wifi]
+            mode=infrastructure
+            ssid=${customsecrets.network.wifiSSID}
+
+            [wifi-security]
+            key-mgmt=wpa-psk
+            psk=${customsecrets.network.wifiPassword}
+
+            [ipv4]
+            method=auto
+
+            [ipv6]
+            method=auto
+          '')
+        ];
+      };
+    };
+
+    # NetworkManager manages wireless connections, so disable wpa_supplicant
+    # (networking.wireless conflicts with NetworkManager)
+    wireless.enable = lib.mkForce false;
 
     nameservers = [
       "8.8.8.8"
