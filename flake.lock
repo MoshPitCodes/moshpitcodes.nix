@@ -835,15 +835,15 @@
       "locked": {
         "lastModified": 1770916225,
         "narHash": "sha256-VwMrVNVoly/ff5v4RCb/oMum6erp09mN3yTxEc3EsZA=",
-        "owner": "MoshPitLabs",
-        "repo": "mcp-td-sidecar",
+        "ref": "refs/heads/main",
         "rev": "d0a16e1377bf6edf8d80870e886824ed4c6c194e",
-        "type": "github"
+        "revCount": 3,
+        "type": "git",
+        "url": "ssh://git@github.com/MoshPitLabs/mcp-td-sidecar"
       },
       "original": {
-        "owner": "MoshPitLabs",
-        "repo": "mcp-td-sidecar",
-        "type": "github"
+        "type": "git",
+        "url": "ssh://git@github.com/MoshPitLabs/mcp-td-sidecar"
       }
     },
     "mnw": {

@@ -58,7 +58,7 @@
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
     mcp-td-sidecar = {
-      url = "github:MoshPitLabs/mcp-td-sidecar";
+      url = "git+ssh://git@github.com/MoshPitLabs/mcp-td-sidecar";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     sidecar = {
