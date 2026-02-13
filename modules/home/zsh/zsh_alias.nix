@@ -46,6 +46,12 @@
       nix-clean = "sudo nix-collect-garbage -d";
       nix-search = "nix search nixpkgs";
 
+      # Repository backups
+      backup-repos-now = "systemctl --user start backup-repos.service";
+      backup-repos-status = "systemctl --user status backup-repos.service";
+      backup-repos-logs = "journalctl --user -u backup-repos.service -n 50";
+      backup-repos-timer = "systemctl --user list-timers backup-repos.timer";
+
       # python
       piv = "python -m venv .venv";
       psv = "source .venv/bin/activate";

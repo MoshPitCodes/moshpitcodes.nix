@@ -57,10 +57,12 @@
     #   url = "github:MoshPitLabs/mcp-github";
     #   inputs.nixpkgs.follows = "nixpkgs";
     # };
-    mcp-td-sidecar = {
-      url = "github:MoshPitLabs/mcp-td-sidecar";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # MCP TD Sidecar - OPTIONAL local development only
+    # Uncomment if you have mcp-td-sidecar checked out as a sibling directory
+    # mcp-td-sidecar = {
+    #   url = "path:../mcp-td-sidecar";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
     sidecar = {
       url = "github:marcus/sidecar";
       flake = false;

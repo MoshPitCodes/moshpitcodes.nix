@@ -5,6 +5,7 @@
   imports = [
     ./aseprite/aseprite.nix # pixel art editor
     ./audacious.nix # music player
+    ./backup-repos.nix # automated repository backups to NAS
     ./bat.nix # better cat command
     ./browser.nix # firefox based browser
     ./btop.nix # resouces monitor

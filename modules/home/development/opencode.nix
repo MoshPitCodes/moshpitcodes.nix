@@ -11,12 +11,14 @@ let
   anthropicApiKey = customsecrets.apiKeys.anthropic or "";
   openrouterApiKey = customsecrets.apiKeys.openrouter or "";
 
-  # MCP servers from Nix flakes
-  tdSidecarMcpServer =
-    inputs.mcp-td-sidecar.packages.${pkgs.stdenv.hostPlatform.system}.td-sidecar-mcp-server;
+  # MCP servers from Nix flakes (optional - only if local repo available)
+  hasTdSidecar = inputs ? mcp-td-sidecar && inputs.mcp-td-sidecar ? packages.${pkgs.stdenv.hostPlatform.system}.td-sidecar-mcp-server;
+  tdSidecarMcpServer = if hasTdSidecar
+    then inputs.mcp-td-sidecar.packages.${pkgs.stdenv.hostPlatform.system}.td-sidecar-mcp-server
+    else null;
 
   # Build MCP server configuration
-  mcpServers = {
+  mcpServers = lib.optionalAttrs hasTdSidecar {
     td-sidecar = {
       type = "local";
       command = [ "${tdSidecarMcpServer}/bin/td-sidecar-mcp-server" ];
