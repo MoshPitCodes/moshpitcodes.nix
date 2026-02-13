@@ -12,11 +12,14 @@ let
   openrouterApiKey = customsecrets.apiKeys.openrouter or "";
 
   # MCP servers from Nix flakes (no Docker required)
-  tdSidecarMcpServer =
-    inputs.mcp-td-sidecar.packages.${pkgs.stdenv.hostPlatform.system}.td-sidecar-mcp-server;
+  # Check if mcp-td-sidecar input is available (local development)
+  hasTdSidecar = inputs ? mcp-td-sidecar && inputs.mcp-td-sidecar ? packages.${pkgs.stdenv.hostPlatform.system}.td-sidecar-mcp-server;
+  tdSidecarMcpServer = if hasTdSidecar
+    then inputs.mcp-td-sidecar.packages.${pkgs.stdenv.hostPlatform.system}.td-sidecar-mcp-server
+    else null;
 
   # Build MCP server configuration
-  mcpServers = {
+  mcpServers = lib.optionalAttrs hasTdSidecar {
     td-sidecar = {
       type = "stdio";
       command = "${tdSidecarMcpServer}/bin/td-sidecar-mcp-server";
@@ -217,7 +220,9 @@ in
     }
 
     # Register desired MCP servers
+    ${lib.optionalString hasTdSidecar ''
     add_mcp_server "td-sidecar" "${tdSidecarMcpServer}/bin/td-sidecar-mcp-server"
+    ''}
 
     echo "MCP servers reconciled for Claude Code"
   '';
