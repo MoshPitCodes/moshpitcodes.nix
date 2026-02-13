@@ -171,7 +171,97 @@ User scripts located in `modules/home/scripts/scripts/` are available in your PA
 - **power-menu** - Quick power options menu
 - **rofi-power-menu** - Rofi-based power menu
 - **vm-start** - Start virtual machines
-- **tmux-sessions** - Manage tmux sessions
+
+### tmux-sessions
+
+Create and manage tmux sessions with a simple 2-panel horizontal layout.
+
+**Usage:**
+```bash
+tmux-sessions <session-name>  # Create/attach to session
+tmux-sessions --help           # Show help
+tmux-sessions --list           # List active sessions
+```
+
+**Features:**
+- Create unlimited sessions with custom names
+- Consistent 2-panel horizontal layout (50/50 split)
+- Automatic attachment to existing sessions
+- Session name validation (prevents errors)
+- Simple, predictable behavior
+
+**Examples:**
+```bash
+# Create session for backend work
+tmux-sessions backend
+
+# Create session for frontend work
+tmux-sessions frontend
+
+# Create session for infrastructure
+tmux-sessions infra
+
+# List all active sessions
+tmux-sessions --list
+
+# Reattach to existing session
+tmux-sessions backend  # Attaches if already exists
+```
+
+**Session Naming Rules:**
+- Alphanumeric characters, hyphens (`-`), and underscores (`_`) only
+- No spaces (use hyphens instead: `my-session`, not `"my session"`)
+- Case-sensitive (`backend` and `Backend` are different sessions)
+
+**Panel Layout:**
+All sessions are created with the same simple layout:
+- **Left panel**: Shell (active by default)
+- **Right panel**: Shell
+
+Both panels start in your home directory. You can navigate to any directory or run any commands after the session is created.
+
+**Migration from Previous Version:**
+
+The previous version automatically created two predefined sessions ("dev" and "monitor") with specialized layouts. The new version is simpler and more flexible.
+
+**Option 1: Use the same session names with the new interface**
+```bash
+# The new version creates simple 2-panel layouts
+tmux-sessions dev      # Creates dev session (2 shells)
+tmux-sessions monitor  # Creates monitor session (2 shells, no btop)
+```
+
+**Option 2: Rename or recreate existing sessions**
+```bash
+# If you have old "dev" or "monitor" sessions running:
+tmux rename-session -t dev my-dev-session
+tmux rename-session -t monitor my-monitor-session
+
+# Or kill and recreate with the new simple layout:
+tmux kill-session -t dev
+tmux kill-session -t monitor
+tmux-sessions dev      # Simple 2-panel layout
+tmux-sessions monitor  # Simple 2-panel layout
+```
+
+**Important Notes:**
+- The new version does NOT automatically run `btop` or other commands in panels
+- If you want btop in the monitor session, run it manually after creation
+- You can create as many sessions as you need, not just "dev" and "monitor"
+
+**Common Workflows:**
+```bash
+# Create multiple project sessions
+tmux-sessions nixos-config
+tmux-sessions personal-site
+tmux-sessions automation-scripts
+
+# Switch between sessions
+tmux-sessions nixos-config   # Switches if already exists
+
+# List all sessions to see what's running
+tmux-sessions --list
+```
 
 ## Development Guidelines
 
