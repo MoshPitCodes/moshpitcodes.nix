@@ -10,6 +10,7 @@
 
   imports = [
     # Core CLI tools
+    ./backup-repos.nix # automated repository backups to NAS
     ./bat.nix # better cat command
     ./btop.nix # resources monitor
     ./fastfetch.nix # fetch tool
@@ -42,6 +43,14 @@
     # WSL uses a custom systemd user service bound to default.target instead.
     ./keyring-wsl.nix
   ];
+
+  # WSL-specific backup configuration
+  # Enable automated repository backups to NAS
+  services.backup-repos = {
+    enable = true;
+    # Use checksum mode by default due to frequent mtime changes from Windows filesystem
+    useChecksum = true;
+  };
 
   # SSH_ASKPASS: When SSH needs a passphrase but has no TTY (e.g. in background
   # processes, IDE terminals, or AI coding tools), it falls back to SSH_ASKPASS.

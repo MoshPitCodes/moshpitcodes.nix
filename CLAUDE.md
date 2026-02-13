@@ -745,6 +745,55 @@ nix develop -c treefmt
 nix flake update
 ```
 
+### Repository Backups
+
+The system includes automated daily backups of `~/Development` to the NAS (enabled for desktop, laptop, and WSL hosts).
+
+**Configuration:**
+- **Backup Destination:** Configured in `secrets.nix` under `backup.nasBackupPath`
+- **Schedule:** Daily at 2 AM (configurable via `services.backup-repos.schedule`)
+- **Implementation:** `modules/home/backup-repos.nix`
+
+**Management Aliases:**
+```bash
+# Manually trigger backup now
+backup-repos-now
+
+# Check backup service status
+backup-repos-status
+
+# View backup logs (last 50 lines)
+backup-repos-logs
+
+# Check timer schedule
+backup-repos-timer
+```
+
+**Manual Commands:**
+```bash
+# Start backup immediately
+systemctl --user start backup-repos.service
+
+# Check timer status
+systemctl --user list-timers backup-repos.timer
+
+# View full logs
+journalctl --user -u backup-repos.service -f
+
+# Disable backups for current host
+services.backup-repos.enable = false;  # In host configuration
+```
+
+**Features:**
+- Incremental backups using rsync
+- Automatic exclusion of build artifacts (node_modules, target, .direnv, result)
+- Desktop notifications on success/failure
+- Graceful handling of NAS unavailability
+- Persistent timer (runs on next boot if missed)
+- Randomized 10-minute delay to avoid system load spikes
+
+**Logs Location:** `~/.local/state/backup-repos.log`
+
 ### Managing Issues
 
 **Issue Tracker:** Linear
