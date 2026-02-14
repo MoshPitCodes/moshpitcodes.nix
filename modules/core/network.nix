@@ -17,32 +17,7 @@ in
 
     networkmanager = {
       enable = true;
-
-      # Declaratively configure WiFi networks
-      ensureProfiles = {
-        environmentFiles = lib.mkIf (!isWsl && customsecrets.network.wifiSSID != "") [
-          (pkgs.writeText "wifi-${customsecrets.network.wifiSSID}.nmconnection" ''
-            [connection]
-            id=${customsecrets.network.wifiSSID}
-            type=wifi
-            autoconnect=true
-
-            [wifi]
-            mode=infrastructure
-            ssid=${customsecrets.network.wifiSSID}
-
-            [wifi-security]
-            key-mgmt=wpa-psk
-            psk=${customsecrets.network.wifiPassword}
-
-            [ipv4]
-            method=auto
-
-            [ipv6]
-            method=auto
-          '')
-        ];
-      };
+      wifi.powersave = false; # Disable WiFi power saving for better stability
     };
 
     # NetworkManager manages wireless connections, so disable wpa_supplicant
@@ -67,4 +42,35 @@ in
   };
 
   # networkmanagerapplet is in home/hyprland/hyprland.nix (user-level GUI)
+
+  # Create WiFi connection profile for NetworkManager
+  system.activationScripts.setupWifiProfile = lib.mkIf (!isWsl && customsecrets.network.wifiSSID != "") {
+    text = ''
+      mkdir -p /etc/NetworkManager/system-connections
+      cat > /etc/NetworkManager/system-connections/${customsecrets.network.wifiSSID}.nmconnection <<EOF
+[connection]
+id=${customsecrets.network.wifiSSID}
+type=wifi
+autoconnect=true
+permissions=
+
+[wifi]
+mode=infrastructure
+ssid=${customsecrets.network.wifiSSID}
+
+[wifi-security]
+auth-alg=open
+key-mgmt=wpa-psk
+psk=${customsecrets.network.wifiPassword}
+
+[ipv4]
+method=auto
+
+[ipv6]
+addr-gen-mode=default
+method=auto
+EOF
+      chmod 600 /etc/NetworkManager/system-connections/${customsecrets.network.wifiSSID}.nmconnection
+    '';
+  };
 }
