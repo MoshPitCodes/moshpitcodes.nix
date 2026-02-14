@@ -54,6 +54,10 @@
       "kvm-intel" # For KVM virtualization
       "msr" # For CPU registers access
       "snd_hda_intel" # Audio support
+      # USB Ethernet adapter support
+      "ax88179_178a" # ASIX AX88179/178A USB 3.0/2.0 to Gigabit Ethernet
+      "cdc_ether" # USB CDC Ethernet (generic USB ethernet)
+      "usbnet" # USB network device support (required by cdc_ether)
       # "intel_rapl_perf_msr" # For Intel RAPL performance MSR
     ];
     extraModulePackages =

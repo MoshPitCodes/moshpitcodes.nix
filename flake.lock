@@ -1125,11 +1125,11 @@
     "sidecar": {
       "flake": false,
       "locked": {
-        "lastModified": 1770696467,
-        "narHash": "sha256-/tCdhU5Q6ejSSFZCeep6BFWpvAgjyC2KPcDaX0ls8eI=",
+        "lastModified": 1770794264,
+        "narHash": "sha256-lED8uBKKKsj3Nrq/I/maLJGRZwsNj2kwcQidfETIwZw=",
         "owner": "marcus",
         "repo": "sidecar",
-        "rev": "04e1b27f79fa21ee9832182d03f4eecff22dad78",
+        "rev": "50dd8c919eb4f5d10f5ca5fd155b14c5ecde84be",
         "type": "github"
       },
       "original": {
@@ -1267,11 +1267,11 @@
     "td": {
       "flake": false,
       "locked": {
-        "lastModified": 1770690583,
-        "narHash": "sha256-gci4B83x/0UMawy+fncArF9zO1aHRE/zXj91e5h6yi8=",
+        "lastModified": 1770821083,
+        "narHash": "sha256-0m7V3fjZ25W4LM1pML37yjaf3C8laW9tQ434sMdP1Kc=",
         "owner": "marcus",
         "repo": "td",
-        "rev": "93b5fef5ce7819ed9d069d7213673fe79d579eb4",
+        "rev": "1653f43e2c0a43382b7f1c7c3c4c5f392460c770",
         "type": "github"
       },
       "original": {

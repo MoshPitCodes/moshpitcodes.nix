@@ -3,17 +3,17 @@
 _final: prev: {
   # Infrastructure as Code Tools
 
-  # Terraform 1.14.4
+  # Terraform 1.14.5
   # Pinned for stability across all hosts
-  # Source: https://github.com/hashicorp/terraform/releases/tag/v1.14.4
+  # Source: https://github.com/hashicorp/terraform/releases/tag/v1.14.5
   terraform = prev.terraform.overrideAttrs (
     finalAttrs: prevAttrs: {
-      version = "1.14.4";
+      version = "1.14.5";
       src = prev.fetchFromGitHub {
         owner = "hashicorp";
         repo = "terraform";
         rev = "v${finalAttrs.version}";
-        hash = "sha256-fEuIAKmR+shKHNldUlU6qvel9tjYFdKnc25JWtxRPHs=";
+        hash = "sha256-qy/aS82YLIalVDFje4F7TWzC8OdYGBijuEpbDMlyEKY=";
       };
       vendorHash = "sha256-NDtBLa8vokrSRDCNX10lQyfMDzTrodoEj5zbDanL4bk=";
 
@@ -23,22 +23,22 @@ _final: prev: {
     }
   );
 
-  # OpenCode v1.1.56 (latest)
+  # OpenCode v1.2.1 (latest)
   # AI coding agent built for the terminal
-  # Source: https://github.com/sst/opencode/releases/tag/v1.1.56
+  # Source: https://github.com/sst/opencode/releases/tag/v1.2.1
   opencode = prev.opencode.overrideAttrs (
     finalAttrs: prevAttrs: {
-      version = "1.1.56";
+      version = "1.2.1";
       src = prev.fetchFromGitHub {
         owner = "sst";
         repo = "opencode";
         tag = "v${finalAttrs.version}";
-        hash = "sha256-IHN7Rh/Wb4TKdT1rkJYgkI0CLBXCcrM0OpCkIlycW+Y=";
+        hash = "sha256-/D0tn09kC1AClJI3uFzMMWBvVWMYvvw52YrRD+dw0D4=";
       };
 
       node_modules = prevAttrs.node_modules.overrideAttrs {
         inherit (finalAttrs) version src;
-        outputHash = "sha256-lPGQxvK8WUqBQs25I+U8V+0y12jCZumEFGHMkEmOR34=";
+        outputHash = "sha256-2zl08cUvIGwK843o+7NcPBOscoSasXzYNLy30htgvYE=";
       };
 
       env = (prevAttrs.env or { }) // {
