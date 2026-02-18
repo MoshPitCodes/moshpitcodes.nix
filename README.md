@@ -56,7 +56,6 @@ My personal NixOS system configuration. This is something I have been working on
 |----------|-------------|
 | [Installation](docs/installation.md) | Complete installation guide |
 | [Configuration](docs/configuration.md) | Monitors, wallpapers, secrets, aliases |
-| [WSL Setup](docs/wsl.md) | Optional WSL reference notes |
 | [Development Shells](docs/development-shells.md) | Nix dev environments |
 | [Scripts](docs/scripts.md) | System management scripts |
 | [Secrets](SECRETS.md) | Secret management guide |
@@ -95,7 +94,7 @@ My personal NixOS system configuration. This is something I have been working on
 | **Terminal Emulator**       | [Ghostty][Ghostty]                                                                  |
 | **Shell**                   | [zsh][zsh] + [Oh-My-Posh][Oh-My-Posh]                                               |
 | **Text Editor**             | [VSCodium][VSCodium] + [VSCode][VSCode] + [Neovim][Neovim]                          |
-| **AI Development**          | [Claude Code][Claude Code] + [OpenCode][OpenCode]                                   |
+| **AI Development**          | [OpenCode][OpenCode]                                                                  |
 | **Network Management Tool** | [NetworkManager][NetworkManager] + [network-manager-applet][network-manager-applet] |
 | **System Resource Monitor** | [Btop][Btop]                                                                        |
 | **File Manager**            | [nemo][nemo] + [yazi][yazi]                                                         |
@@ -129,15 +128,14 @@ My personal NixOS system configuration. This is something I have been working on
                      |                             |
         +------------+----------+      +-----------+-----------+
         |   nixpkgs (unstable)  |      |  nixosConfigurations  |
-        |   home-manager        |      |                       |
+         |   home-manager        |      |                       |
          |   hyprland            |      |  desktop  laptop      |
          |   spicetify-nix       |      |  vmware-guest         |
-        |   zen-browser         |      |                       |
-        |   ghostty             |      +-----------+-----------+
-        |   nvf (neovim)        |                  |
-        |   nixos-wsl           |      +-----------+-----------+
-        |   nix-flatpak         |      |                       |
-        |   ...                 |      |  specialArgs:          |
+         |   zen-browser         |      |                       |
+         |   ghostty             |      +-----------+-----------+
+         |   nvf (neovim)        |                  |
+         |   nix-flatpak         |      +-----------+-----------+
+         |   ...                 |      |  specialArgs:          |
         +------------+----------+      |    customsecrets       |
                                        |    inputs              |
                                        |                       |
@@ -153,8 +151,8 @@ My personal NixOS system configuration. This is something I have been working on
             | services    wayland       |            | openssh   starship   rofi         |
             | user        samba         |            | ghostty   bat        swaync       |
             | pipewire    virtualization|            | development/                      |
-            | system      flatpak       |            |   claude-code.nix                 |
-            | steam       xserver       |            |   opencode.nix                    |
+            | system      flatpak       |            |   opencode.nix                    |
+            | steam       xserver       |            |   sidecar.nix                     |
             +---------------------------+            |   development.nix                 |
                                                      | scripts/  discord/                |
                                                      | vscode    browser    packages     |
@@ -266,7 +264,7 @@ Development Tools
 </summary>
 
 - **Nix Dev Environment**: Reproducible shell via `nix develop`
-- **AI Development**: Claude Code and OpenCode integration with MCP servers (Discord, Linear, GitHub)
+- **AI Development**: OpenCode integration with MCP servers (Discord, Linear, GitHub)
 - **Full DevOps Stack**: kubectl, terraform, ansible, Docker/Podman, and more
 
 </details>
@@ -369,7 +367,6 @@ Other dotfiles that have inspired me greatly:
 [VSCodium]: https://vscodium.com/
 [VSCode]: https://code.visualstudio.com/
 [Neovim]: https://github.com/neovim/neovim
-[Claude Code]: https://docs.anthropic.com/en/docs/claude-code
 [OpenCode]: https://opencode.ai/
 [grimblast]: https://github.com/hyprwm/contrib
 [Rose Pine]: https://rosepinetheme.com/

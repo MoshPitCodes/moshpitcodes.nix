@@ -195,8 +195,7 @@
       gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1 || true
 
       # SSH agent socket discovery: GNOME Keyring (gcr-ssh-agent) on all hosts
-      # Desktop: started by graphical-session-pre.target (Hyprland)
-      # WSL:     started by keyring-wsl.nix systemd user service
+      # Started by graphical-session-pre.target on Hyprland hosts.
       if [[ -z "$SSH_AUTH_SOCK" ]]; then
         if [[ -S "$XDG_RUNTIME_DIR/gcr/ssh" ]]; then
           export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/gcr/ssh"
@@ -204,8 +203,8 @@
       fi
 
       # Auto-load SSH keys on first interactive login if the agent has none.
-      # This prompts for the passphrase once (via seahorse on both desktop
-      # and WSL) and caches the key in GNOME Keyring. Subsequent shells
+      # This prompts for the passphrase once (via seahorse where available)
+      # and caches the key in GNOME Keyring. Subsequent shells
       # skip the prompt.
       if [[ -o interactive ]] && [[ -n "$SSH_AUTH_SOCK" ]]; then
         if ! ssh-add -l &>/dev/null; then

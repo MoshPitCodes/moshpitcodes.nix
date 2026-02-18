@@ -1,0 +1,63 @@
+name: Test flake
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-flake:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v6
+
+    - name: Install Nix
+      uses: cachix/install-nix-action@v31
+      with:
+        nix_path: nixpkgs=channel:nixos-unstable
+        extra_nix_config: |
+          experimental-features = nix-command flakes
+          access-tokens = github.com=${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Cachix
+      env:
+        CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      if: env.CACHIX_AUTH_TOKEN != ''
+      uses: cachix/cachix-action@v16
+      with:
+        name: nix-community
+        authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
+        skipPush: true
+
+    - name: Create secrets.nix for CI
+      run: |
+        echo "📝 Creating secrets.nix for CI environment..."
+        cp secrets.nix.example secrets.nix
+        echo "✅ Secrets file created"
+
+    - name: Check flake syntax
+      run: |
+        echo "🔍 Checking flake syntax..."
+        nix flake metadata --json | jq '.description' > /dev/null
+        echo "✅ Flake syntax is valid"
+
+    - name: Verify flake.lock integrity
+      run: |
+        echo "🔒 Verifying flake.lock integrity..."
+        nix flake metadata --json | jq '.locks | keys | length' > /dev/null
+        echo "✅ Flake.lock is valid"
+
+    - name: Run flake check
+      run: |
+        echo "🧪 Running flake check..."
+        nix flake check --show-trace
+        echo "✅ Flake check passed"
+
+    - name: Test development shell
+      run: |
+        echo "🚀 Testing development shell..."
+        nix develop --command echo "Development shell works"
+        echo "✅ Development shell is functional"

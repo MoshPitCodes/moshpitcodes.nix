@@ -1,0 +1,434 @@
+# OpenCode Configuration Template
+
+**TEMPLATE FILE:** This is a template for creating your project-specific AGENTS.md file. 
+Replace all placeholders `[like this]` with your actual project information. 
+Delete this note when you're done customizing.
+
+---
+
+This file provides context and instructions for AI assistants working in this repository.
+
+---
+
+## Table of Contents
+
+- [General Instructions (Project-Independent)](#general-instructions-project-independent)
+  - [OpenCode File Locations](#opencode-file-locations)
+  - [Git Workflow](#git-workflow)
+  - [Coding Standards](#coding-standards)
+  - [Available Components](#available-components)
+- [Project-Specific Context](#project-specific-context)
+  - [Project Overview](#project-overview)
+  - [Technology Stack](#technology-stack)
+  - [Project Structure](#project-structure)
+  - [Key Conventions](#key-conventions)
+
+---
+
+# General Instructions (Project-Independent)
+
+## OpenCode File Locations
+
+When creating OpenCode components, always use the correct directory:
+
+| Component Type | Location | Purpose | Naming Convention |
+|----------------|----------|---------|-------------------|
+| **Plans** | `.opencode/plans/` | Implementation plans and design documents | `kebab-case.md` |
+| **Notes** | `.opencode/notes/` | Session notes, research, and observations | `YYYY-MM-DD-topic.md` |
+| **Commands** | `.opencode/commands/` | Slash commands (workflows, processes) | `kebab-case.md` |
+| **Agents** | `.opencode/agents/` | Specialized domain expertise agents | `kebab-case.md` |
+| **Skills** | `.opencode/skills/` | Bundled resources with scripts | `kebab-case/` |
+| **Documentation** | `.opencode/docs/` | Guides and reference documentation | `kebab-case.md` |
+
+**Important:**
+- Never create plans, notes, or commands outside their designated directories
+- Use kebab-case for all filenames (e.g., `my-new-command.md`)
+- Commands are invoked as `/filename` (without `.md` extension)
+- Agent names should not include model identifiers in the filename
+
+---
+
+## Git Workflow
+
+### Git Flow Management
+
+Git operations (branching, commits, PRs, releases) are managed by the `git-flow-manager` agent.
+
+**Branch Types:**
+- `main` - Production-ready code (protected)
+- `develop` - Integration branch (if using Git Flow)
+- `feature/*` - New features (e.g., `feature/user-authentication`)
+- `bugfix/*` - Bug fixes (e.g., `bugfix/login-error`)
+- `hotfix/*` - Emergency production fixes (e.g., `hotfix/security-patch`)
+- `release/*` - Release preparation (e.g., `release/v1.2.0`)
+
+**Commit Message Format:**
+```
+<type>: <subject>
+
+<body>
+
+<footer>
+```
+
+**Types:**
+- `feat:` - New feature
+- `fix:` - Bug fix
+- `docs:` - Documentation changes
+- `style:` - Code style changes (formatting, no logic change)
+- `refactor:` - Code refactoring
+- `test:` - Adding or updating tests
+- `chore:` - Maintenance tasks
+- `perf:` - Performance improvements
+
+**Reference:** See `.opencode/agents/git-flow-manager.md` for complete conventions.
+
+---
+
+## Coding Standards
+
+### General Best Practices
+
+1. **Code Quality**
+   - Write clear, self-documenting code
+   - Use meaningful variable and function names
+   - Follow language-specific style guides
+   - Handle errors and exceptions gracefully
+   - Avoid code duplication (DRY principle)
+
+2. **Documentation**
+   - Document complex logic with comments
+   - Maintain up-to-date README files
+   - Write clear commit messages
+   - Document API endpoints and interfaces
+
+3. **Testing**
+   - Write unit tests for new features
+   - Maintain high test coverage (aim for 80%+)
+   - Include integration tests for critical paths
+   - Test edge cases and error conditions
+
+4. **Version Control**
+   - Commit frequently with clear messages
+   - Keep commits atomic (one logical change per commit)
+   - Review your own code before creating PR
+   - Respond to review feedback promptly
+
+---
+
+## Available Components
+
+### Slash Commands
+
+Slash commands provide structured workflows and processes. Invoke with `/command-name`.
+
+**Common Commands:**
+- `/structured-thinking` - Reflection and problem-solving framework
+- `/ultrathink` - Deep analysis and complex problem solving
+- `/systematic-diagnosis` - Issue diagnosis and root cause analysis
+- `/refactor-code` - Code refactoring assistance
+- `/create-architecture-docs` - Generate architecture documentation
+
+**Reference:** See `.opencode/AGENTS_INDEX.md` for complete command list.
+
+### Specialized Agents
+
+Agents provide domain-specific expertise. Reference the agent name when requesting specialized help.
+
+**Agent Categories:**
+- **Frontend**: React, Next.js, Svelte
+- **Backend**: Go, Java/Kotlin, TypeScript
+- **DevOps**: Kubernetes, Terraform, CI/CD
+- **Quality**: Code review, architecture review, security
+- **Meta**: Agent creation, command creation, prompt engineering
+
+**Model Selection:**
+- Agents use different AI models based on task complexity
+- See `.opencode/docs/model-selection-guide.md` for rationale
+- Haiku (fast), Sonnet (balanced), Opus (complex reasoning)
+
+**Reference:** See `.opencode/AGENTS_INDEX.md` for complete agent catalog.
+
+### Skills
+
+Skills bundle resources, scripts, and guides for specific tasks.
+
+**Available Skills:**
+- `artifacts-builder` - Create complex React/Tailwind HTML artifacts
+- `mcp-builder` - Build Model Context Protocol servers
+- `skill-creator` - Create new OpenCode skills
+- `theme-factory` - Apply professional themes to artifacts
+- `docx`, `xlsx`, `pdf`, `pptx` - Document manipulation
+
+**Usage:** Skills are loaded dynamically when needed for specific tasks.
+
+**Reference:** See `.opencode/AGENTS_INDEX.md` for complete skill list.
+
+---
+
+# Project-Specific Context
+
+## Project Overview
+
+**Project Name:** `[YOUR PROJECT NAME]`  
+**Description:** `[Brief description of what your project does]`
+
+**Primary Purpose:**
+`[Explain the main purpose and goals of your project. What problem does it solve? Who is it for?]`
+
+**Key Features:**
+- `[Feature 1]`
+- `[Feature 2]`
+- `[Feature 3]`
+- `[Add more as needed]`
+
+---
+
+## Technology Stack
+
+### Core Technologies
+
+**Languages:**
+- `[List your primary programming languages]`
+- `[e.g., Python, TypeScript, Go, Java, etc.]`
+
+**Frameworks & Libraries:**
+- `[List your main frameworks]`
+- `[e.g., React, Next.js, Django, Spring Boot, etc.]`
+
+### Development Tools
+
+**Package Manager:** `[e.g., npm, pnpm, pip, maven, gradle]`  
+**Version Control:** `[e.g., Git + GitHub/GitLab/Bitbucket]`  
+**Issue Tracking:** `[e.g., Linear, Jira, GitHub Issues]`  
+**Database:** `[e.g., PostgreSQL, MySQL, MongoDB]`  
+**Deployment:** `[e.g., AWS, GCP, Azure, Docker, Kubernetes]`
+
+---
+
+## Project Structure
+
+```
+[your-project-name]/
+├── .opencode/                   # OpenCode components directory
+│   ├── agents/                  # [Describe your agents organization]
+│   ├── commands/                # [List key commands if any]
+│   ├── skills/                  # [List key skills if any]
+│   ├── docs/                    # [Project-specific documentation]
+│   ├── plans/                   # Implementation plans
+│   ├── notes/                   # Session notes
+│   └── AGENTS_INDEX.md         # Component catalog (optional)
+├── [src/lib/app/etc.]/         # [Your source code directory]
+│   └── [your modules/packages]
+├── [tests/]/                   # [Your test directory]
+├── [config/]/                  # [Configuration files]
+├── README.md                   # Project documentation
+└── [package.json/pom.xml/etc.] # [Your dependency file]
+```
+
+**Key Files:**
+- `[List your important configuration files]`
+- `[List your main entry points]`
+- `[List any critical documentation files]`
+
+---
+
+## Key Conventions
+
+### Agent Naming
+
+**Format:** `domain-technology.md` or `role-specialization.md`
+
+**Your Project's Naming Convention:**
+- `[Define your agent naming pattern]`
+- `[Example 1: e.g., backend-api.md]`
+- `[Example 2: e.g., data-analyst.md]`
+
+**Guidelines:**
+- Use kebab-case (lowercase with hyphens)
+- Avoid model names in filenames
+- Be descriptive but concise
+
+### Agent Frontmatter Structure
+
+```yaml
+---
+name: agent-name
+description: Use this agent when [use case]. Specializes in [areas]. Examples - [example 1], [example 2]
+type: subagent
+model: anthropic/claude-opus-4-5
+model_metadata:
+  complexity: high
+  reasoning_required: true
+  code_generation: true
+  cost_tier: premium
+  description: "Brief explanation"
+fallbacks:
+  - anthropic/claude-sonnet-4-5
+  - openai/gpt-5.2
+tools:
+  write: true
+  edit: true
+permission:
+  bash:
+    "*": ask
+    "specific-command*": allow
+---
+```
+
+**Required Fields:**
+- `name` - Agent identifier (matches filename without `.md`)
+- `description` - Clear use case with examples
+- `type` - `primary` or `subagent`
+- `model` - Primary AI model to use
+
+**Recommended Fields:**
+- `model_metadata` - Complexity, reasoning needs, cost tier
+- `fallbacks` - Alternative models if primary unavailable
+- `tools` - Which file operations are allowed
+- `permission` - Granular bash command permissions
+
+### Command Structure
+
+```yaml
+---
+allowed-tools: Read, Write, Edit, Bash
+argument-hint: [mode] | --option1 | --option2
+description: Brief description of command purpose
+---
+
+Command content with workflow instructions...
+```
+
+### Skill Structure
+
+```
+skill-name/
+├── SKILL.md              # Main skill file with YAML frontmatter
+├── scripts/              # Executable scripts
+│   ├── init.sh
+│   └── validate.py
+├── reference/            # Reference documentation
+│   └── api-docs.md
+├── assets/              # Static assets
+│   └── template.json
+└── LICENSE.txt          # License information
+```
+
+---
+
+## Project-Specific Workflows
+
+### Adding a New Agent
+
+1. **Research**: `[Describe where to look for examples]`
+2. **Create**: `[Your agent creation process]`
+3. **Test**: `[How you validate agents]`
+4. **Document**: `[Where to document new agents]`
+5. **Review**: `[Your review/approval process]`
+
+### Adding a New Skill
+
+1. **Plan**: `[Your skill planning process]`
+2. **Create**: `[How you create skills]`
+3. **Bundle**: `[What to include in skills]`
+4. **Test**: `[How you test skills]`
+5. **Document**: `[Where to document skills]`
+
+### Model Selection for New Agents
+
+`[Define your model selection strategy]`
+
+**Decision Framework:**
+1. `[Your criterion 1]`
+2. `[Your criterion 2]`
+3. `[Your criterion 3]`
+4. `[Add more as needed]`
+
+---
+
+## Common Tasks
+
+### Updating Component Documentation
+
+`[List the files that need updating when components change]`
+
+1. `[File 1 and when to update it]`
+2. `[File 2 and when to update it]`
+3. `[Add more as needed]`
+
+### Managing Issues
+
+**Issue Tracker:** `[e.g., Linear, Jira, GitHub Issues]`  
+**Team/Project:** `[Your team name or project identifier]`  
+**Issue Prefixes:** `[e.g., PROJ-1, PROJ-2, or no prefix]`
+
+**Common Labels:**
+- `[label 1]` - `[Description]`
+- `[label 2]` - `[Description]`
+- `[label 3]` - `[Description]`
+
+### Creating Pull Requests
+
+**Required in PR Description:**
+- `[What you require in PR descriptions]`
+- `[e.g., Summary of changes]`
+- `[e.g., Testing performed]`
+- `[e.g., Related issues]`
+
+**PR Title Format:**
+```
+[Your PR title format]
+```
+
+**Examples:**
+- `[Example 1]`
+- `[Example 2]`
+- `[Example 3]`
+
+---
+
+## Resources
+
+### Internal Documentation
+- `[Link to your main documentation file]`
+- `[Link to architecture docs]`
+- `[Link to API documentation]`
+- `[Add more as needed]`
+
+### External Resources
+- `[Link to company wiki/knowledge base]`
+- `[Link to issue tracker]`
+- `[Link to repository]`
+- `[Link to deployment dashboard]`
+- `[Add more as needed]`
+
+---
+
+## Customization Guide
+
+### For Your Project
+
+When using this template, customize the following sections:
+
+1. **Project Overview** → Your project's name, description, purpose
+2. **Technology Stack** → Your specific languages, frameworks, tools
+3. **Project Structure** → Your actual directory structure
+4. **Key Conventions** → Your project-specific naming and patterns
+5. **Project-Specific Workflows** → Your team's processes
+6. **Common Tasks** → Your team's frequent activities
+
+### Keep From Template
+
+Retain these general sections as-is:
+- OpenCode File Locations
+- Git Workflow (adjust branch strategy if needed)
+- Coding Standards
+- Available Components structure
+- Agent/Skill/Command frontmatter formats
+
+---
+
+**Last Updated:** `[YYYY-MM-DD]`  
+**Version:** `[Your project version]`  
+**Maintained By:** `[Your team name]`

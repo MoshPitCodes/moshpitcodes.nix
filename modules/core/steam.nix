@@ -21,15 +21,15 @@
       # Fix pressure-vessel container driver access on NixOS
       extraPackages = with pkgs; [
         # X11 libraries
-        xorg.libXcursor
-        xorg.libXi
-        xorg.libXinerama
-        xorg.libXScrnSaver
-        xorg.libXrandr
-        xorg.libXrender
-        xorg.libX11
-        xorg.libXext
-        xorg.libXfixes
+        libxcursor
+        libxi
+        libxinerama
+        libxscrnsaver
+        libxrandr
+        libxrender
+        libx11
+        libxext
+        libxfixes
 
         # Graphics/OpenGL - including NVIDIA drivers for container
         libGL

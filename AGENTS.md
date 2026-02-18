@@ -634,8 +634,8 @@ model_metadata:
   cost_tier: premium
   description: "Brief explanation"
 fallbacks:
-  - openai/gpt-5.2
   - anthropic/claude-sonnet-4-5
+  - openai/gpt-5.2
 tools:
   write: true
   edit: true
@@ -823,7 +823,6 @@ services.backup-repos.enable = false;  # In host configuration
 - `SECRETS.md` - Secrets management guide
 - `docs/installation.md` - Complete installation guide
 - `docs/configuration.md` - Configuration reference (monitors, wallpapers, secrets)
-- `docs/wsl.md` - Optional WSL reference notes
 - `docs/development-shells.md` - Nix development environments
 - `docs/scripts.md` - System management scripts
 
