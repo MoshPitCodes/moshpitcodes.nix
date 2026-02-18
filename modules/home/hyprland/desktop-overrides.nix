@@ -6,7 +6,7 @@
     exec-once = lib.mkAfter [
       "${pkgs.hyprlock}/bin/hyprlock"
       "sleep 2 && ${pkgs.discord}/bin/discord --enable-features=UseOzonePlatform --ozone-platform=wayland"
-      "sleep 5 && ${pkgs.ghostty}/bin/ghostty --title=btop-monitor -e ${pkgs.btop}/bin/btop"
+      "${pkgs.bash}/bin/bash -lc 'for i in {1..60}; do ${pkgs.hyprland}/bin/hyprctl clients | ${pkgs.gnugrep}/bin/grep -qi \"class: discord\" && break; sleep 1; done; ${pkgs.ghostty}/bin/ghostty --title=btop-monitor -e ${pkgs.btop}/bin/btop'"
     ];
     # Desktop monitor configuration (3-monitor setup)
     # HDMI-A-1: Samsung S27F350 (1920x1080 portrait - left)

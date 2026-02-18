@@ -257,8 +257,6 @@
         "$mod, G, togglegroup,"
         "$mod, F, fullscreen,"
         "$mod, M, fullscreen, 1"
-        "$mod, Escape, exec, ${pkgs.swaylock-effects}/bin/swaylock"
-        "ALT, Escape, exec, hyprlock"
         "$mod SHIFT, Escape, exec, power-menu"
         "$mod CTRL, L, exec, ${pkgs.swaylock-effects}/bin/swaylock"
         "$mod CTRL, R, exec, ${pkgs.hyprland}/bin/hyprctl reload"
@@ -336,7 +334,7 @@
         "$mod CTRL, h, resizeactive, -80 0"
         "$mod CTRL, j, resizeactive, 0 80"
         "$mod CTRL, k, resizeactive, 0 -80"
-        "$mod CTRL, l, resizeactive, 80 0"
+        "$mod CTRL SHIFT, l, resizeactive, 80 0"
 
         # Move floating window (arrow keys)
         "$mod ALT, left, moveactive, -80 0"
@@ -385,9 +383,9 @@
         "$mod, mouse_up, workspace, e-1"
 
         # Screenshots
-        ", Print, exec, ${pkgs.grim}/bin/grim -g \"$(${pkgs.slurp}/bin/slurp)\" - | ${pkgs.wl-clipboard}/bin/wl-copy"
-        "$mod, Print, exec, ${pkgs.grim}/bin/grim -g \"$(${pkgs.slurp}/bin/slurp)\" ~/Pictures/screenshots/$(date +%Y-%m-%d_%H-%m-%s).png"
-        "$mod SHIFT, Print, exec, ${pkgs.grim}/bin/grim -g \"$(${pkgs.slurp}/bin/slurp)\" - | ${pkgs.swappy}/bin/swappy -f -"
+        ", Print, exec, ${pkgs.grimblast}/bin/grimblast --notify copy area"
+        "$mod, Print, exec, ${pkgs.grimblast}/bin/grimblast --notify save area ~/Pictures/Screenshots/Screenshot_$(date +%Y-%m-%d_%H-%M-%S).png"
+        "$mod SHIFT, Print, exec, ${pkgs.grimblast}/bin/grimblast --notify copy output"
 
         # Media keys
         ", XF86AudioMute, exec, ${pkgs.swayosd}/bin/swayosd-client --output-volume mute-toggle"

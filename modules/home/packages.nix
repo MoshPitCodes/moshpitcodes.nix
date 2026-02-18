@@ -55,9 +55,8 @@
       wl-clipboard
       wl-clip-persist
       cliphist
-      grim
       slurp
-      swappy
+      grimblast
       wf-recorder
 
       # Desktop utilities
