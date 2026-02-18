@@ -55,6 +55,13 @@ jobs:
         cp secrets.nix.example secrets.nix
         echo "✅ Secrets file created"
 
+    - name: Resolve ${{ matrix.host }} primary user
+      run: |
+        echo "🔎 Resolving primary user for ${{ matrix.host }}..."
+        USERNAME=$(nix eval --raw .#nixosConfigurations.${{ matrix.host }}.config.users.users --apply 'users: builtins.head (builtins.filter (name: ((builtins.getAttr name users).isNormalUser or false)) (builtins.attrNames users))')
+        echo "CI_NIX_USER=$USERNAME" >> "$GITHUB_ENV"
+        echo "✅ Using user: $USERNAME"
+
     - name: Test ${{ matrix.host }} system configuration validity
       run: |
         echo "🔍 Testing ${{ matrix.host }} system configuration validity..."
@@ -70,17 +77,17 @@ jobs:
     - name: Test ${{ matrix.host }} user configuration
       run: |
         echo "👤 Testing ${{ matrix.host }} user configuration..."
-        nix eval --show-trace .#nixosConfigurations.${{ matrix.host }}.config.users.users.testuser.isNormalUser
+        nix eval --show-trace .#nixosConfigurations.${{ matrix.host }}.config.users.users.${{ env.CI_NIX_USER }}.isNormalUser
         echo "✅ ${{ matrix.host }} user configuration is valid"
 
     - name: Test ${{ matrix.host }} home-manager user packages
       run: |
         echo "📦 Testing ${{ matrix.host }} home-manager user packages..."
-        nix eval --show-trace .#nixosConfigurations.${{ matrix.host }}.config.home-manager.users.testuser.home.packages --apply "builtins.length"
+        nix eval --show-trace .#nixosConfigurations.${{ matrix.host }}.config.home-manager.users.${{ env.CI_NIX_USER }}.home.packages --apply "builtins.length"
         echo "✅ ${{ matrix.host }} home-manager user packages are accessible"
 
     - name: Test ${{ matrix.host }} home-manager modules
       run: |
         echo "🏠 Testing ${{ matrix.host }} home-manager modules..."
-        nix eval --show-trace .#nixosConfigurations.${{ matrix.host }}.config.home-manager.users.testuser.programs.git.enable
+        nix eval --show-trace .#nixosConfigurations.${{ matrix.host }}.config.home-manager.users.${{ env.CI_NIX_USER }}.programs.git.enable
         echo "✅ ${{ matrix.host }} home-manager modules are accessible"
