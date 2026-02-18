@@ -77,18 +77,28 @@
       ];
       forEachSystem = nixpkgs.lib.genAttrs supportedSystems;
 
-      # Load secrets from file
+      validateSecrets =
+        secrets:
+        assert builtins.isAttrs secrets || throw "secrets.nix must return an attribute set";
+        assert (secrets.username or null) != null || throw "secrets.nix must define 'username'";
+        secrets;
+
+      # Load secrets from either the original working tree path (impure) or
+      # from flake source path (pure). This keeps git-ignored secrets.nix usable
+      # with commands like `nixos-rebuild --flake .#host --impure`.
+      flakeRoot = builtins.getEnv "FLAKE_ROOT";
+      pwdPath = builtins.getEnv "PWD";
+      secretsPath =
+        let
+          basePath = if flakeRoot != "" then flakeRoot else pwdPath;
+        in
+        if basePath != "" then /. + basePath + "/secrets.nix" else null;
+
       customsecrets =
-        if builtins.pathExists ./secrets.nix then
-          let
-            rawSecrets = import ./secrets.nix;
-            validateSecrets =
-              secrets:
-              assert builtins.isAttrs secrets || throw "secrets.nix must return an attribute set";
-              assert (secrets.username or null) != null || throw "secrets.nix must define 'username'";
-              secrets;
-          in
-          validateSecrets rawSecrets
+        if secretsPath != null && builtins.pathExists secretsPath then
+          validateSecrets (import secretsPath)
+        else if builtins.pathExists ./secrets.nix then
+          validateSecrets (import ./secrets.nix)
         else
           builtins.trace "WARNING: secrets.nix not found. Using default fallback values." {
             username = "user";
