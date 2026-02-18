@@ -1,20 +1,78 @@
-# Secrets - never commit
-secrets.nix
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
 
-# Nix build outputs
-result
-result-*
+# Test binary, built with `go test -c`
+*.test
 
-# direnv
-.direnv/
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
 
-# Editor-specific
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# Environment variables
+.env*
+!.env.example
+
+# Build output
+/build
+/dist
+
+# IDE specific files
 .idea/
+.vscode/
 *.swp
 *.swo
-*~
-.vscode/
 
-# OS-specific
+# Mac OS
 .DS_Store
-Thumbs.db
+
+# Log files
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.bak
+
+# Nix build outputs
+nixos.wsl
+result
+
+# Generated files
+proto/v1/*.pb.go
+
+# Local configuration
+.env
+.env.local
+secrets.nix
+.claude/*
+!.claude/settings.json
+# CLAUDE.md
+
+# Claude Flow / AI Agent data directories
+.swarm/
+.claude-flow/
+.claude-plugin/
+.hive-mind/
+.ruv-swarm/
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+.todos/
+.claude/
+.opencode/
