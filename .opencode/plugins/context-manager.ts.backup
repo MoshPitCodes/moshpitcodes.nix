@@ -1,0 +1,1982 @@
+import type { Plugin, Hooks } from "@opencode-ai/plugin"
+import type {
+  Message,
+  Part,
+  ToolPart,
+  TextPart,
+  Model,
+  Config,
+} from "@opencode-ai/sdk"
+import { tool } from "@opencode-ai/plugin"
+import { writeFile, readFile, mkdir } from "fs/promises"
+import { join, basename, relative } from "path"
+
+// ============================================================================
+// TYPES & INTERFACES
+// ============================================================================
+
+/** Configuration for the ICM plugin */
+interface ICMConfig {
+  enabled: boolean
+  debug: boolean
+  /** Notification level: "off", "minimal", "detailed" */
+  pruneNotification: "off" | "minimal" | "detailed"
+  /** Where to display notifications */
+  pruneNotificationType: "chat" | "toast"
+  /** Slash commands configuration */
+  commands: {
+    enabled: boolean
+    protectedTools: string[]
+  }
+  /** Manual mode: disables autonomous context management */
+  manualMode: {
+    enabled: boolean
+    automaticStrategies: boolean
+  }
+  /** Turn-based protection for recent tool outputs */
+  turnProtection: {
+    enabled: boolean
+    turns: number
+  }
+  /** Glob patterns for files protected from pruning */
+  protectedFilePatterns: string[]
+  /** LLM-driven tool configuration */
+  tools: {
+    settings: {
+      nudgeEnabled: boolean
+      nudgeFrequency: number
+      /** Token threshold that triggers compress nudge */
+      contextLimit: number | string
+      /** Per-model overrides for context limits */
+      modelLimits: Record<string, number | string>
+      protectedTools: string[]
+    }
+    distill: { permission: "ask" | "allow" | "deny"; showDistillation: boolean }
+    compress: { permission: "ask" | "allow" | "deny"; showCompression: boolean }
+    prune: { permission: "ask" | "allow" | "deny" }
+  }
+  /** Automatic pruning strategies */
+  strategies: {
+    deduplication: {
+      enabled: boolean
+      /** Similarity threshold for fuzzy matching (0-1) */
+      fuzzyThreshold: number
+      protectedTools: string[]
+    }
+    supersedeWrites: { enabled: boolean }
+    purgeErrors: {
+      enabled: boolean
+      turns: number
+      protectedTools: string[]
+    }
+    /** Intelligent compression: replace large outputs with structural summaries */
+    smartCompression: {
+      enabled: boolean
+      /** Minimum output length (chars) before compression kicks in */
+      minLength: number
+      /** Keep structural metadata (function signatures, exports) */
+      preserveStructure: boolean
+    }
+  }
+  /** Semantic analysis settings */
+  semantic: {
+    enabled: boolean
+    /** Track which content references which */
+    trackDependencies: boolean
+    /** Score decay rate per turn (0-1) */
+    decayRate: number
+    /** Minimum importance score to keep (0-100) */
+    minImportanceToKeep: number
+  }
+  /** Session memory for cross-session learning */
+  memory: {
+    enabled: boolean
+    persistPath: string
+    learnPrunePatterns: boolean
+  }
+  /** Cache-aware pruning to minimize cache invalidation */
+  cacheAwareness: {
+    enabled: boolean
+    provider: "auto" | "anthropic" | "openai" | "none"
+    /** Only prune when net token savings exceeds this threshold */
+    minNetSavings: number
+  }
+}
+
+/** Content importance scoring */
+interface ContentScore {
+  /** Importance score 0-100 */
+  score: number
+  /** What category this content belongs to */
+  category: "definition" | "decision" | "output" | "error" | "navigation" | "routine"
+  /** Whether content is referenced by later content */
+  hasForwardReferences: boolean
+  /** Turn number when this content was created */
+  turn: number
+  /** Number of times this content has been referenced */
+  referenceCount: number
+}
+
+/** Dependency graph node */
+interface DependencyNode {
+  /** Unique ID (part ID or message ID) */
+  id: string
+  /** Content type */
+  type: "tool" | "text" | "file-read" | "file-write" | "file-edit" | "command"
+  /** Tool name if applicable */
+  toolName?: string
+  /** File path if applicable */
+  filePath?: string
+  /** IDs of nodes this depends on */
+  dependsOn: Set<string>
+  /** IDs of nodes that depend on this */
+  dependedBy: Set<string>
+  /** Turn number */
+  turn: number
+  /** Content length in characters */
+  contentLength: number
+  /** Estimated token count */
+  estimatedTokens: number
+  /** Whether this node has been pruned */
+  pruned: boolean
+  /** Importance score */
+  importance: ContentScore
+}
+
+/** Session state tracking */
+interface SessionState {
+  /** Current turn counter */
+  turnCount: number
+  /** Variant string for message identification */
+  variant?: string
+  /** Map of tool call IDs to their metadata */
+  toolCalls: Map<string, {
+    tool: string
+    args: Record<string, unknown>
+    output?: string
+    error?: string
+    turn: number
+    partId?: string
+    filePath?: string
+  }>
+  /** Dependency graph */
+  dependencies: Map<string, DependencyNode>
+  /** Set of pruned part/message IDs */
+  prunedIds: Set<string>
+  /** Running statistics */
+  stats: {
+    totalTokensSaved: number
+    pruneCount: number
+    deduplicationCount: number
+    supersedeCount: number
+    errorPurgeCount: number
+    smartCompressionCount: number
+    distillCount: number
+    compressCount: number
+    nudgesSent: number
+    sessionStart: number
+  }
+  /** File access history: filePath -> { reads: turn[], writes: turn[] } */
+  fileHistory: Map<string, { reads: number[]; writes: number[]; edits: number[] }>
+  /** Whether manual mode is currently active */
+  manualMode: boolean
+  /** Detected provider for cache-awareness */
+  detectedProvider?: string
+  /** Current model info */
+  currentModel?: { providerID: string; modelID: string; contextLimit: number }
+  /** Tool result count since last nudge */
+  toolResultsSinceNudge: number
+  /** Session ID */
+  sessionId?: string
+}
+
+/** Pruning result for a single item */
+interface PruneResult {
+  partId: string
+  toolName: string
+  reason: string
+  tokensSaved: number
+  strategy: "deduplication" | "supersede" | "error-purge" | "smart-compression" | "manual" | "distill" | "compress" | "prune"
+}
+
+// ============================================================================
+// CONSTANTS
+// ============================================================================
+
+const PLUGIN_NAME = "icm"
+const PLUGIN_VERSION = "1.0.0"
+
+/** Placeholder text for pruned content */
+const PRUNE_PLACEHOLDER = "[Content pruned by ICM - context optimization]"
+const DEDUP_PLACEHOLDER = "[Duplicate content removed - see latest instance]"
+const SUPERSEDE_PLACEHOLDER = "[Superseded by later file read - current state captured]"
+const ERROR_PURGE_PLACEHOLDER = "[Error input pruned after resolution]"
+const COMPRESS_PLACEHOLDER = "[Compressed by ICM]"
+
+/** Tools that should never be pruned */
+const DEFAULT_PROTECTED_TOOLS = new Set([
+  "task",
+  "todowrite",
+  "todoread",
+  "distill",
+  "compress",
+  "prune",
+  "batch",
+  "plan_enter",
+  "plan_exit",
+  "icm_distill",
+  "icm_compress",
+  "icm_prune",
+])
+
+/** Estimated tokens per character */
+const CHARS_PER_TOKEN = 4
+
+/** Default configuration */
+const DEFAULT_CONFIG: ICMConfig = {
+  enabled: true,
+  debug: false,
+  pruneNotification: "detailed",
+  pruneNotificationType: "chat",
+  commands: {
+    enabled: true,
+    protectedTools: [],
+  },
+  manualMode: {
+    enabled: false,
+    automaticStrategies: true,
+  },
+  turnProtection: {
+    enabled: false,
+    turns: 4,
+  },
+  protectedFilePatterns: [],
+  tools: {
+    settings: {
+      nudgeEnabled: true,
+      nudgeFrequency: 10,
+      contextLimit: 100000,
+      modelLimits: {},
+      protectedTools: [],
+    },
+    distill: { permission: "allow", showDistillation: false },
+    compress: { permission: "deny", showCompression: false },
+    prune: { permission: "allow", showDistillation: false } as any,
+  },
+  strategies: {
+    deduplication: {
+      enabled: true,
+      fuzzyThreshold: 0.92,
+      protectedTools: [],
+    },
+    supersedeWrites: { enabled: true },
+    purgeErrors: {
+      enabled: true,
+      turns: 4,
+      protectedTools: [],
+    },
+    smartCompression: {
+      enabled: true,
+      minLength: 2000,
+      preserveStructure: true,
+    },
+  },
+  semantic: {
+    enabled: true,
+    trackDependencies: true,
+    decayRate: 0.05,
+    minImportanceToKeep: 20,
+  },
+  memory: {
+    enabled: true,
+    persistPath: ".opencode/data/icm",
+    learnPrunePatterns: true,
+  },
+  cacheAwareness: {
+    enabled: true,
+    provider: "auto",
+    minNetSavings: 500,
+  },
+}
+
+// ============================================================================
+// LOGGER
+// ============================================================================
+
+class ICMLogger {
+  private debug: boolean
+  private logDir: string
+  private initialized = false
+
+  constructor(debug: boolean, directory: string) {
+    this.debug = debug
+    this.logDir = join(directory, ".opencode", "logs")
+  }
+
+  private async ensureDir() {
+    if (!this.initialized) {
+      await mkdir(this.logDir, { recursive: true })
+      this.initialized = true
+    }
+  }
+
+  private async log(file: string, data: Record<string, unknown>) {
+    try {
+      await this.ensureDir()
+      const entry = { timestamp: new Date().toISOString(), plugin: PLUGIN_NAME, ...data }
+      await writeFile(join(this.logDir, `${file}.jsonl`), JSON.stringify(entry) + "\n", { flag: "a" })
+    } catch {
+      // Fail silently
+    }
+  }
+
+  async info(message: string, data?: Record<string, unknown>) {
+    await this.log("icm", { level: "info", message, ...data })
+  }
+
+  async warn(message: string, data?: Record<string, unknown>) {
+    await this.log("icm", { level: "warn", message, ...data })
+  }
+
+  async error(message: string, data?: Record<string, unknown>) {
+    await this.log("icm", { level: "error", message, ...data })
+  }
+
+  async debugLog(message: string, data?: Record<string, unknown>) {
+    if (this.debug) {
+      await this.log("icm_debug", { level: "debug", message, ...data })
+    }
+  }
+
+  async logPrune(result: PruneResult) {
+    await this.log("icm_prune", {
+      event: "pruned",
+      partId: result.partId,
+      tool: result.toolName,
+      reason: result.reason,
+      tokensSaved: result.tokensSaved,
+      strategy: result.strategy,
+    })
+  }
+
+  async logStats(stats: SessionState["stats"]) {
+    await this.log("icm_stats", {
+      event: "session_stats",
+      ...stats,
+      duration: Date.now() - stats.sessionStart,
+    })
+  }
+}
+
+// ============================================================================
+// CONFIG LOADER
+// ============================================================================
+
+function loadConfig(directory: string): ICMConfig {
+  const config = structuredClone(DEFAULT_CONFIG)
+  const configPaths = [
+    join(process.env.HOME ?? "", ".config", "opencode", "icm.json"),
+    join(process.env.HOME ?? "", ".config", "opencode", "icm.jsonc"),
+  ]
+
+  if (process.env.OPENCODE_CONFIG_DIR) {
+    configPaths.push(join(process.env.OPENCODE_CONFIG_DIR, "icm.json"))
+    configPaths.push(join(process.env.OPENCODE_CONFIG_DIR, "icm.jsonc"))
+  }
+
+  configPaths.push(join(directory, ".opencode", "icm.json"))
+  configPaths.push(join(directory, ".opencode", "icm.jsonc"))
+
+  for (const configPath of configPaths) {
+    try {
+      const raw = require("fs").readFileSync(configPath, "utf-8")
+      // Strip JSONC comments
+      const cleaned = raw.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "")
+      const parsed = JSON.parse(cleaned)
+      deepMerge(config, parsed)
+    } catch {
+      // Config file doesn't exist or is invalid — skip
+    }
+  }
+
+  return config
+}
+
+function deepMerge(target: any, source: any): void {
+  for (const key of Object.keys(source)) {
+    if (
+      source[key] &&
+      typeof source[key] === "object" &&
+      !Array.isArray(source[key]) &&
+      target[key] &&
+      typeof target[key] === "object" &&
+      !Array.isArray(target[key])
+    ) {
+      deepMerge(target[key], source[key])
+    } else {
+      target[key] = source[key]
+    }
+  }
+}
+
+// ============================================================================
+// STATE MANAGEMENT
+// ============================================================================
+
+function createSessionState(): SessionState {
+  return {
+    turnCount: 0,
+    toolCalls: new Map(),
+    dependencies: new Map(),
+    prunedIds: new Set(),
+    stats: {
+      totalTokensSaved: 0,
+      pruneCount: 0,
+      deduplicationCount: 0,
+      supersedeCount: 0,
+      errorPurgeCount: 0,
+      smartCompressionCount: 0,
+      distillCount: 0,
+      compressCount: 0,
+      nudgesSent: 0,
+      sessionStart: Date.now(),
+    },
+    fileHistory: new Map(),
+    manualMode: false,
+    toolResultsSinceNudge: 0,
+  }
+}
+
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
+
+function estimateTokens(text: string): number {
+  if (!text) return 0
+  return Math.ceil(text.length / CHARS_PER_TOKEN)
+}
+
+function resolveContextLimit(
+  config: ICMConfig,
+  model?: { providerID: string; modelID: string; contextLimit: number },
+): number {
+  if (!model) return typeof config.tools.settings.contextLimit === "number"
+    ? config.tools.settings.contextLimit
+    : 100000
+
+  const modelKey = `${model.providerID}/${model.modelID}`
+  const modelLimit = config.tools.settings.modelLimits[modelKey]
+  const limit = modelLimit ?? config.tools.settings.contextLimit
+
+  if (typeof limit === "string" && limit.endsWith("%")) {
+    const pct = parseFloat(limit) / 100
+    return Math.floor(model.contextLimit * pct)
+  }
+  return typeof limit === "number" ? limit : 100000
+}
+
+function isProtectedTool(toolName: string, config: ICMConfig): boolean {
+  if (DEFAULT_PROTECTED_TOOLS.has(toolName)) return true
+  if (config.tools.settings.protectedTools.includes(toolName)) return true
+  if (config.commands.protectedTools.includes(toolName)) return true
+  return false
+}
+
+function isTurnProtected(toolTurn: number, currentTurn: number, config: ICMConfig): boolean {
+  if (!config.turnProtection.enabled) return false
+  return currentTurn - toolTurn <= config.turnProtection.turns
+}
+
+function extractFilePath(toolName: string, args: Record<string, unknown>): string | undefined {
+  if (args.filePath && typeof args.filePath === "string") return args.filePath
+  if (args.file && typeof args.file === "string") return args.file
+  if (args.path && typeof args.path === "string") return args.path
+  if (toolName === "bash" && typeof args.command === "string") {
+    // Try to extract file paths from bash commands (rough heuristic)
+    const match = args.command.match(/(?:cat|head|tail|less|more|vim|nano|code)\s+["']?([^\s"'|>]+)/)
+    return match?.[1]
+  }
+  return undefined
+}
+
+function isFileReadTool(toolName: string): boolean {
+  return ["read", "glob", "grep"].includes(toolName)
+}
+
+function isFileWriteTool(toolName: string): boolean {
+  return ["write", "edit"].includes(toolName)
+}
+
+/** Check if a file path matches any protected pattern */
+function isProtectedFile(filePath: string, patterns: string[]): boolean {
+  if (!filePath || patterns.length === 0) return false
+  for (const pattern of patterns) {
+    if (simpleGlobMatch(pattern, filePath)) return true
+  }
+  return false
+}
+
+/** Very simple glob matching (supports * and **) */
+function simpleGlobMatch(pattern: string, path: string): boolean {
+  const regex = pattern
+    .replace(/\*\*/g, "___GLOBSTAR___")
+    .replace(/\*/g, "[^/]*")
+    .replace(/___GLOBSTAR___/g, ".*")
+    .replace(/\?/g, ".")
+  return new RegExp(`^${regex}$`).test(path)
+}
+
+// ============================================================================
+// SEMANTIC SCORING
+// ============================================================================
+
+function scoreContent(
+  toolName: string,
+  args: Record<string, unknown>,
+  output: string | undefined,
+  error: string | undefined,
+  turn: number,
+  currentTurn: number,
+  config: ICMConfig,
+): ContentScore {
+  let score = 50 // Base score
+  let category: ContentScore["category"] = "routine"
+
+  // Category detection
+  if (error) {
+    category = "error"
+    score = 30
+  } else if (isFileWriteTool(toolName)) {
+    category = "definition"
+    score = 70
+  } else if (isFileReadTool(toolName)) {
+    category = "navigation"
+    score = 40
+  } else if (toolName === "bash") {
+    const cmd = String(args.command ?? "")
+    if (cmd.match(/^(npm|bun|yarn)\s+(test|run|build)/)) {
+      category = "output"
+      score = 55
+    } else if (cmd.match(/^(git|docker|kubectl)/)) {
+      category = "routine"
+      score = 35
+    } else {
+      category = "output"
+      score = 45
+    }
+  } else if (toolName === "task") {
+    category = "decision"
+    score = 80
+  } else if (toolName === "todowrite" || toolName === "todoread") {
+    category = "decision"
+    score = 85
+  }
+
+  // Output size penalty: very large outputs are less likely to be entirely relevant
+  if (output && output.length > 5000) {
+    score -= Math.min(15, Math.floor(output.length / 5000))
+  }
+
+  // Decay based on age
+  const age = currentTurn - turn
+  const decay = config.semantic.decayRate * age
+  score = Math.max(0, score - Math.floor(decay * 100))
+
+  return {
+    score,
+    category,
+    hasForwardReferences: false,
+    turn,
+    referenceCount: 0,
+  }
+}
+
+// ============================================================================
+// DEPENDENCY GRAPH
+// ============================================================================
+
+function addDependencyNode(
+  state: SessionState,
+  id: string,
+  toolName: string,
+  args: Record<string, unknown>,
+  output: string | undefined,
+  turn: number,
+  config: ICMConfig,
+): void {
+  const filePath = extractFilePath(toolName, args)
+  const contentLength = (output ?? "").length + JSON.stringify(args).length
+  const type = isFileReadTool(toolName) ? "file-read"
+    : isFileWriteTool(toolName) ? "file-write"
+    : toolName === "bash" ? "command"
+    : "tool"
+
+  const importance = scoreContent(toolName, args, output, undefined, turn, state.turnCount, config)
+
+  const node: DependencyNode = {
+    id,
+    type,
+    toolName,
+    filePath,
+    dependsOn: new Set(),
+    dependedBy: new Set(),
+    turn,
+    contentLength,
+    estimatedTokens: estimateTokens(output ?? ""),
+    pruned: false,
+    importance,
+  }
+
+  // Build dependency edges based on file relationships
+  if (filePath && config.semantic.trackDependencies) {
+    for (const [existingId, existingNode] of state.dependencies) {
+      if (existingNode.filePath === filePath && existingId !== id) {
+        // If we're reading a file that was previously written, we depend on that write
+        if (isFileReadTool(toolName) && (existingNode.type === "file-write" || existingNode.type === "file-edit")) {
+          node.dependsOn.add(existingId)
+          existingNode.dependedBy.add(id)
+        }
+        // If we're writing a file that was previously read, mark the read as referenced
+        if (isFileWriteTool(toolName) && existingNode.type === "file-read") {
+          node.dependsOn.add(existingId)
+          existingNode.dependedBy.add(id)
+          existingNode.importance.hasForwardReferences = true
+          existingNode.importance.referenceCount++
+        }
+      }
+    }
+  }
+
+  state.dependencies.set(id, node)
+}
+
+function canSafelyPrune(id: string, state: SessionState): boolean {
+  const node = state.dependencies.get(id)
+  if (!node) return true
+
+  // Don't prune if other non-pruned nodes depend on this
+  for (const depId of node.dependedBy) {
+    const dep = state.dependencies.get(depId)
+    if (dep && !dep.pruned) return false
+  }
+  return true
+}
+
+// ============================================================================
+// AUTOMATIC STRATEGIES
+// ============================================================================
+
+/** Deduplication: find repeated tool calls with same args, keep latest */
+function findDuplicates(
+  messages: { info: Message; parts: Part[] }[],
+  state: SessionState,
+  config: ICMConfig,
+): PruneResult[] {
+  if (!config.strategies.deduplication.enabled) return []
+  const results: PruneResult[] = []
+
+  // Build a map of tool signature -> list of part IDs (in order)
+  const toolSignatures = new Map<string, { partId: string; turn: number; tokens: number }[]>()
+
+  const dedupeProtected = new Set([
+    ...config.strategies.deduplication.protectedTools,
+    ...config.tools.settings.protectedTools,
+  ])
+
+  for (const msg of messages) {
+    for (const part of msg.parts) {
+      if (part.type !== "tool") continue
+      const tp = part as ToolPart
+      if (tp.state.status !== "completed") continue
+      if (isProtectedTool(tp.tool, config)) continue
+      if (dedupeProtected.has(tp.tool)) continue
+      if (state.prunedIds.has(tp.id)) continue
+
+      const sig = `${tp.tool}::${JSON.stringify(tp.state.input)}`
+      if (!toolSignatures.has(sig)) {
+        toolSignatures.set(sig, [])
+      }
+      const tokens = estimateTokens(tp.state.output)
+      toolSignatures.get(sig)!.push({ partId: tp.id, turn: state.turnCount, tokens })
+    }
+  }
+
+  // For each signature with duplicates, prune all but the last
+  for (const [_sig, instances] of toolSignatures) {
+    if (instances.length <= 1) continue
+    for (let i = 0; i < instances.length - 1; i++) {
+      const inst = instances[i]
+      if (isTurnProtected(inst.turn, state.turnCount, config)) continue
+      results.push({
+        partId: inst.partId,
+        toolName: _sig.split("::")[0],
+        reason: "Duplicate tool call with identical arguments",
+        tokensSaved: inst.tokens,
+        strategy: "deduplication",
+      })
+    }
+  }
+
+  return results
+}
+
+/** Fuzzy deduplication: find near-identical tool calls */
+function findFuzzyDuplicates(
+  messages: { info: Message; parts: Part[] }[],
+  state: SessionState,
+  config: ICMConfig,
+): PruneResult[] {
+  if (!config.strategies.deduplication.enabled || config.strategies.deduplication.fuzzyThreshold >= 1.0) return []
+  const results: PruneResult[] = []
+  const threshold = config.strategies.deduplication.fuzzyThreshold
+
+  // Group by tool name, then compare outputs
+  const toolOutputs = new Map<string, { partId: string; output: string; turn: number; tokens: number }[]>()
+
+  for (const msg of messages) {
+    for (const part of msg.parts) {
+      if (part.type !== "tool") continue
+      const tp = part as ToolPart
+      if (tp.state.status !== "completed") continue
+      if (isProtectedTool(tp.tool, config)) continue
+      if (state.prunedIds.has(tp.id)) continue
+
+      if (!toolOutputs.has(tp.tool)) toolOutputs.set(tp.tool, [])
+      toolOutputs.get(tp.tool)!.push({
+        partId: tp.id,
+        output: tp.state.output,
+        turn: state.turnCount,
+        tokens: estimateTokens(tp.state.output),
+      })
+    }
+  }
+
+  for (const [toolName, outputs] of toolOutputs) {
+    if (outputs.length <= 1) continue
+    for (let i = 0; i < outputs.length - 1; i++) {
+      for (let j = i + 1; j < outputs.length; j++) {
+        const similarity = computeSimilarity(outputs[i].output, outputs[j].output)
+        if (similarity >= threshold) {
+          const older = outputs[i]
+          if (!isTurnProtected(older.turn, state.turnCount, config)) {
+            results.push({
+              partId: older.partId,
+              toolName,
+              reason: `Near-duplicate output (${(similarity * 100).toFixed(0)}% similar)`,
+              tokensSaved: older.tokens,
+              strategy: "deduplication",
+            })
+          }
+        }
+      }
+    }
+  }
+
+  return results
+}
+
+// Similarity cache (LRU with size limit)
+const similarityCache = new Map<string, number>()
+const MAX_CACHE_SIZE = 1000
+
+function getCacheKey(a: string, b: string): string {
+  // Sort to ensure cache hits for (a,b) and (b,a)
+  return a < b ? `${a}::${b}` : `${b}::${a}`
+}
+
+/** Simple similarity computation using character trigrams with memoization */
+function computeSimilarity(a: string, b: string): number {
+  if (a === b) return 1.0
+  if (!a || !b) return 0
+  
+  // Check cache
+  const cacheKey = getCacheKey(a, b)
+  if (similarityCache.has(cacheKey)) {
+    return similarityCache.get(cacheKey)!
+  }
+
+  // For very long strings, sample to keep performance reasonable
+  const maxLen = 2000
+  const sa = a.length > maxLen ? a.substring(0, maxLen) : a
+  const sb = b.length > maxLen ? b.substring(0, maxLen) : b
+
+  const trigramsA = new Set<string>()
+  const trigramsB = new Set<string>()
+  for (let i = 0; i < sa.length - 2; i++) trigramsA.add(sa.substring(i, i + 3))
+  for (let i = 0; i < sb.length - 2; i++) trigramsB.add(sb.substring(i, i + 3))
+
+  if (trigramsA.size === 0 || trigramsB.size === 0) return 0
+
+  let intersection = 0
+  for (const t of trigramsA) if (trigramsB.has(t)) intersection++
+
+  const result = (2 * intersection) / (trigramsA.size + trigramsB.size)
+  
+  // Cache result (with size limit - simple LRU eviction)
+  if (similarityCache.size >= MAX_CACHE_SIZE) {
+    // Evict oldest entry (first key)
+    const firstKey = similarityCache.keys().next().value as string | undefined
+    if (firstKey) similarityCache.delete(firstKey)
+  }
+  similarityCache.set(cacheKey, result)
+  
+  return result
+}
+
+/** Supersede writes: when a file is written then later read, the write output is redundant */
+function findSupersededWrites(
+  messages: { info: Message; parts: Part[] }[],
+  state: SessionState,
+  config: ICMConfig,
+): PruneResult[] {
+  if (!config.strategies.supersedeWrites.enabled) return []
+  const results: PruneResult[] = []
+
+  // Track read positions by file
+  const latestReads = new Map<string, number>() // filePath -> message index
+
+  // First pass: find latest read for each file
+  for (let mi = 0; mi < messages.length; mi++) {
+    for (const part of messages[mi].parts) {
+      if (part.type !== "tool") continue
+      const tp = part as ToolPart
+      if (tp.state.status !== "completed") continue
+      if (!isFileReadTool(tp.tool)) continue
+      const fp = extractFilePath(tp.tool, tp.state.input)
+      if (fp) latestReads.set(fp, mi)
+    }
+  }
+
+  // Second pass: find writes that precede reads of the same file
+  for (let mi = 0; mi < messages.length; mi++) {
+    for (const part of messages[mi].parts) {
+      if (part.type !== "tool") continue
+      const tp = part as ToolPart
+      if (tp.state.status !== "completed") continue
+      if (!isFileWriteTool(tp.tool)) continue
+      if (isProtectedTool(tp.tool, config)) continue
+      if (state.prunedIds.has(tp.id)) continue
+
+      const fp = extractFilePath(tp.tool, tp.state.input)
+      if (!fp) continue
+      if (isProtectedFile(fp, config.protectedFilePatterns)) continue
+
+      const readIdx = latestReads.get(fp)
+      if (readIdx !== undefined && readIdx > mi) {
+        const tokens = estimateTokens(tp.state.output)
+        if (!isTurnProtected(mi, state.turnCount, config)) {
+          results.push({
+            partId: tp.id,
+            toolName: tp.tool,
+            reason: `File ${basename(fp)} was subsequently re-read`,
+            tokensSaved: tokens,
+            strategy: "supersede",
+          })
+        }
+      }
+    }
+  }
+
+  return results
+}
+
+/** Purge error inputs: remove input content for tools that errored, after N turns */
+function findPurgeableErrors(
+  messages: { info: Message; parts: Part[] }[],
+  state: SessionState,
+  config: ICMConfig,
+): PruneResult[] {
+  if (!config.strategies.purgeErrors.enabled) return []
+  const results: PruneResult[] = []
+  const turnsThreshold = config.strategies.purgeErrors.turns
+  const errorProtected = new Set(config.strategies.purgeErrors.protectedTools)
+
+  for (const msg of messages) {
+    for (const part of msg.parts) {
+      if (part.type !== "tool") continue
+      const tp = part as ToolPart
+      if (tp.state.status !== "error") continue
+      if (isProtectedTool(tp.tool, config)) continue
+      if (errorProtected.has(tp.tool)) continue
+      if (state.prunedIds.has(tp.id)) continue
+
+      // Check if enough turns have passed
+      const toolEntry = state.toolCalls.get(tp.callID)
+      if (!toolEntry) continue
+      const turnAge = state.turnCount - toolEntry.turn
+      if (turnAge < turnsThreshold) continue
+
+      const inputTokens = estimateTokens(JSON.stringify(tp.state.input))
+      if (inputTokens > 50) { // Only worth pruning if input is substantial
+        results.push({
+          partId: tp.id,
+          toolName: tp.tool,
+          reason: `Error input pruned after ${turnAge} turns`,
+          tokensSaved: inputTokens,
+          strategy: "error-purge",
+        })
+      }
+    }
+  }
+
+  return results
+}
+
+/** Smart compression: extract structural summary from large tool outputs */
+function generateSmartSummary(toolName: string, output: string, args: Record<string, unknown>): string {
+  const lines = output.split("\n")
+  const lineCount = lines.length
+  const charCount = output.length
+
+  if (toolName === "read" || toolName === "glob") {
+    // For file reads, extract key structural info
+    const filePath = extractFilePath(toolName, args) ?? "unknown"
+    const ext = filePath.split(".").pop()?.toLowerCase()
+
+    if (ext === "ts" || ext === "tsx" || ext === "js" || ext === "jsx") {
+      return extractCodeStructure(output, filePath)
+    }
+    if (ext === "json" || ext === "jsonc") {
+      return extractJsonStructure(output, filePath)
+    }
+    if (ext === "md") {
+      return extractMarkdownStructure(output, filePath)
+    }
+
+    // Generic summary
+    return [
+      `[ICM Smart Summary] File: ${basename(filePath)} (${lineCount} lines, ~${estimateTokens(output)} tokens)`,
+      `First 10 lines preview:`,
+      lines.slice(0, 10).join("\n"),
+      `... (${lineCount - 10} more lines)`,
+      `[Full content available on re-read]`,
+    ].join("\n")
+  }
+
+  if (toolName === "bash") {
+    const cmd = String(args.command ?? "")
+    return [
+      `[ICM Smart Summary] Command: ${cmd.substring(0, 100)}`,
+      `Output: ${lineCount} lines, ${charCount} chars`,
+      `First 5 lines:`,
+      lines.slice(0, 5).join("\n"),
+      lines.length > 10 ? `Last 5 lines:` : "",
+      lines.length > 10 ? lines.slice(-5).join("\n") : "",
+      `[Full output pruned - re-run command if needed]`,
+    ].filter(Boolean).join("\n")
+  }
+
+  // Generic tool output summary
+  return [
+    `[ICM Smart Summary] Tool: ${toolName} (${charCount} chars, ~${estimateTokens(output)} tokens)`,
+    output.substring(0, 500),
+    charCount > 500 ? `... (${charCount - 500} chars truncated)` : "",
+  ].filter(Boolean).join("\n")
+}
+
+function extractCodeStructure(code: string, filePath: string): string {
+  const lines = code.split("\n")
+  const imports: string[] = []
+  const exports: string[] = []
+  const functions: string[] = []
+  const classes: string[] = []
+  const types: string[] = []
+
+  for (const line of lines) {
+    const trimmed = line.trim()
+    if (trimmed.startsWith("import ")) imports.push(trimmed)
+    if (trimmed.startsWith("export ")) {
+      if (trimmed.includes("function ")) {
+        const match = trimmed.match(/export\s+(?:default\s+)?(?:async\s+)?function\s+(\w+)/)
+        if (match) functions.push(match[0] + "(...)")
+      } else if (trimmed.includes("class ")) {
+        const match = trimmed.match(/export\s+(?:default\s+)?class\s+(\w+)/)
+        if (match) classes.push(match[0])
+      } else if (trimmed.includes("type ") || trimmed.includes("interface ")) {
+        const match = trimmed.match(/export\s+(?:type|interface)\s+(\w+)/)
+        if (match) types.push(match[0])
+      } else {
+        exports.push(trimmed.substring(0, 80))
+      }
+    }
+    if (!trimmed.startsWith("export") && trimmed.match(/^(?:async\s+)?function\s+(\w+)/)) {
+      const match = trimmed.match(/^(?:async\s+)?function\s+(\w+)/)
+      if (match) functions.push(match[0] + "(...)")
+    }
+    if (!trimmed.startsWith("export") && trimmed.match(/^class\s+(\w+)/)) {
+      const match = trimmed.match(/^class\s+(\w+)/)
+      if (match) classes.push(match[0])
+    }
+  }
+
+  const parts = [
+    `[ICM Smart Summary] File: ${basename(filePath)} (${lines.length} lines, ~${estimateTokens(code)} tokens)`,
+  ]
+  if (imports.length > 0) parts.push(`Imports (${imports.length}): ${imports.slice(0, 5).join("; ")}${imports.length > 5 ? "..." : ""}`)
+  if (types.length > 0) parts.push(`Types: ${types.join(", ")}`)
+  if (classes.length > 0) parts.push(`Classes: ${classes.join(", ")}`)
+  if (functions.length > 0) parts.push(`Functions: ${functions.join(", ")}`)
+  if (exports.length > 0) parts.push(`Exports: ${exports.slice(0, 5).join("; ")}${exports.length > 5 ? "..." : ""}`)
+  parts.push(`[Full content available on re-read]`)
+
+  return parts.join("\n")
+}
+
+function extractJsonStructure(json: string, filePath: string): string {
+  try {
+    const parsed = JSON.parse(json)
+    const keys = Object.keys(parsed)
+    return [
+      `[ICM Smart Summary] JSON: ${basename(filePath)} (${keys.length} top-level keys)`,
+      `Keys: ${keys.slice(0, 20).join(", ")}${keys.length > 20 ? "..." : ""}`,
+      `[Full content available on re-read]`,
+    ].join("\n")
+  } catch {
+    return `[ICM Smart Summary] JSON: ${basename(filePath)} (~${estimateTokens(json)} tokens) [parse error - full content available on re-read]`
+  }
+}
+
+function extractMarkdownStructure(md: string, filePath: string): string {
+  const headings: string[] = []
+  for (const line of md.split("\n")) {
+    if (line.startsWith("#")) headings.push(line.trim())
+  }
+  return [
+    `[ICM Smart Summary] Markdown: ${basename(filePath)} (${md.split("\n").length} lines)`,
+    headings.length > 0 ? `Headings: ${headings.slice(0, 10).join(" | ")}${headings.length > 10 ? "..." : ""}` : "",
+    `[Full content available on re-read]`,
+  ].filter(Boolean).join("\n")
+}
+
+/** Find large tool outputs that can be smart-compressed */
+function findSmartCompressible(
+  messages: { info: Message; parts: Part[] }[],
+  state: SessionState,
+  config: ICMConfig,
+): PruneResult[] {
+  if (!config.strategies.smartCompression.enabled) return []
+  const results: PruneResult[] = []
+  const minLen = config.strategies.smartCompression.minLength
+
+  for (const msg of messages) {
+    for (const part of msg.parts) {
+      if (part.type !== "tool") continue
+      const tp = part as ToolPart
+      if (tp.state.status !== "completed") continue
+      if (isProtectedTool(tp.tool, config)) continue
+      if (state.prunedIds.has(tp.id)) continue
+
+      const output = tp.state.output
+      if (!output || output.length < minLen) continue
+      if (isTurnProtected(state.turnCount, state.turnCount, config)) continue
+
+      // Check dependency graph: don't compress if content is still referenced
+      if (config.semantic.trackDependencies && !canSafelyPrune(tp.id, state)) continue
+
+      const filePath = extractFilePath(tp.tool, tp.state.input)
+      if (filePath && isProtectedFile(filePath, config.protectedFilePatterns)) continue
+
+      // Check importance score
+      const toolEntry = state.toolCalls.get(tp.callID)
+      if (toolEntry) {
+        const importance = scoreContent(tp.tool, tp.state.input as Record<string, unknown>, output, undefined, toolEntry.turn, state.turnCount, config)
+        if (importance.score >= 60) continue // Still important enough
+      }
+
+      const currentTokens = estimateTokens(output)
+      const summary = generateSmartSummary(tp.tool, output, tp.state.input as Record<string, unknown>)
+      const summaryTokens = estimateTokens(summary)
+      const savings = currentTokens - summaryTokens
+
+      if (savings > 100) { // Only worth it if we save meaningful tokens
+        results.push({
+          partId: tp.id,
+          toolName: tp.tool,
+          reason: `Smart compression: ${currentTokens} -> ${summaryTokens} tokens`,
+          tokensSaved: savings,
+          strategy: "smart-compression",
+        })
+      }
+    }
+  }
+
+  return results
+}
+
+// ============================================================================
+// CACHE-AWARE PRUNING
+// ============================================================================
+
+function filterForCacheAwareness(
+  results: PruneResult[],
+  messages: { info: Message; parts: Part[] }[],
+  state: SessionState,
+  config: ICMConfig,
+): PruneResult[] {
+  if (!config.cacheAwareness.enabled || config.cacheAwareness.provider === "none") {
+    return results
+  }
+
+  // For cache-aware pruning, we prefer to prune from the end of the conversation
+  // rather than the beginning, to preserve cached prefixes.
+  // Sort by position: later parts first (these are more likely to be past the cache point)
+  const partPositions = new Map<string, number>()
+  let position = 0
+  for (const msg of messages) {
+    for (const part of msg.parts) {
+      partPositions.set(part.id, position++)
+    }
+  }
+
+  // Filter out results where savings don't meet threshold
+  const filtered = results.filter((r) => r.tokensSaved >= config.cacheAwareness.minNetSavings)
+
+  // Sort so we prune later items first (preserve cache prefix)
+  filtered.sort((a, b) => {
+    const posA = partPositions.get(a.partId) ?? 0
+    const posB = partPositions.get(b.partId) ?? 0
+    return posB - posA // Later items first
+  })
+
+  return filtered
+}
+
+// ============================================================================
+// MESSAGE TRANSFORMATION
+// ============================================================================
+
+function applyPruneResults(
+  messages: { info: Message; parts: Part[] }[],
+  results: PruneResult[],
+  state: SessionState,
+  config: ICMConfig,
+): { info: Message; parts: Part[] }[] {
+  const prunedPartIds = new Set(results.map((r) => r.partId))
+
+  return messages.map((msg) => ({
+    info: msg.info,
+    parts: msg.parts.map((part) => {
+      if (part.type !== "tool") return part
+      const tp = part as ToolPart
+      if (!prunedPartIds.has(tp.id)) return part
+      if (tp.state.status !== "completed" && tp.state.status !== "error") return part
+
+      const result = results.find((r) => r.partId === tp.id)
+      if (!result) return part
+
+      // Mark as pruned in state
+      state.prunedIds.add(tp.id)
+      const depNode = state.dependencies.get(tp.id)
+      if (depNode) depNode.pruned = true
+
+      // Update stats
+      state.stats.totalTokensSaved += result.tokensSaved
+      state.stats.pruneCount++
+
+      switch (result.strategy) {
+        case "deduplication": state.stats.deduplicationCount++; break
+        case "supersede": state.stats.supersedeCount++; break
+        case "error-purge": state.stats.errorPurgeCount++; break
+        case "smart-compression": state.stats.smartCompressionCount++; break
+        case "distill": state.stats.distillCount++; break
+        case "compress": state.stats.compressCount++; break
+      }
+
+      // Apply the prune
+      if (tp.state.status === "completed") {
+        let replacement: string
+        switch (result.strategy) {
+          case "deduplication":
+            replacement = DEDUP_PLACEHOLDER
+            break
+          case "supersede":
+            replacement = SUPERSEDE_PLACEHOLDER
+            break
+          case "smart-compression":
+            replacement = generateSmartSummary(tp.tool, tp.state.output, tp.state.input as Record<string, unknown>)
+            break
+          default:
+            replacement = PRUNE_PLACEHOLDER
+        }
+
+        return {
+          ...tp,
+          state: {
+            ...tp.state,
+            output: replacement,
+          },
+        } as Part
+      }
+
+      if (tp.state.status === "error") {
+        return {
+          ...tp,
+          state: {
+            ...tp.state,
+            input: { _pruned: true, _reason: ERROR_PURGE_PLACEHOLDER } as any,
+          },
+        } as Part
+      }
+
+      return part
+    }),
+  }))
+}
+
+// ============================================================================
+// SYSTEM PROMPT INJECTION
+// ============================================================================
+
+function buildSystemPromptAddition(state: SessionState, config: ICMConfig): string {
+  const parts: string[] = []
+
+  if (!config.manualMode.enabled && !state.manualMode) {
+    parts.push(`<icm-context-management>`)
+    parts.push(`You have context management tools available to optimize token usage:`)
+
+    if (config.tools.distill.permission !== "deny") {
+      parts.push(`- **icm_distill**: Extract key findings from tool outputs before removing the raw content. Use when tool output contains important information that should be preserved in summary form.`)
+    }
+    if (config.tools.compress.permission !== "deny") {
+      parts.push(`- **icm_compress**: Collapse a range of conversation into a concise summary. Use when a series of exploration steps can be condensed.`)
+    }
+    if (config.tools.prune.permission !== "deny") {
+      parts.push(`- **icm_prune**: Remove completed or noisy tool content from context. Use for tool outputs no longer needed.`)
+    }
+
+    parts.push(``)
+    parts.push(`Guidelines:`)
+    parts.push(`- Proactively manage context when working on long tasks`)
+    parts.push(`- Distill important findings before they get pruned`)
+    parts.push(`- Prune exploratory tool calls once you have the information you need`)
+    parts.push(`- Never prune tool outputs that contain information you still need`)
+    parts.push(`</icm-context-management>`)
+  }
+
+  return parts.join("\n")
+}
+
+function buildNudgeMessage(state: SessionState, config: ICMConfig): string | undefined {
+  if (!config.tools.settings.nudgeEnabled) return undefined
+  if (config.manualMode.enabled || state.manualMode) return undefined
+  if (state.toolResultsSinceNudge < config.tools.settings.nudgeFrequency) return undefined
+
+  state.toolResultsSinceNudge = 0
+  state.stats.nudgesSent++
+
+  const contextLimit = resolveContextLimit(config, state.currentModel)
+  const estimatedUsage = estimateCurrentTokenUsage(state)
+
+  if (estimatedUsage > contextLimit * 0.8) {
+    return `[ICM] Context usage is high (~${Math.round(estimatedUsage / 1000)}k tokens). Consider using icm_distill or icm_prune to free up context for better response quality.`
+  }
+
+  return `[ICM] Consider pruning completed tool outputs to maintain context quality. Use icm_prune for outputs no longer needed, or icm_distill to preserve key findings.`
+}
+
+function estimateCurrentTokenUsage(state: SessionState): number {
+  let total = 0
+  for (const [, node] of state.dependencies) {
+    if (!node.pruned) {
+      total += node.estimatedTokens
+    }
+  }
+  return total
+}
+
+// ============================================================================
+// SESSION MEMORY
+// ============================================================================
+
+interface SessionMemory {
+  /** Files that are frequently read and re-read */
+  hotFiles: Record<string, number>
+  /** Tools that commonly produce pruneable output */
+  frequentlyPruned: Record<string, number>
+  /** Average session stats */
+  sessionCount: number
+  avgTokensSaved: number
+  avgPruneCount: number
+  lastUpdated: string
+}
+
+async function loadSessionMemory(directory: string, config: ICMConfig): Promise<SessionMemory> {
+  if (!config.memory.enabled) {
+    return { hotFiles: {}, frequentlyPruned: {}, sessionCount: 0, avgTokensSaved: 0, avgPruneCount: 0, lastUpdated: "" }
+  }
+
+  const memoryPath = join(directory, config.memory.persistPath, "memory.json")
+  try {
+    const raw = await readFile(memoryPath, "utf-8")
+    return JSON.parse(raw) as SessionMemory
+  } catch {
+    return { hotFiles: {}, frequentlyPruned: {}, sessionCount: 0, avgTokensSaved: 0, avgPruneCount: 0, lastUpdated: "" }
+  }
+}
+
+async function saveSessionMemory(
+  directory: string,
+  config: ICMConfig,
+  state: SessionState,
+  memory: SessionMemory,
+): Promise<void> {
+  if (!config.memory.enabled) return
+
+  try {
+    const memDir = join(directory, config.memory.persistPath)
+    await mkdir(memDir, { recursive: true })
+
+    // Update memory with session data
+    memory.sessionCount++
+    memory.avgTokensSaved = ((memory.avgTokensSaved * (memory.sessionCount - 1)) + state.stats.totalTokensSaved) / memory.sessionCount
+    memory.avgPruneCount = ((memory.avgPruneCount * (memory.sessionCount - 1)) + state.stats.pruneCount) / memory.sessionCount
+    memory.lastUpdated = new Date().toISOString()
+
+    // Track hot files
+    for (const [fp, history] of state.fileHistory) {
+      const accessCount = history.reads.length + history.writes.length + history.edits.length
+      memory.hotFiles[fp] = (memory.hotFiles[fp] ?? 0) + accessCount
+    }
+
+    // Track frequently pruned tools
+    for (const [, node] of state.dependencies) {
+      if (node.pruned && node.toolName) {
+        memory.frequentlyPruned[node.toolName] = (memory.frequentlyPruned[node.toolName] ?? 0) + 1
+      }
+    }
+
+    await writeFile(join(memDir, "memory.json"), JSON.stringify(memory, null, 2))
+  } catch {
+    // Fail silently
+  }
+}
+
+// ============================================================================
+// NOTIFICATION FORMATTING
+// ============================================================================
+
+function formatPruneNotification(
+  results: PruneResult[],
+  config: ICMConfig,
+): string | undefined {
+  if (config.pruneNotification === "off" || results.length === 0) return undefined
+
+  const totalSaved = results.reduce((sum, r) => sum + r.tokensSaved, 0)
+
+  if (config.pruneNotification === "minimal") {
+    return `[ICM] Pruned ${results.length} items, saved ~${totalSaved} tokens`
+  }
+
+  // Detailed
+  const byStrategy = new Map<string, { count: number; tokens: number }>()
+  for (const r of results) {
+    const entry = byStrategy.get(r.strategy) ?? { count: 0, tokens: 0 }
+    entry.count++
+    entry.tokens += r.tokensSaved
+    byStrategy.set(r.strategy, entry)
+  }
+
+  const lines = [`[ICM] Pruned ${results.length} items, saved ~${totalSaved} tokens:`]
+  for (const [strategy, data] of byStrategy) {
+    lines.push(`  ${strategy}: ${data.count} items (~${data.tokens} tokens)`)
+  }
+
+  return lines.join("\n")
+}
+
+function formatContextBreakdown(
+  messages: { info: Message; parts: Part[] }[],
+  state: SessionState,
+): string {
+  let systemTokens = 0
+  let userTokens = 0
+  let assistantTokens = 0
+  let toolTokens = 0
+  let prunedTokens = state.stats.totalTokensSaved
+
+  for (const msg of messages) {
+    for (const part of msg.parts) {
+      if (part.type === "text") {
+        const tp = part as TextPart
+        const tokens = estimateTokens(tp.text)
+        if (msg.info.role === "user") userTokens += tokens
+        else assistantTokens += tokens
+      } else if (part.type === "tool") {
+        const tp = part as ToolPart
+        if (tp.state.status === "completed") {
+          toolTokens += estimateTokens(tp.state.output)
+          toolTokens += estimateTokens(JSON.stringify(tp.state.input))
+        } else if (tp.state.status === "error") {
+          toolTokens += estimateTokens(tp.state.error)
+        }
+      }
+    }
+  }
+
+  const total = systemTokens + userTokens + assistantTokens + toolTokens
+  const lines = [
+    `Context Breakdown (estimated):`,
+    `  User messages:      ~${userTokens.toLocaleString()} tokens`,
+    `  Assistant messages:  ~${assistantTokens.toLocaleString()} tokens`,
+    `  Tool I/O:           ~${toolTokens.toLocaleString()} tokens`,
+    `  ─────────────────────────────`,
+    `  Total active:       ~${total.toLocaleString()} tokens`,
+    `  Tokens saved (ICM): ~${prunedTokens.toLocaleString()} tokens`,
+    `  Total original:     ~${(total + prunedTokens).toLocaleString()} tokens`,
+  ]
+
+  return lines.join("\n")
+}
+
+function formatStats(state: SessionState): string {
+  const duration = Date.now() - state.stats.sessionStart
+  const mins = Math.floor(duration / 60000)
+  const secs = Math.floor((duration % 60000) / 1000)
+
+  return [
+    `ICM Session Statistics:`,
+    `  Session duration:      ${mins}m ${secs}s`,
+    `  Total tokens saved:    ~${state.stats.totalTokensSaved.toLocaleString()}`,
+    `  Total prunes:          ${state.stats.pruneCount}`,
+    `    Deduplication:       ${state.stats.deduplicationCount}`,
+    `    Supersede writes:    ${state.stats.supersedeCount}`,
+    `    Error purges:        ${state.stats.errorPurgeCount}`,
+    `    Smart compression:   ${state.stats.smartCompressionCount}`,
+    `    Distill:             ${state.stats.distillCount}`,
+    `    Compress:            ${state.stats.compressCount}`,
+    `  Nudges sent:           ${state.stats.nudgesSent}`,
+    `  Tracked tool calls:    ${state.toolCalls.size}`,
+    `  Dependency nodes:      ${state.dependencies.size}`,
+    `  Files tracked:         ${state.fileHistory.size}`,
+  ].join("\n")
+}
+
+// ============================================================================
+// TOOL DEFINITIONS
+// ============================================================================
+
+function createDistillTool(state: SessionState, logger: ICMLogger, config: ICMConfig) {
+  return tool({
+    description:
+      "Distill key findings from tool outputs into a concise summary, then mark the original content for pruning. " +
+      "Use this to preserve important information while freeing context space. " +
+      "Provide a summary of the key findings and specify which tool call IDs to prune.",
+    args: {
+      summary: tool.schema
+        .string()
+        .describe("Concise summary of the key findings to preserve"),
+      toolCallIds: tool.schema
+        .array(tool.schema.string())
+        .describe("IDs of tool call parts to prune after distillation"),
+      focus: tool.schema
+        .string()
+        .optional()
+        .describe("Optional focus area for the distillation"),
+    },
+    async execute(input) {
+      const pruneCount = input.toolCallIds.length
+      let tokensSaved = 0
+
+      for (const id of input.toolCallIds) {
+        if (isProtectedTool(id, config)) continue
+        state.prunedIds.add(id)
+        const node = state.dependencies.get(id)
+        if (node) {
+          node.pruned = true
+          tokensSaved += node.estimatedTokens
+        }
+        state.stats.distillCount++
+      }
+
+      state.stats.totalTokensSaved += tokensSaved
+      state.stats.pruneCount += pruneCount
+
+      await logger.info("Distill executed", {
+        pruneCount,
+        tokensSaved,
+        summaryLength: input.summary.length,
+      })
+
+      return `Distilled ${pruneCount} tool outputs (~${tokensSaved} tokens freed). Summary preserved:\n${input.summary}`
+    },
+  })
+}
+
+function createCompressTool(state: SessionState, logger: ICMLogger, config: ICMConfig) {
+  return tool({
+    description:
+      "Compress a range of conversation content into a single summary. " +
+      "Use this when a series of exploratory steps (reading files, running commands) can be " +
+      "condensed into what was learned. Specify the part IDs to compress and provide a summary.",
+    args: {
+      summary: tool.schema
+        .string()
+        .describe("Concise summary of the compressed conversation range"),
+      partIds: tool.schema
+        .array(tool.schema.string())
+        .describe("IDs of message parts to compress"),
+      focus: tool.schema
+        .string()
+        .optional()
+        .describe("Optional focus area for the compression"),
+    },
+    async execute(input) {
+      let tokensSaved = 0
+      let compressCount = 0
+
+      for (const id of input.partIds) {
+        if (state.prunedIds.has(id)) continue
+        state.prunedIds.add(id)
+        const node = state.dependencies.get(id)
+        if (node) {
+          node.pruned = true
+          tokensSaved += node.estimatedTokens
+        }
+        compressCount++
+      }
+
+      state.stats.totalTokensSaved += tokensSaved
+      state.stats.pruneCount += compressCount
+      state.stats.compressCount += compressCount
+
+      await logger.info("Compress executed", {
+        compressCount,
+        tokensSaved,
+        summaryLength: input.summary.length,
+      })
+
+      return `Compressed ${compressCount} items (~${tokensSaved} tokens freed). Summary:\n${input.summary}`
+    },
+  })
+}
+
+function createPruneTool(state: SessionState, logger: ICMLogger, config: ICMConfig) {
+  return tool({
+    description:
+      "Remove completed or noisy tool content from context. " +
+      "Use this for tool outputs that are no longer needed (completed tasks, " +
+      "exploratory reads that have been superseded, etc.).",
+    args: {
+      partIds: tool.schema
+        .array(tool.schema.string())
+        .describe("IDs of tool call parts to prune"),
+      reason: tool.schema
+        .string()
+        .optional()
+        .describe("Brief reason for pruning"),
+    },
+    async execute(input) {
+      let tokensSaved = 0
+      let pruneCount = 0
+
+      for (const id of input.partIds) {
+        if (state.prunedIds.has(id)) continue
+        if (isProtectedTool(id, config)) continue
+        state.prunedIds.add(id)
+        const node = state.dependencies.get(id)
+        if (node) {
+          node.pruned = true
+          tokensSaved += node.estimatedTokens
+        }
+        pruneCount++
+      }
+
+      state.stats.totalTokensSaved += tokensSaved
+      state.stats.pruneCount += pruneCount
+
+      await logger.info("Prune executed", {
+        pruneCount,
+        tokensSaved,
+        reason: input.reason,
+      })
+
+      return `Pruned ${pruneCount} items (~${tokensSaved} tokens freed)${input.reason ? `. Reason: ${input.reason}` : ""}`
+    },
+  })
+}
+
+// ============================================================================
+// MAIN PLUGIN
+// ============================================================================
+
+export const ICMPlugin: Plugin = async ({ directory, client, $ }) => {
+  const config = loadConfig(directory)
+
+  if (!config.enabled) return {}
+
+  const logger = new ICMLogger(config.debug, directory)
+  const state = createSessionState()
+  state.manualMode = config.manualMode.enabled
+
+  let memory = await loadSessionMemory(directory, config)
+
+  await logger.info("ICM initialized", {
+    version: PLUGIN_VERSION,
+    strategies: {
+      deduplication: config.strategies.deduplication.enabled,
+      supersedeWrites: config.strategies.supersedeWrites.enabled,
+      purgeErrors: config.strategies.purgeErrors.enabled,
+      smartCompression: config.strategies.smartCompression.enabled,
+    },
+    semantic: config.semantic.enabled,
+    memory: config.memory.enabled,
+    cacheAwareness: config.cacheAwareness.enabled,
+    manualMode: state.manualMode,
+  })
+
+  // Build the hooks object
+  const hooks: Hooks = {
+    // ---- System prompt injection ----
+    "experimental.chat.system.transform": async (input, output) => {
+      const addition = buildSystemPromptAddition(state, config)
+      if (addition) {
+        output.system.push(addition)
+      }
+
+      // Detect provider/model for cache-awareness
+      if (input.model) {
+        state.currentModel = {
+          providerID: input.model.providerID,
+          modelID: input.model.id,
+          contextLimit: input.model.limit?.context ?? 200000,
+        }
+        if (config.cacheAwareness.provider === "auto") {
+          state.detectedProvider = input.model.providerID
+        }
+      }
+    },
+
+    // ---- Message transformation (the core pruning engine) ----
+    "experimental.chat.messages.transform": async (_input, output) => {
+      // Skip if in manual mode with automatic strategies disabled
+      if (state.manualMode && !config.manualMode.automaticStrategies) return
+
+      const messages = output.messages
+
+      // Run automatic strategies
+      let allResults: PruneResult[] = []
+
+      // 1. Exact deduplication
+      const dedupeResults = findDuplicates(messages, state, config)
+      allResults.push(...dedupeResults)
+
+      // 2. Fuzzy deduplication
+      const fuzzyResults = findFuzzyDuplicates(messages, state, config)
+      allResults.push(...fuzzyResults)
+
+      // 3. Supersede writes
+      const supersedeResults = findSupersededWrites(messages, state, config)
+      allResults.push(...supersedeResults)
+
+      // 4. Purge errors
+      const errorResults = findPurgeableErrors(messages, state, config)
+      allResults.push(...errorResults)
+
+      // 5. Smart compression (only if not in manual mode)
+      if (!state.manualMode) {
+        const smartResults = findSmartCompressible(messages, state, config)
+        allResults.push(...smartResults)
+      }
+
+      // Deduplicate results (same part might be caught by multiple strategies)
+      const seenParts = new Set<string>()
+      allResults = allResults.filter((r) => {
+        if (seenParts.has(r.partId)) return false
+        seenParts.add(r.partId)
+        return true
+      })
+
+      // Apply cache-awareness filtering
+      if (config.cacheAwareness.enabled) {
+        allResults = filterForCacheAwareness(allResults, messages, state, config)
+      }
+
+      // Apply pruning
+      if (allResults.length > 0) {
+        output.messages = applyPruneResults(messages, allResults, state, config)
+
+        // Log results
+        for (const result of allResults) {
+          await logger.logPrune(result)
+        }
+
+        await logger.debugLog("Transform applied", {
+          pruneCount: allResults.length,
+          totalTokensSaved: allResults.reduce((s, r) => s + r.tokensSaved, 0),
+        })
+      }
+
+      // Handle nudge injection
+      const nudge = buildNudgeMessage(state, config)
+      if (nudge) {
+        // Find the last assistant message and inject a nudge as a synthetic text part
+        for (let i = output.messages.length - 1; i >= 0; i--) {
+          if (output.messages[i].info.role === "assistant") {
+            // We can't easily inject parts into read-only SDK types,
+            // so we log the nudge and rely on system prompt guidance
+            await logger.debugLog("Nudge triggered", { nudge })
+            break
+          }
+        }
+      }
+    },
+
+    // ---- Track new messages (turn counting, variant caching) ----
+    "chat.message": async (input) => {
+      state.turnCount++
+      state.variant = input.variant
+      state.sessionId = input.sessionID
+
+      if (input.model) {
+        state.currentModel = {
+          providerID: input.model.providerID,
+          modelID: input.model.modelID,
+          contextLimit: 200000, // Updated via system.transform when we get full Model object
+        }
+      }
+
+      await logger.debugLog("New turn", { turn: state.turnCount, variant: input.variant })
+    },
+
+    // ---- Track tool execution results ----
+    "tool.execute.after": async (input, output) => {
+      state.toolResultsSinceNudge++
+
+      const toolName = input.tool
+      const callId = input.callID
+
+      // Parse tool args if available from output metadata
+      const args = (output.metadata as Record<string, unknown>) ?? {}
+
+      // Track in tool calls map
+      state.toolCalls.set(callId, {
+        tool: toolName,
+        args,
+        output: output.output,
+        turn: state.turnCount,
+      })
+
+      // Track file access
+      const filePath = extractFilePath(toolName, args)
+      if (filePath) {
+        if (!state.fileHistory.has(filePath)) {
+          state.fileHistory.set(filePath, { reads: [], writes: [], edits: [] })
+        }
+        const history = state.fileHistory.get(filePath)!
+        if (isFileReadTool(toolName)) history.reads.push(state.turnCount)
+        else if (toolName === "write") history.writes.push(state.turnCount)
+        else if (toolName === "edit") history.edits.push(state.turnCount)
+      }
+
+      // Add to dependency graph
+      addDependencyNode(state, callId, toolName, args, output.output, state.turnCount, config)
+
+      await logger.debugLog("Tool tracked", {
+        tool: toolName,
+        callId,
+        outputLength: output.output?.length ?? 0,
+        turn: state.turnCount,
+      })
+    },
+
+    // ---- Slash command handling ----
+    "command.execute.before": async (input, output) => {
+      if (input.command !== "icm") return
+
+      const args = input.arguments.trim().split(/\s+/)
+      const subcommand = args[0]?.toLowerCase()
+
+      switch (subcommand) {
+        case "context": {
+          // Show context breakdown — inject as synthetic text
+          // We need to read current messages via the transform hook, so we store a flag
+          output.parts.push({
+            type: "text",
+            text: `Show me the ICM context breakdown. The current session stats are:\n${formatStats(state)}`,
+          } as any)
+          break
+        }
+
+        case "stats": {
+          output.parts.push({
+            type: "text",
+            text: formatStats(state),
+          } as any)
+          break
+        }
+
+        case "sweep": {
+          const count = parseInt(args[1]) || undefined
+          output.parts.push({
+            type: "text",
+            text: `Use icm_prune to prune ${count ? `the last ${count}` : "all"} completed tool outputs since the last user message. Skip any tools named: ${[...DEFAULT_PROTECTED_TOOLS].join(", ")}`,
+          } as any)
+          break
+        }
+
+        case "manual": {
+          const setting = args[1]?.toLowerCase()
+          if (setting === "on") {
+            state.manualMode = true
+          } else if (setting === "off") {
+            state.manualMode = false
+          } else {
+            state.manualMode = !state.manualMode
+          }
+          output.parts.push({
+            type: "text",
+            text: `ICM manual mode: ${state.manualMode ? "ON" : "OFF"}. ${state.manualMode ? "Automatic pruning tools disabled. Use /icm sweep or /icm prune to manually trigger." : "Automatic context management re-enabled."}`,
+          } as any)
+          break
+        }
+
+        case "prune": {
+          const focus = args.slice(1).join(" ")
+          output.parts.push({
+            type: "text",
+            text: `Use icm_prune to remove completed tool outputs that are no longer needed.${focus ? ` Focus: ${focus}` : ""} Skip protected tools: ${[...DEFAULT_PROTECTED_TOOLS].join(", ")}`,
+          } as any)
+          break
+        }
+
+        case "distill": {
+          const focus = args.slice(1).join(" ")
+          output.parts.push({
+            type: "text",
+            text: `Use icm_distill to extract key findings from tool outputs.${focus ? ` Focus: ${focus}` : ""} Summarize important information before pruning.`,
+          } as any)
+          break
+        }
+
+        case "compress": {
+          const focus = args.slice(1).join(" ")
+          output.parts.push({
+            type: "text",
+            text: `Use icm_compress to collapse a range of conversation into a summary.${focus ? ` Focus: ${focus}` : ""} Preserve key decisions and findings.`,
+          } as any)
+          break
+        }
+
+        default: {
+          output.parts.push({
+            type: "text",
+            text: [
+              "ICM - Intelligent Context Manager",
+              "",
+              "Available commands:",
+              "  /icm context        — Show context token breakdown",
+              "  /icm stats          — Show pruning statistics",
+              "  /icm sweep [N]      — Prune last N tool outputs (or all since last user msg)",
+              "  /icm manual [on|off] — Toggle manual mode",
+              "  /icm prune [focus]  — Trigger a prune with optional focus",
+              "  /icm distill [focus] — Trigger a distill with optional focus",
+              "  /icm compress [focus] — Trigger a compress with optional focus",
+              "",
+              `Status: ${state.manualMode ? "Manual mode" : "Automatic"} | ${state.stats.pruneCount} prunes | ~${state.stats.totalTokensSaved} tokens saved`,
+            ].join("\n"),
+          } as any)
+        }
+      }
+    },
+
+    // ---- Event handling (session lifecycle) ----
+    event: async ({ event }) => {
+      switch (event.type) {
+        case "session.created": {
+          state.sessionId = event.properties.info.id
+          state.stats.sessionStart = Date.now()
+          await logger.info("Session started", { sessionId: state.sessionId })
+          break
+        }
+
+        case "session.idle": {
+          // Save session memory and log final stats
+          await saveSessionMemory(directory, config, state, memory)
+          await logger.logStats(state.stats)
+
+          // Show notification if configured as toast
+          if (config.pruneNotificationType === "toast" && state.stats.pruneCount > 0) {
+            try {
+              const msg = `ICM: ${state.stats.pruneCount} prunes, ~${state.stats.totalTokensSaved} tokens saved`
+              // Use TUI toast if available
+              await client.tui.showToast({
+                body: {
+                  message: msg,
+                  variant: "info",
+                  title: "ICM Stats",
+                  duration: 5000,
+                },
+              })
+            } catch {
+              // Toast not available
+            }
+          }
+          break
+        }
+
+        case "session.compacted": {
+          // Reset state after compaction since all messages are replaced
+          state.prunedIds.clear()
+          state.toolCalls.clear()
+          state.dependencies.clear()
+          state.fileHistory.clear()
+          state.toolResultsSinceNudge = 0
+          await logger.info("Session compacted — state reset")
+          break
+        }
+      }
+    },
+
+    // ---- Register tools ----
+    tool: {
+      ...(config.tools.distill.permission !== "deny" && {
+        icm_distill: createDistillTool(state, logger, config),
+      }),
+      ...(config.tools.compress.permission !== "deny" && {
+        icm_compress: createCompressTool(state, logger, config),
+      }),
+      ...(config.tools.prune.permission !== "deny" && {
+        icm_prune: createPruneTool(state, logger, config),
+      }),
+    },
+
+    // ---- Config mutation: register commands and tool permissions ----
+    config: async (opencodeConfig: Config) => {
+      // Register /icm command
+      if (config.commands.enabled) {
+        opencodeConfig.command ??= {}
+        opencodeConfig.command["icm"] = {
+          template: "",
+          description: "Intelligent Context Manager — manage context, view stats, and control pruning",
+        }
+      }
+
+      // Register tools as primary (accessible in main agent context)
+      const toolsToAdd: string[] = []
+      if (config.tools.distill.permission !== "deny") toolsToAdd.push("icm_distill")
+      if (config.tools.compress.permission !== "deny") toolsToAdd.push("icm_compress")
+      if (config.tools.prune.permission !== "deny") toolsToAdd.push("icm_prune")
+
+      if (toolsToAdd.length > 0) {
+        const existing = opencodeConfig.experimental?.primary_tools ?? []
+        opencodeConfig.experimental = {
+          ...opencodeConfig.experimental,
+          primary_tools: [...existing, ...toolsToAdd],
+        }
+      }
+
+      // Set tool permissions
+      const permission = (opencodeConfig as any).permission ?? {}
+      ;(opencodeConfig as any).permission = {
+        ...permission,
+        icm_distill: config.tools.distill.permission,
+        icm_compress: config.tools.compress.permission,
+        icm_prune: config.tools.prune.permission,
+      }
+    },
+  }
+
+  return hooks
+}
+
+export default ICMPlugin
