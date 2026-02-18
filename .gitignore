@@ -73,6 +73,8 @@ package-lock.json
 *.db-journal
 *.db-shm
 *.db-wal
-.todos/
 .claude/
+
+# AI runtime/session state
 .opencode/
+.todos
