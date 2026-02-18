@@ -1,14 +1,22 @@
-{ pkgs, ... }:
+# Boot loader configuration
+{ pkgs, lib, ... }:
 {
   boot = {
     loader = {
-      systemd-boot = {
-        enable = true;
-        configurationLimit = 10;
-      };
+      systemd-boot.enable = true;
       efi.canTouchEfiVariables = true;
     };
-    kernelPackages = pkgs.linuxPackages_zen;
-    supportedFilesystems = [ "ntfs" ];
+
+    # Use the latest kernel
+    kernelPackages = pkgs.linuxPackages_latest;
+
+    # Common kernel parameters
+    kernelParams = [
+      "quiet"
+      "splash"
+    ];
+
+    # Plymouth for boot splash
+    plymouth.enable = true;
   };
 }

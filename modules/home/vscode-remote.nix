@@ -138,7 +138,7 @@ let
     # Nix IDE settings
     "nix.enableLanguageServer" = true;
     "nix.serverPath" = "${pkgs.nil}/bin/nil";
-    "nix.formatterPath" = "${pkgs.nixpkgs-fmt}/bin/nixpkgs-fmt";
+    "nix.formatterPath" = "${pkgs.nixfmt}/bin/nixfmt";
 
     # Remote-WSL specific settings
     "remote.WSL.fileWatcher.polling" = true;
@@ -205,7 +205,7 @@ in
         ## Extension List
 
         The extension list is declaratively managed in your NixOS configuration at:
-        `modules/home/vscode-extensions.nix`
+        `modules/home/vscode-remote.nix`
 
         To add or remove extensions, edit that file and run `nixos-rebuild switch`.
 
@@ -220,7 +220,8 @@ in
       '';
 
       # Create a symlink script for easy access
-      ".vscode-remote/install-extensions.sh".source = "${installExtensionsScript}/bin/vscode-install-extensions";
+      ".vscode-remote/install-extensions.sh".source =
+        "${installExtensionsScript}/bin/vscode-install-extensions";
     };
   };
 }

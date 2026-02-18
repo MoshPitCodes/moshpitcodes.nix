@@ -1,6 +1,7 @@
+# Git configuration
 {
-  lib,
   pkgs,
+  lib,
   customsecrets,
   ...
 }:
@@ -11,47 +12,42 @@
 
       settings = {
         user = {
-          name = customsecrets.git.userName;
-          email = customsecrets.git.userEmail;
-          inherit (customsecrets.git.user) signingkey;
+          name = customsecrets.git.userName or "User";
+          email = customsecrets.git.userEmail or "user@example.com";
+          signingkey = customsecrets.git.user.signingkey or "";
         };
+
         init.defaultBranch = "main";
+        pull.rebase = true;
+        push.autoSetupRemote = true;
+        core.editor = "vim";
+        core.autocrlf = "input";
         credential.helper = "${pkgs.git}/lib/git-core/git-credential-libsecret";
         merge.conflictstyle = "diff3";
         diff.colorMoved = "default";
         commit.gpgsign = true;
         gpg.format = "openpgp";
-        core.autocrlf = "input";
+
+        # Aliases
+        alias = {
+          st = "status";
+          co = "checkout";
+          br = "branch";
+          ci = "commit";
+          lg = "log --oneline --graph --decorate";
+        };
       };
     };
 
+    # Delta for git diffs
     delta = {
       enable = true;
       enableGitIntegration = true;
       options = {
-        line-numbers = true;
-        side-by-side = true;
-        diff-so-fancy = true;
         navigate = true;
-
-        # Rose Pine color scheme
-        syntax-theme = "TwoDark"; # Fallback until bat rose-pine theme is built
-
-        # Rose Pine colors for diff highlighting
-        minus-style = "syntax #26233a"; # base with highlight background
-        minus-emph-style = "syntax #eb6f92"; # love for deletions
-        plus-style = "syntax #26233a"; # base with highlight background
-        plus-emph-style = "syntax #9ccfd8"; # foam for additions
-
-        # Line numbers with Rose Pine colors
-        line-numbers-minus-style = "#eb6f92"; # love
-        line-numbers-plus-style = "#9ccfd8"; # foam
-        line-numbers-zero-style = "#908caa"; # subtle
-
-        # Commit decoration colors
-        commit-decoration-style = "#f6c177 bold"; # gold
-        file-decoration-style = "#c4a7e7"; # iris
-        hunk-header-decoration-style = "#31748f"; # pine
+        light = false;
+        side-by-side = true;
+        line-numbers = true;
       };
     };
 
@@ -80,7 +76,6 @@
       glol = "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset'";
       glola = "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --all";
       glols = "git log --graph --pretty='%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset' --stat";
-      # Backup gh CLI config to the backup directory
       gh-backup = "test -d ${customsecrets.ghConfigDir or ""} && mkdir -p ${
         customsecrets.ghConfigDir or ""
       } && cp -f ~/.config/gh/hosts.yml ${
@@ -93,7 +88,7 @@
     gh
     git-secrets
     libsecret
-  ]; # pkgs.git-lfs
+  ];
 
   # Restore gh CLI configuration from backup
   # NOTE: gh CLI uses SSH for git operations. If not authenticated, run:

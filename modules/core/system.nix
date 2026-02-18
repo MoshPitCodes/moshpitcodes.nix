@@ -1,7 +1,5 @@
-{
-  pkgs,
-  ...
-}:
+# System-level Nix configuration
+{ pkgs, ... }:
 {
   nix = {
     settings = {
@@ -10,43 +8,47 @@
         "nix-command"
         "flakes"
       ];
-
-      flake-registry = builtins.toFile "null-flake-registry.json" ''{"flakes":[],"version":2}'';
-
-      # Binary caches for faster builds (supplements default cache.nixos.org)
-      # nix-community: Home-manager, NUR, community packages
-      # nix-gaming: Gaming optimizations, Proton, Wine
-      # hyprland: Hyprland compositor pre-built binaries
-      # ghostty: Ghostty terminal emulator
-      extra-substituters = [
-        "https://nix-community.cachix.org"
-        "https://nix-gaming.cachix.org"
-        "https://hyprland.cachix.org"
-        "https://ghostty.cachix.org"
+      trusted-users = [
+        "root"
+        "@wheel"
       ];
-
-      extra-trusted-public-keys = [
-        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-        "nix-gaming.cachix.org-1:nbjlureqMbRAxR1gJ/f3hxemL9svXaZF/Ees8vCUUs4="
-        "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
-        "ghostty.cachix.org-1:QB389yTa6gTyneehvqG58y0WnHjQOqgnA+wBnpWWxns="
-      ];
-
-      trusted-users = [ "@wheel" ];
-
       warn-dirty = false;
     };
   };
-  # NUR overlay is applied centrally via overlays/default.nix
 
-  # Note: security.sudo.enable is set in security.nix
-
+  # Basic system packages
   environment.systemPackages = with pkgs; [
     git
+    vim
+    curl
+    wget
+    htop
   ];
 
+  # Timezone and locale
   time.timeZone = "Europe/Berlin";
   i18n.defaultLocale = "en_US.UTF-8";
+  i18n.extraLocaleSettings = {
+    LC_ADDRESS = "en_US.UTF-8";
+    LC_IDENTIFICATION = "en_US.UTF-8";
+    LC_MEASUREMENT = "en_US.UTF-8";
+    LC_MONETARY = "en_US.UTF-8";
+    LC_NAME = "en_US.UTF-8";
+    LC_NUMERIC = "en_US.UTF-8";
+    LC_PAPER = "en_US.UTF-8";
+    LC_TELEPHONE = "en_US.UTF-8";
+    LC_TIME = "en_US.UTF-8";
+  };
+
+  # Console keyboard layout
+  console.keyMap = "de";
+
+  # Enable nix-ld for dynamically linked binaries (uv, pip, etc.)
+  programs.nix-ld.enable = true;
+
+  # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
-  system.stateVersion = "25.05";
+
+  # System state version
+  system.stateVersion = "24.11";
 }

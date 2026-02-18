@@ -56,7 +56,7 @@ My personal NixOS system configuration. This is something I have been working on
 |----------|-------------|
 | [Installation](docs/installation.md) | Complete installation guide |
 | [Configuration](docs/configuration.md) | Monitors, wallpapers, secrets, aliases |
-| [WSL Setup](docs/wsl.md) | Windows Subsystem for Linux |
+| [WSL Setup](docs/wsl.md) | Optional WSL reference notes |
 | [Development Shells](docs/development-shells.md) | Nix dev environments |
 | [Scripts](docs/scripts.md) | System management scripts |
 | [Secrets](SECRETS.md) | Secret management guide |
@@ -69,16 +69,11 @@ My personal NixOS system configuration. This is something I have been working on
 - [./hosts/](hosts) Per-host configurations
   - [../desktop/](hosts/desktop/) Desktop configuration
   - [../laptop/](hosts/laptop/) Laptop configuration
-  - [../vm/](hosts/vm/) QEMU/KVM configuration
   - [../vmware-guest/](hosts/vmware-guest/) VMWare configuration
-  - [../wsl/](hosts/wsl/) WSL2 configuration
 - [./modules/](modules) Modularized NixOS configurations
   - [../core/](modules/core/) Core NixOS configuration
   - [../home/](modules/home/) [Home Manager](https://github.com/nix-community/home-manager) user configurations
 - [./overlays/](overlays) Nixpkgs overlays
-- [./shells/](shells) Development shell environments
-- [./scripts/](scripts) Utility scripts
-- [./pkgs/](pkgs) Custom packages
 - [./wallpapers/](wallpapers) Wallpapers collection
 - [./docs/](docs) Project documentation
 
@@ -135,8 +130,8 @@ My personal NixOS system configuration. This is something I have been working on
         +------------+----------+      +-----------+-----------+
         |   nixpkgs (unstable)  |      |  nixosConfigurations  |
         |   home-manager        |      |                       |
-        |   hyprland            |      |  desktop  laptop  vm  |
-        |   spicetify-nix       |      |  vmware-guest   wsl   |
+         |   hyprland            |      |  desktop  laptop      |
+         |   spicetify-nix       |      |  vmware-guest         |
         |   zen-browser         |      |                       |
         |   ghostty             |      +-----------+-----------+
         |   nvf (neovim)        |                  |
@@ -226,7 +221,7 @@ cd moshpitcodes.nix
 ## 3. Configure Secrets
 
 > [!TIP]
-> To ensure you understand what you're executing, it's advisable to review the code base or at minimum consult the documentation thoroughly prior to running the installer.
+> To ensure you understand what you're executing, it's advisable to review the code base or at minimum consult the documentation thoroughly before applying the configuration.
 
 ### Create Your Secrets File
 
@@ -237,13 +232,7 @@ cp secrets.nix.example secrets.nix
 
 See the [Secrets Guide](SECRETS.md) for detailed instructions on configuring credentials, API keys, and external secret storage.
 
-### Run the Installer
-
-```bash
-./scripts/install.sh
-```
-
-### Rebuild Manually
+### Apply Configuration
 
 ```bash
 # Standard rebuild
@@ -265,7 +254,7 @@ nix build .#nixosConfigurations.desktop.config.system.build.toplevel
 Modular Architecture
 </summary>
 
-- **Flexible Host Configurations**: Separate configurations for desktop, laptop, VM, VMware guest, and WSL2
+- **Flexible Host Configurations**: Separate configurations for desktop, laptop, and VMware guest
 - **Reusable Modules**: Core system modules and Home Manager user configurations
 - **Custom Overlays**: Package version overrides through Nixpkgs overlays
 
@@ -276,7 +265,7 @@ Modular Architecture
 Development Tools
 </summary>
 
-- **Multiple Dev Shells**: Specialized environments for different workflows (default, devshell, claude-flow)
+- **Nix Dev Environment**: Reproducible shell via `nix develop`
 - **AI Development**: Claude Code and OpenCode integration with MCP servers (Discord, Linear, GitHub)
 - **Full DevOps Stack**: kubectl, terraform, ansible, Docker/Podman, and more
 
@@ -287,20 +276,20 @@ Development Tools
 System Management
 </summary>
 
-- **Interactive Installation**: Step-by-step guided setup with `install.sh`
-- **Smart Rebuilds**: Rebuild script with cache clearing, garbage collection, and dry-run options
-- **Automated Scripts**: 20+ user scripts for common tasks
+- **Declarative Rebuilds**: Standard NixOS rebuild workflow with optional Doppler integration
+- **Automated Backups**: Daily `backup-repos` user service for source repositories
+- **Modular Operations**: Host-specific and shared behavior split across reusable modules
 
 </details>
 
 <details>
 <summary>
-Cross-Platform
+Multi-Host
 </summary>
 
-- **WSL2 Integration**: Full WSL2 support with systemd, Docker, and Windows interop
-- **VM Support**: Optimized configurations for QEMU/KVM and VMware
-- **Consistent Experience**: Same tools and workflows across all platforms
+- **Hardware + Virtualized Targets**: Tuned profiles for desktop, laptop, and VMware guest
+- **Consistent Experience**: Shared module stack keeps tooling and workflows aligned across hosts
+- **Host Overrides**: Per-host defaults for hardware, display, and service behavior
 
 </details>
 

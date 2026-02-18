@@ -4,12 +4,10 @@
   ...
 }:
 {
-  home.packages =
-    with pkgs;
-    [
-      waypaper
-      swww
-    ];
+  home.packages = with pkgs; [
+    waypaper
+    swww
+  ];
 
   # Waypaper configuration for wallpaper selection GUI
   # Uses swww backend which has native waypaper integration
@@ -35,19 +33,7 @@
     swww_transition_fps = 60
     use_xdg_state = False
 
-    [DP-6]
-    wallpaper = ${config.home.homeDirectory}/Pictures/wallpapers/mix/titlwinzbst81.jpg
-    fill = fill
-
-    [DP-7]
-    wallpaper = ${config.home.homeDirectory}/Pictures/wallpapers/mix/titlwinzbst81.jpg
-    fill = fill
-
-    [DP-5]
-    wallpaper = ${config.home.homeDirectory}/Pictures/wallpapers/mix/titlwinzbst81.jpg
-    fill = stretch   
-
-    [eDP-1]
+    [Virtual-1]
     wallpaper = ${config.home.homeDirectory}/Pictures/wallpapers/mix/titlwinzbst81.jpg
     fill = fill
   '';

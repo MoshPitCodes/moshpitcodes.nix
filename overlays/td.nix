@@ -2,14 +2,14 @@
 final: prev: {
   td = prev.buildGoModule rec {
     pname = "td";
-    version = "0.34.0";
+    version = "0.37.0";
 
     src = inputs.td;
 
     # Go module vendoring hash
     # Using proxyVendor for proper module vendoring
     proxyVendor = true;
-    vendorHash = "sha256-rwb+x4RVYoYfr9UM4x6TWs6Tkvcl7r6bMxGmn0z0FZE=";
+    vendorHash = "sha256-6OMT5nGoEFRkaQjh1SLBn8rfHZfcOlD0C+foZu6VhLY=";
 
     # Build the main td binary
     subPackages = [ "." ];

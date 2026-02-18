@@ -1,3 +1,4 @@
+# Firefox and Zen Browser configuration
 {
   inputs,
   pkgs,
@@ -5,11 +6,8 @@
 }:
 {
   home.packages = with pkgs; [
-    # Use stable versioned release instead of rolling twilight release
+    # Zen Browser from flake input (stable versioned release)
     inputs.zen-browser.packages."${pkgs.stdenv.hostPlatform.system}".default
-    # inputs.zen-browser.packages."${pkgs.stdenv.hostPlatform.system}".twilight-official
-    # firefox
-    # pkgs.librewolf
 
     # Media support for Firefox-based browsers
     openh264 # H.264 codec
@@ -21,10 +19,9 @@
     gst_all_1.gst-libav
   ];
 
-  # Firefox/Zen Browser configuration
   programs.firefox = {
-    # enable = true;
-    # Correct syntax for Firefox policies
+    enable = true;
+
     policies = {
       DisableFirefoxStudies = true;
       DisablePocket = true;
@@ -38,40 +35,50 @@
       };
       OverrideFirstRunPage = "";
       OverridePostUpdatePage = "";
-      # Enable DRM support
       DRMPlayback = true;
     };
 
-    # Correct structure for Firefox preferences
-    profiles = {
-      default = {
-        id = 0;
-        name = "Default";
-        isDefault = true;
-        settings = {
-          # Enable hardware acceleration
-          "media.hardware-video-decoding.enabled" = true;
-          "media.ffmpeg.vaapi.enabled" = true;
+    profiles.default = {
+      isDefault = true;
+      settings = {
+        # Wayland
+        "widget.use-xdg-desktop-portal.file-picker" = 1;
 
-          # Enable DRM
-          "media.eme.enabled" = true;
+        # Privacy
+        "browser.send_pings" = false;
+        "browser.urlbar.speculativeConnect.enabled" = false;
+        "dom.event.clipboardevents.enabled" = false;
+        "media.navigator.enabled" = false;
+        "network.cookie.cookieBehavior" = 1;
+        "network.http.referer.XOriginPolicy" = 2;
+        "network.http.referer.XOriginTrimmingPolicy" = 2;
 
-          # Improve video playback
-          "media.autoplay.default" = 0;
-          "media.autoplay.blocking_policy" = 0;
+        # Performance
+        "gfx.webrender.all" = true;
+        "layers.acceleration.force-enabled" = true;
 
-          # Support various media formats
-          "media.mediasource.webm.enabled" = true;
+        # Hardware acceleration
+        "media.hardware-video-decoding.enabled" = true;
+        "media.ffmpeg.vaapi.enabled" = true;
 
-          # Performance improvements
-          "media.ffvpx.enabled" = true;
-          "media.navigator.mediadatadecoder_vpx_enabled" = true;
-        };
+        # DRM support
+        "media.eme.enabled" = true;
+
+        # Video playback improvements
+        "media.autoplay.default" = 0;
+        "media.autoplay.blocking_policy" = 0;
+        "media.mediasource.webm.enabled" = true;
+        "media.ffvpx.enabled" = true;
+        "media.navigator.mediadatadecoder_vpx_enabled" = true;
+
+        # Misc
+        "browser.aboutConfig.showWarning" = false;
+        "browser.tabs.warnOnClose" = false;
       };
     };
   };
 
-  # Set some environment variables that might help with hardware acceleration and DRM
+  # Environment variables for hardware acceleration and DRM
   home.sessionVariables = {
     MOZ_USE_XINPUT2 = "1";
     MOZ_WEBRENDER = "1";

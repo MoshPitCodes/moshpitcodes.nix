@@ -1,36 +1,24 @@
-{ pkgs, ... }:
+# System services configuration
+{ ... }:
 {
   services = {
+    # D-Bus
+    dbus.enable = true;
+
+    # GVFS for file manager functionality
     gvfs.enable = true;
-    gnome = {
-      tinysparql.enable = true;
-      # gnome-keyring is managed by home-manager (modules/home/gnome.nix)
-    };
-    dbus.enable = true; # needed for gnome-keyring and other D-Bus services
-    fstrim.enable = true; # needed for SSDs
 
-    # needed for GNOME services outside of GNOME Desktop
-    dbus.packages = with pkgs; [
-      gcr
-      gnome-settings-daemon
-    ];
-  };
-  services.envfs.enable = true;
-  services.logind.settings = {
-    Login = {
-      # don't shutdown when power button is short-pressed
-      HandlePowerKey = "ignore";
+    # Periodic SSD TRIM
+    fstrim.enable = true;
 
-      # suspend when power button is long-pressed
+    # Logind configuration (using new settings format)
+    logind.settings.Login = {
       HandleLidSwitch = "suspend";
-
-      # ignore closing the lid when docked
-      HandleLidSwitchExternalPower = "ignore";
-
-      # lidSwitch = ignore
-      # lidSwitchDocked = ignore
-      # lidSwitchExternalPower = ignore
+      HandleLidSwitchExternalPower = "lock";
+      HandlePowerKey = "suspend";
     };
-  };
 
+    # GNOME Keyring
+    gnome.gnome-keyring.enable = true;
+  };
 }

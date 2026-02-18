@@ -1,35 +1,12 @@
-{
-  pkgs,
-  ...
-}:
+# Gaming: CLI games and utilities
+{ pkgs, ... }:
 {
   home.packages = with pkgs; [
-    ## Utils
-    # gamemode
-    # gamescope
-    # winetricks
-    # inputs.nix-gaming.packages.${pkgs.stdenv.hostPlatform.system}.wine-ge
-
-    ## Minecraft
-    # prismlauncher
-
-    ## Cli games
-    _2048-in-terminal
+    # CLI games
     vitetris
     nethack
 
-    ## Celeste
-    # celeste-classic
-    # celeste-classic-pm
-
-    ## Doom
-    # gzdoom
-    # crispy-doom
-
-    ## Emulation
-    # sameboy
-    # snes9x
-    # cemu
-    # dolphin-emu
+    # Gaming utilities
+    ckan # Kerbal Space Program mod manager
   ];
 }

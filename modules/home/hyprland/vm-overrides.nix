@@ -1,62 +1,55 @@
-{ lib, ... }:
+# Hyprland VM-specific overrides
+# Software rendering makes blur/shadows expensive - disable them
+# Uses lib.mkForce to override base Hyprland settings
+{ pkgs, lib, ... }:
 {
-  # Hyprland VM-specific overrides
-  # This module overrides settings for VM environments (VMware, QEMU, etc.)
-
-  # Override session variables for VM compatibility
-  home.sessionVariables = {
-    # Use VMware graphics driver instead of Intel
-    LIBVA_DRIVER_NAME = lib.mkForce "vmwgfx";
-
-    # Keep Vulkan backend but allow software rendering fallback
-    # These are already set in the main variables.nix but we ensure they're correct for VMs
-    WLR_NO_HARDWARE_CURSORS = lib.mkForce "1";
-    WLR_RENDERER_ALLOW_SOFTWARE = lib.mkForce "1";
-
-  };
-
-  # Override Hyprland configuration for VM
   wayland.windowManager.hyprland.settings = {
-    # Auto-detect monitors instead of hardcoding
-    monitor = lib.mkForce [
-      ",preferred,auto,1"  # Auto-configure any connected monitor
+    # Auto-start hyprlock on boot
+    exec-once = lib.mkAfter [
+      "${pkgs.hyprlock}/bin/hyprlock"
     ];
 
-    # Disable some effects for better VM performance
+    # Force single monitor for VMware (disable phantom second screen)
+    # Order matters: specific rules first, catch-all last
+    monitor = lib.mkForce [
+      "Virtual-1,2560x1440@60,0x0,1" # Primary VMware monitor at explicit position
+      "Unknown-1,disable" # Disable unknown monitors
+      ",disable" # Catch-all: disable any other monitors
+    ];
+
+    # Disable hardware cursors (required for VM compatibility)
+    env = [
+      "WLR_NO_HARDWARE_CURSORS,1"
+      "WLR_RENDERER_ALLOW_SOFTWARE,1"
+      "LIBVA_DRIVER_NAME,vmwgfx"
+    ];
+
+    # Disable blur and shadows (heavy with software rendering)
     decoration = {
       blur = {
-        enabled = lib.mkForce false;  # Disable blur for better performance
+        enabled = lib.mkForce false;
       };
-      drop_shadow = lib.mkForce false;  # Disable shadows for better performance
+      shadow = {
+        enabled = lib.mkForce false;
+      };
     };
 
-    # Reduce animations for better VM performance
-    animation = lib.mkForce [
-      "windows,1,3,default"
-      "border,1,5,default"
-      "fade,1,5,default"
-      "workspaces,1,3,default"
-    ];
+    # Snappy animations (fast enough to feel responsive, not disabled entirely)
+    animations = {
+      enabled = lib.mkForce true;
+      bezier = lib.mkForce [
+        "quick, 0.15, 0, 0.1, 1"
+      ];
+      animation = lib.mkForce [
+        "global, 1, 2, quick"
+        "workspaces, 1, 1.5, quick, slide"
+      ];
+    };
 
+    # VM performance misc settings
     misc = {
-      # Disable VFR for more consistent performance in VMs
-      vfr = lib.mkForce false;
-
-      # Force software cursors (important for VMs)
-      no_hardware_cursors = lib.mkForce true;
+      vfr = true;
+      disable_autoreload = true; # Don't reload config on monitor changes
     };
   };
-
-  # Override extraConfig to remove hardcoded monitor settings
-  wayland.windowManager.hyprland.extraConfig = lib.mkForce ''
-    # VM-friendly monitor configuration
-    monitor=,preferred,auto,1
-
-    xwayland {
-      force_zero_scaling = true
-    }
-
-    # Exec-once commands (keep your original startup apps if needed)
-    exec-once = waybar & swww-daemon
-  '';
 }

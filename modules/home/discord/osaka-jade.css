@@ -1,0 +1,205 @@
+/**
+ * @name Osaka Jade
+ * @author moshpitcodes
+ * @version 1.0
+ * @description Themes your Discord using Osaka Jade colors.
+ * @source Based on Gruvbox theme by Ethan McTague
+ */
+
+/* DiscoCSS Osaka Jade Theme - By moshpitcodes
+
+   Compatible with the latest version of Discord.
+
+   Based on the Gruvbox theme by Ethan McTague
+   Original Gruvbox color scheme by Pavel Pertsev: https://github.com/morhetz/gruvbox
+   Osaka Jade color palette applied for custom theming.
+
+   Using CSS from highlight.js themes, to style code blocks: https://highlightjs.org/
+   highlight.js is licensed under the BSD 3-clause license - see its section in the code for more details.
+
+   Installation:
+    1. Install DiscoCSS via your NixOS configuration.
+    2. This file is automatically deployed via Home Manager.
+    3. DiscoCSS config.json loads this theme automatically.
+
+*/
+
+
+/* Set basic color variables. Some parts of Discord don't use these, so we need to do more after... */
+:root {
+    --interactive-normal: #e6d8ba;
+    --text-normal: #e6d8ba;
+    --background-primary: #11221C;
+    --background-secondary: #0d1a15;
+    --background-tertiary: #11221C;
+    --channels-default: #71CEAD;
+    --deprecated-panel-background: #0d1a15;
+    --channeltextarea-background: #23372B;
+}
+
+/* Popout / menu colors. */
+.da-popouts .da-container,
+.da-friendsTableHeader,
+.da-friendsTable,
+.da-autocomplete,
+.da-themedPopout,
+.da-header,
+.da-footer,
+.da-userPopout>*,
+.da-systemPad,
+.da-autocompleteHeaderBackground {
+    background-color: var(--background-secondary) !important;
+    border-color: transparent !important;
+}
+
+.theme-dark .da-messageGroupWrapper {
+    background-color: var(--background-tertiary) !important;
+    border-color: transparent;
+}
+
+/* Each individual item in popouts has a slight gradient - we clear it here. */
+.theme-dark .da-option:after {
+    background-image: none !important;
+}
+
+/* Force BetterDiscord settings items to match normal settings items. */
+.theme-dark #bd-settings-sidebar .ui-tab-bar-item {
+    color: var(--interactive-normal);
+}
+
+/* Recolor BD settings headers, Nitro settings item and Add Channel icon */
+.theme-dark #bd-settings-sidebar .ui-tab-bar-header,
+div[style*="color: rgb(114, 137, 218);"],
+.da-addButtonIcon {
+    color: var(--channels-default) !important;
+}
+
+/* Force BetterDiscord *active* settings items to match normal active settings items. */
+.theme-dark #bd-settings-sidebar .ui-tab-bar-item.selected,
+.theme-dark .da-autocompleteRow .da-selectorSelected {
+    background-color: var(--background-modifier-selected);
+    color: var(--interactive-active);
+}
+
+/* Recolor the emoji button in the chat bar to match the color scheme. */
+.da-emojiButtonNormal .da-contents .da-sprite {
+    filter: sepia(1) !important;
+}
+
+
+/* Recolor scrollbar track. */
+.da-messagesWrapper .da-scroller::-webkit-scrollbar,
+.da-messagesWrapper .da-scroller::-webkit-scrollbar-track-piece {
+    background-color: var(--background-tertiary) !important;
+    border-color: rgba(0, 0, 0, 0) !important;
+}
+
+/* Recolor scrollbar thumbs. */
+.da-scrollerThemed .da-scroller::-webkit-scrollbar-thumb,
+.da-scrollerWrap .da-scroller::-webkit-scrollbar-thumb {
+    background-color: var(--background-secondary) !important;
+    border-color: var(--background-tertiary) !important;
+}
+
+
+
+
+
+/* CSS below this comment is from highlight.js gruvbox-dark theme.
+   https://github.com/highlightjs/highlight.js/blob/master/src/styles/gruvbox-dark.css
+
+   This CSS makes code blocks within Discord match Osaka Jade colors.
+
+   hightlight.js is copyright 2006 Ivan Sagalaev and licensed under the BSD 3-clause license,
+   as specified here: https://github.com/highlightjs/highlight.js/blob/master/LICENSE            */
+
+/* Osaka Jade Red */
+.hljs-deletion,
+.hljs-formula,
+.hljs-keyword,
+.hljs-link,
+.hljs-selector-tag {
+    color: #FF5345;
+}
+
+/* Osaka Jade Cyan (Jade Accent) */
+.hljs-built_in,
+.hljs-emphasis,
+.hljs-name,
+.hljs-quote,
+.hljs-strong,
+.hljs-title,
+.hljs-variable {
+    color: #2DD5B7;
+}
+
+/* Osaka Jade Yellow */
+.hljs-attr,
+.hljs-params,
+.hljs-template-tag,
+.hljs-type {
+    color: #E5C736;
+}
+
+/* Osaka Jade Magenta */
+.hljs-builtin-name,
+.hljs-doctag,
+.hljs-literal,
+.hljs-number {
+    color: #D2689C;
+}
+
+/* Osaka Jade Orange (using Red variant) */
+.hljs-code,
+.hljs-meta,
+.hljs-regexp,
+.hljs-selector-id,
+.hljs-template-variable {
+    color: #FF5345;
+}
+
+/* Osaka Jade Green */
+.hljs-addition,
+.hljs-meta-string,
+.hljs-section,
+.hljs-selector-attr,
+.hljs-selector-class,
+.hljs-string,
+.hljs-symbol {
+    color: #549e6a;
+}
+
+/* Osaka Jade Cyan */
+.hljs-attribute,
+.hljs-bullet,
+.hljs-class,
+.hljs-function,
+.hljs-function .hljs-keyword,
+.hljs-meta-keyword,
+.hljs-selector-pseudo,
+.hljs-tag {
+    color: #71CEAD;
+}
+
+/* Osaka Jade Gray (using dimmed text) */
+.hljs-comment {
+    color: #8a8d7a;
+}
+
+/* Osaka Jade Magenta */
+.hljs-link_label,
+.hljs-literal,
+.hljs-number {
+    color: #D2689C;
+}
+
+.hljs-comment,
+.hljs-emphasis {
+    font-style: italic;
+}
+
+.hljs-section,
+.hljs-strong,
+.hljs-tag {
+    font-weight: bold;
+}

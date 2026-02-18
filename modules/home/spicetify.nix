@@ -1,3 +1,4 @@
+# Spotify customization via spicetify (Everforest-compatible theme)
 {
   pkgs,
   inputs,
@@ -14,9 +15,9 @@ in
     enabledExtensions = with spicePkgs.extensions; [
       adblock
       hidePodcasts
-      shuffle # shuffle+ (special characters are sanitized out of extension names)
+      shuffle
     ];
     theme = spicePkgs.themes.dribbblish;
-    colorScheme = "gruvbox-material-dark";
+    colorScheme = "rosepine";
   };
 }

@@ -1,32 +1,35 @@
+# lazygit - terminal git UI (Everforest theme)
 { pkgs, ... }:
 {
-  home.packages = with pkgs; [ lazygit ];
+  home.packages = [ pkgs.lazygit ];
 
   xdg.configFile."lazygit/config.yml".text = ''
     gui:
-      border: single
-      # Rose Pine theme
+      nerdFontsVersion: "3"
       theme:
         activeBorderColor:
-          - "#9ccfd8" # foam
+          - "#83c092"
           - bold
         inactiveBorderColor:
-          - "#6e6a86" # muted
-        optionsTextColor:
-          - "#31748f" # pine
-        selectedLineBgColor:
-          - "#26233a" # highlight
-        selectedRangeBgColor:
-          - "#26233a" # highlight
-        cherryPickedCommitBgColor:
-          - "#c4a7e7" # iris
-        cherryPickedCommitFgColor:
-          - "#e0def4" # text
-        unstagedChangesColor:
-          - "#eb6f92" # love
-        defaultFgColor:
-          - "#e0def4" # text
+          - "#859289"
         searchingActiveBorderColor:
-          - "#f6c177" # gold
+          - "#dbbc7f"
+          - bold
+        optionsTextColor:
+          - "#7fbbb3"
+        selectedLineBgColor:
+          - "#3d484d"
+        cherryPickedCommitFgColor:
+          - "#7fbbb3"
+        cherryPickedCommitBgColor:
+          - "#3d484d"
+        markedBaseCommitFgColor:
+          - "#7fbbb3"
+        markedBaseCommitBgColor:
+          - "#3d484d"
+        unstagedChangesColor:
+          - "#e67e80"
+        defaultFgColor:
+          - "#d3c6aa"
   '';
 }

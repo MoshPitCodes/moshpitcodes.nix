@@ -1,51 +1,81 @@
-{
-  ...
-}:
+# Home Manager modules aggregator
+{ username, host, ... }:
 {
   imports = [
-    ./aseprite/aseprite.nix # pixel art editor
-    ./audacious.nix # music player
-    ./backup-repos.nix # automated repository backups to NAS
-    ./bat.nix # better cat command
-    ./browser.nix # firefox based browser
-    ./btop.nix # resouces monitor
-    ./cava.nix # audio visualizer
-    ./discord/discord.nix # discord with gruvbox
-    ./fastfetch.nix # fetch tool
-    ./fzf.nix # fuzzy finder
-    ./gaming.nix # packages related to gaming
-    ./ghostty.nix # terminal
-    ./git.nix # version control
-    ./gnome.nix # gnome apps
-    ./gpg.nix # GPG configuration for commit signing
-    ./gtk.nix # gtk theme
-    ./hyprland # window manager
-    ./lazygit.nix # terminal git client
-    ./openssh.nix # ssh client
-    ./micro.nix # nano replacement
-    ./nemo.nix # file manager
-    ./nvim.nix # neovim editor
+    # Core
+    ./packages.nix
+    ./git.nix
+    ./starship.nix
+    ./ghostty.nix
+    ./tmux.nix
+    ./browser.nix
+    ./media.nix
+    ./btop.nix
+    ./fastfetch.nix
+    ./theming.nix
+    ./language-servers.nix
+
+    # Hyprland & desktop
+    ./swayosd.nix
+    ./swaylock.nix
+    ./hyprlock.nix
+    ./hypridle.nix
+    ./hyprpaper.nix
+    ./waypaper.nix
+    ./swaync.nix
+    ./rofi.nix
+    ./zsh
+    ./hyprland
+    ./waybar
+
+    # Shell & CLI tools
+    ./bat.nix
+    ./fzf.nix
+    ./lazygit.nix
+    ./nvim.nix
+    ./sidecar.nix
+    ./vivid.nix
+    ./yazi.nix
+    ./scripts
+
+    # Security & system
+    ./openssh.nix
+    ./gpg.nix
+    ./gnome.nix
+    ./xdg-mimes.nix
+
+    # Desktop applications
     ./obsidian.nix
-    ./oh-my-posh/oh-my-posh.nix
-    ./packages.nix # other packages
-    ./rofi.nix # launcher
-    ./scripts/scripts.nix # personal scripts
-    ./spicetify.nix # spotify client
-    ./starship.nix # shell prompt
-    ./swaylock.nix # lock screen
-    ./swayosd.nix # brightness / volume wiget
-    ./swaync/swaync.nix # notification deamon
-    ./tmux # terminal multiplexer
-    ./vivid.nix # Rose Pine LS_COLORS for directory listings
-    ./vscode.nix # vscode
-    ./waybar # status bar
-    ./waypaper.nix # GUI wallpaper picker
-    ./xdg-mimes.nix # xdg config
-    ./yazi.nix # terminal file manager
-    ./zsh # shell
+    ./vscode.nix
+    ./discord
+    ./micro.nix
+    ./viewnior.nix
+    ./rider.nix
 
-    # Special configs for development work
+    # Media & entertainment
+    ./audacious.nix
+    ./cava.nix
+    ./spicetify.nix
+    ./gaming.nix
+
+    # Development
     ./development
+    ./backup-repos.nix
+  ];
 
+  # Basic home configuration
+  home = {
+    inherit username;
+    homeDirectory = "/home/${username}";
+    stateVersion = "24.11";
+  };
+
+  # Let home-manager manage itself
+  programs.home-manager.enable = true;
+
+  # User-level nix settings
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
   ];
 }

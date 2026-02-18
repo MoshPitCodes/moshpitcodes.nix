@@ -1,298 +1,265 @@
 {
-  description = "NixOS Configuration for Desktops, Laptops, and VMs";
+  description = "ShiftTab NixOS Configuration";
+
+  nixConfig = {
+    extra-substituters = [
+      "https://nix-community.cachix.org"
+      "https://hyprland.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
+    ];
+  };
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-    nur.url = "github:nix-community/NUR";
-    hypr-contrib = {
-      url = "github:hyprwm/contrib";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    hyprpicker = {
-      url = "github:hyprwm/hyprpicker";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    alejandra.url = "github:kamadorueda/alejandra/3.0.0";
-    nix-gaming.url = "github:fufexan/nix-gaming";
-    hyprland.url = "github:hyprwm/Hyprland";
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    hyprland = {
+      url = "github:hyprwm/Hyprland";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     spicetify-nix = {
       url = "github:gerg-l/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     nix-flatpak.url = "github:gmodena/nix-flatpak";
+
     zen-browser = {
-      url = "github:0xc000022070/zen-browser-flake";
+      url = "github:0xc000022070/zen-browser-flake/0fa995bec0e391b45b032fbd9d6e03609a30c115";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     yazi-plugins = {
       url = "github:yazi-rs/plugins";
       flake = false;
     };
-    ghostty = {
-      url = "github:ghostty-org/ghostty";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    zig = {
-      url = "github:mitchellh/zig-overlay";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nvf = {
-      url = "github:notashelf/nvf";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    s4rchiso-plymouth = {
-      url = "github:SergioRibera/s4rchiso-plymouth-theme";
+
+    nvf = {
+      url = "github:notashelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # Disabled: GitHub MCP server build
-    # mcp-github = {
-    #   url = "github:MoshPitLabs/mcp-github";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
-    # MCP TD Sidecar - OPTIONAL local development only
-    # Uncomment if you have mcp-td-sidecar checked out as a sibling directory
-    # mcp-td-sidecar = {
-    #   url = "path:../mcp-td-sidecar";
-    #   inputs.nixpkgs.follows = "nixpkgs";
-    # };
+
     sidecar = {
-      url = "github:marcus/sidecar";
+      url = "github:marcus/sidecar/v0.74.0";
       flake = false;
     };
+
     td = {
-      url = "github:marcus/td";
+      url = "github:marcus/td/v0.37.0";
+      flake = false;
+    };
+
+    reposync = {
+      url = "github:MoshPitCodes/reposync";
       flake = false;
     };
   };
 
   outputs =
-    { nixpkgs, self, ... }@inputs:
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      ...
+    }@inputs:
     let
-      system = "x86_64-linux";
+      supportedSystems = [
+        "x86_64-linux"
+        "aarch64-linux"
+      ];
+      forEachSystem = nixpkgs.lib.genAttrs supportedSystems;
 
-      # Import custom overlays for package version overrides
-      overlays = import ./overlays { inherit inputs; };
-
-      pkgs = import nixpkgs {
-        inherit system;
-        overlays = overlays ++ [ inputs.s4rchiso-plymouth.overlays.default ];
-        config.allowUnfree = true;
-      };
-
-      # Load secrets with fallback defaults for CI/testing environments
-      defaultSecrets = {
-        username = "testuser";
-        # INSECURE: CI/test-only hash - DO NOT use in production
-        # Generate a real hash with: mkpasswd -m sha-512
-        hashedPassword = "$6$INSECURE.CI.TEST$DONOTUSE.THIS.IN.PRODUCTION";
-        reponame = "moshpitcodes.nix";
-        git = {
-          userName = "Test User";
-          userEmail = "test@example.com";
-          user.signingkey = "testkey";
-        };
-        network = {
-          wifiSSID = "";
-          wifiPassword = "";
-        };
-        apiKeys = {
-          anthropic = "";
-          openai = "";
-        };
-        discord = {
-          webhooks = {
-            messages = "";
-            releases = "";
-            teasers = "";
-            changelog = "";
-          };
-        };
-        sshKeys = {
-          sourceDir = "";
-          keys = [
-            "id_ed25519"
-            "id_rsa"
-            "id_ecdsa"
-          ];
-        };
-      };
-
-      # Validate that secrets have all required keys (including nested structures)
-      validateSecrets =
-        secrets:
-        let
-          requiredKeys = [
-            "username"
-            "hashedPassword"
-            "git"
-            "network"
-          ];
-          missingKeys = builtins.filter (k: !(builtins.hasAttr k secrets)) requiredKeys;
-          # Validate nested git keys
-          requiredGitKeys = [
-            "userName"
-            "userEmail"
-          ];
-          missingGitKeys =
-            if builtins.hasAttr "git" secrets then
-              builtins.filter (k: !(builtins.hasAttr k secrets.git)) requiredGitKeys
-            else
-              requiredGitKeys;
-        in
-        if missingKeys != [ ] then
-          throw "secrets.nix missing required keys: ${builtins.toString missingKeys}"
-        else if missingGitKeys != [ ] then
-          throw "secrets.nix git section missing required keys: ${builtins.toString missingGitKeys}"
-        else
-          secrets;
-
-      # Load secrets from git-ignored file using absolute path
-      # The flake copies sources to /nix/store, excluding git-ignored files
-      # So we use PWD or FLAKE_ROOT to find the original directory
-      # Requires --impure flag for builds: nix build .#wsl-distro --impure
-      flakeRoot = builtins.getEnv "FLAKE_ROOT";
-      pwdPath = builtins.getEnv "PWD";
-
-      # Try FLAKE_ROOT first, then PWD, construct path to secrets.nix
-      secretsPath =
-        let
-          basePath = if flakeRoot != "" then flakeRoot else pwdPath;
-        in
-        if basePath != "" then /. + basePath + "/secrets.nix" else null;
-
+      # Load secrets from file
       customsecrets =
-        if secretsPath != null && builtins.pathExists secretsPath then
-          validateSecrets (import secretsPath)
-        else if builtins.pathExists ./secrets.nix then
-          validateSecrets (import ./secrets.nix)
+        if builtins.pathExists ./secrets.nix then
+          let
+            rawSecrets = import ./secrets.nix;
+            validateSecrets =
+              secrets:
+              assert builtins.isAttrs secrets || throw "secrets.nix must return an attribute set";
+              assert (secrets.username or null) != null || throw "secrets.nix must define 'username'";
+              secrets;
+          in
+          validateSecrets rawSecrets
         else
-          defaultSecrets;
-
-      inherit (customsecrets) username;
-
+          builtins.trace "WARNING: secrets.nix not found. Using default fallback values." {
+            username = "user";
+            hashedPassword = "";
+            reponame = "dotfiles";
+            git = {
+              userName = "User";
+              userEmail = "user@example.com";
+              user.signingkey = "";
+            };
+            network = {
+              wifiSSID = "";
+              wifiPassword = "";
+            };
+            apiKeys = {
+              anthropic = "";
+              openai = "";
+            };
+            backup = {
+              nasBackupPath = "";
+            };
+          };
+      # Import overlays
+      overlays = import ./overlays { inherit inputs; };
     in
     {
       nixosConfigurations = {
-        desktop = nixpkgs.lib.nixosSystem {
-          modules = [
-            { nixpkgs.hostPlatform = system; }
-            ./hosts/desktop
-            # Apply overlays to nixpkgs for this configuration
-            { nixpkgs.overlays = overlays ++ [ inputs.s4rchiso-plymouth.overlays.default ]; }
-          ];
-          specialArgs = {
-            host = "desktop";
-            inherit
-              self
-              inputs
-              username
-              customsecrets
-              ;
-          };
-        };
-        laptop = nixpkgs.lib.nixosSystem {
-          modules = [
-            { nixpkgs.hostPlatform = system; }
-            ./hosts/laptop
-            # Apply overlays to nixpkgs for this configuration
-            { nixpkgs.overlays = overlays ++ [ inputs.s4rchiso-plymouth.overlays.default ]; }
-          ];
-          specialArgs = {
+        laptop =
+          let
             host = "laptop";
-            inherit
-              self
-              inputs
-              username
-              customsecrets
-              ;
+          in
+          nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            specialArgs = {
+              inherit
+                self
+                inputs
+                host
+                customsecrets
+                ;
+              username = customsecrets.username;
+            };
+            modules = [
+              ./hosts/${host}
+              home-manager.nixosModules.home-manager
+              {
+                nixpkgs.config.allowUnfree = true;
+                nixpkgs.overlays = overlays;
+                home-manager = {
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+                  extraSpecialArgs = {
+                    inherit
+                      self
+                      inputs
+                      host
+                      customsecrets
+                      ;
+                    username = customsecrets.username;
+                  };
+                  users.${customsecrets.username} = import ./modules/home/default.laptop.nix;
+                };
+              }
+            ];
           };
-        };
-        vm = nixpkgs.lib.nixosSystem {
-          modules = [
-            { nixpkgs.hostPlatform = system; }
-            ./hosts/vm
-            # Apply overlays to nixpkgs for this configuration
-            { nixpkgs.overlays = overlays; }
-          ];
-          specialArgs = {
-            host = "vm";
-            inherit
-              self
-              inputs
-              username
-              customsecrets
-              ;
+
+        desktop =
+          let
+            host = "desktop";
+          in
+          nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            specialArgs = {
+              inherit
+                self
+                inputs
+                host
+                customsecrets
+                ;
+              username = customsecrets.username;
+            };
+            modules = [
+              ./hosts/${host}
+              home-manager.nixosModules.home-manager
+              {
+                nixpkgs.config.allowUnfree = true;
+                nixpkgs.overlays = overlays;
+                home-manager = {
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+                  extraSpecialArgs = {
+                    inherit
+                      self
+                      inputs
+                      host
+                      customsecrets
+                      ;
+                    username = customsecrets.username;
+                  };
+                  users.${customsecrets.username} = import ./modules/home/default.desktop.nix;
+                };
+              }
+            ];
           };
-        };
-        vmware-guest = nixpkgs.lib.nixosSystem {
-          modules = [
-            { nixpkgs.hostPlatform = system; }
-            ./hosts/vmware-guest
-            # Apply overlays to nixpkgs for this configuration
-            { nixpkgs.overlays = overlays; }
-          ];
-          specialArgs = {
-            host = "nixos-vmware";
-            inherit
-              self
-              inputs
-              username
-              customsecrets
-              ;
+
+        vmware-guest =
+          let
+            host = "vmware-guest";
+          in
+          nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            specialArgs = {
+              inherit
+                self
+                inputs
+                host
+                customsecrets
+                ;
+              username = customsecrets.username;
+            };
+            modules = [
+              ./hosts/${host}
+              home-manager.nixosModules.home-manager
+              {
+                nixpkgs.config.allowUnfree = true;
+                nixpkgs.overlays = overlays;
+                home-manager = {
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+                  extraSpecialArgs = {
+                    inherit
+                      self
+                      inputs
+                      host
+                      customsecrets
+                      ;
+                    username = customsecrets.username;
+                  };
+                  users.${customsecrets.username} = import ./modules/home/default.vm.nix;
+                };
+              }
+            ];
           };
-        };
-        wsl = nixpkgs.lib.nixosSystem {
-          modules = [
-            { nixpkgs.hostPlatform = system; }
-            ./hosts/wsl
-            # Apply overlays to nixpkgs for this configuration
-            { nixpkgs.overlays = overlays; }
-          ];
-          specialArgs = {
-            host = "nixos-wsl";
-            inherit
-              self
-              inputs
-              username
-              customsecrets
-              ;
-          };
-        };
       };
 
-      packages.${system}.wsl-distro = self.nixosConfigurations.wsl.config.system.build.tarballBuilder;
+      devShells = forEachSystem (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          default = pkgs.mkShell {
+            name = "dev-environment";
+            packages = with pkgs; [
+              git
+              nixfmt
+              nil
+              treefmt
+            ];
+            shellHook = ''
+              echo "Development environment loaded."
+            '';
+          };
+        }
+      );
 
-      devShells.${system} = {
-        default = pkgs.mkShell {
-          buildInputs = with pkgs; [
-            treefmt
-            nixfmt
-            shfmt
-            deadnix
-            statix
-          ];
-          shellHook = ''
-            echo "🚀 NixOS Development Environment"
-            echo "Available commands:"
-            echo "  treefmt        - Format all files"
-            echo "  treefmt --fail-on-change - Check if files are formatted"
-            echo "  nixfmt - Format Nix files"
-            echo "  shfmt          - Format shell scripts"
-            echo "  deadnix        - Find dead Nix code"
-            echo "  statix         - Lint Nix files"
-          '';
-        };
-
-        claude-flow = import ./shells/claude-flow.nix { inherit pkgs; };
-        devshell = import ./shells/devshell.nix { inherit pkgs; };
-      };
+      formatter = forEachSystem (system: nixpkgs.legacyPackages.${system}.nixfmt);
     };
 }

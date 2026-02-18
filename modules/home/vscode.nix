@@ -1,9 +1,9 @@
-{ pkgs, ... }:
+# VS Code editor (Everforest theme)
+# LSP configuration is centralized in language-servers.nix
+{ pkgs, lspLanguages, ... }:
 let
-  # Import shared VSCode extension definitions
   vscodeExtensions = import ./vscode-extensions.nix { inherit pkgs; };
 
-  # MCP configuration content
   mcpConfigContent = builtins.toJSON {
     servers = {
       fetch = {
@@ -15,11 +15,9 @@ let
   };
 in
 {
-  # Create MCP configuration file as a writable file
   xdg.configFile."Code/User/mcp.json" = {
     text = mcpConfigContent;
     onChange = ''
-      # Copy the file to make it writable (not a symlink)
       if [ -L "$HOME/.config/Code/User/mcp.json" ]; then
         cp -f "$HOME/.config/Code/User/mcp.json" "$HOME/.config/Code/User/mcp.json.tmp"
         rm -f "$HOME/.config/Code/User/mcp.json"
@@ -34,25 +32,19 @@ in
     package = pkgs.vscode;
     mutableExtensionsDir = true;
     profiles.default = {
-      # Use shared extension definitions
       extensions = vscodeExtensions.vscodeExtensions.packages;
       userSettings = {
-        "update.mode" = "none"; # This stuff fixes VSCode freaking out when theres an update
-        "extensions.ignoreRecommendations" = true; # This stuff fixes VSCode freaking out when theres an update
-        "extensions.autoUpdate" = true; # This stuff fixes VSCode freaking out when theres an update
-        "window.titleBarStyle" = "custom"; # see https://github.com/NixOS/nixpkgs/issues/246509
-
+        "update.mode" = "none";
+        "extensions.ignoreRecommendations" = true;
+        "extensions.autoUpdate" = true;
+        "window.titleBarStyle" = "custom";
         "breadcrumbs.enabled" = false;
-
-        # Enable GitHub Copilot.cpptools
 
         "github.copilot.enable" = true;
         "github.copilot.chat.enable" = true;
-        "github.copilot.chat.enableExperimental" = true;
-        "github.copilot.chat.enableExperimentalUI" = true;
 
         editor = {
-          fontFamily = "'Maple Mono NF', 'SymbolsNerdFont', 'monospace', monospace";
+          fontFamily = "'FiraCode Nerd Font', 'monospace', monospace";
           fontLigatures = true;
           fontSize = 16;
           formatOnPaste = true;
@@ -83,7 +75,6 @@ in
           autoCheckUpdates = false;
           autoUpdate = true;
           ignoreRecommendations = true;
-          showRecommendationsOnlyOnDemand = true;
         };
 
         files = {
@@ -96,106 +87,32 @@ in
             "**/.git/subtree-cache/**" = true;
             "**/node_modules/**" = true;
             "**/vendor/**" = true;
-            "**/.hg/store/**" = true;
-            "**/.svn/wc.db" = true;
           };
           insertFinalNewline = true;
           trimTrailingWhitespace = true;
-          format = {
-            enable = true;
-            insertFinalNewline = true;
-            trimTrailingWhitespace = true;
-          };
-          quickSuggestions = {
-            comments = false;
-            strings = true;
-            other = true;
-          };
-          quickSuggestionsDelay = 100;
-          renameOnType = true;
-          search = {
-            followSymlinks = true;
-            useRipgrep = true;
-          };
-          showHiddenFiles = true;
-          showResolvedSymlinks = true;
-          sortOrder = "default";
-          tabSize = 4;
-          useExperimentalFileWatcher = true;
-          useExperimentalSearch = true;
-          useExperimentalTreeSitterParser = true;
         };
 
         git = {
           confirmSync = false;
           enableSmartCommit = true;
           ignoreLimitWarning = true;
-          showPushSuccessNotification = false;
-          showUncommittedChangesResourceCount = true;
-          smartCommitChanges = true;
-          smartCommitChangesPrompt = false;
-          useEditorAsCommitInput = true;
-        };
-
-        markdown = {
-          autoCloseBrackets = true;
-          autoClosingBrackets = "always";
-          autoClosingQuotes = "always";
-          codeLens = {
-            actions = true;
-            references = true;
-            definitions = true;
-          };
-          colorDecorators = true;
-          comments = {
-            ignoreEmptyLines = false;
-            ignoreEmptyComments = false;
-          };
-          format = {
-            enable = true;
-            insertSpaces = true;
-            tabSize = 4;
-          };
-          hover.enabled = true;
-          preview = {
-            autoShow = true;
-            scrollPreviewWithEditor = true;
-            scrollEditorWithPreview = true;
-          };
-        };
-
-        material-icon-theme = {
-          folders = "classic";
         };
 
         terminal = {
           integrated = {
-            allowWorkspaceShellCommand = true;
             cursorBlinking = true;
             cursorStyle = "line";
-            fontFamily = "'Maple Mono NF', 'SymbolsNerdFont'";
+            fontFamily = "'FiraCode Nerd Font'";
             fontSize = 16;
             lineHeight = 1.2;
             scrollback = 10000;
-            shellIntegration = {
-              enabled = true;
-              autoDetect = true;
-              autoDetectNixShell = true;
-            };
+            shellIntegration.enabled = true;
           };
-        };
-
-        vsicons = {
-          dontShowNewVersionMessage = true;
-        };
-
-        windows = {
-          menuBarVisibility = "show";
         };
 
         workbench = {
           activityBar.location = "default";
-          colorTheme = "Rosé Pine";
+          colorTheme = "Everforest Dark";
           editor = {
             limit = {
               enabled = true;
@@ -204,207 +121,49 @@ in
             };
             showTabs = "multiple";
           };
-          iconTheme = "gruvbox-material-icon-theme";
-          layoutControl = {
-            enabled = false;
-            type = "menu";
-          };
+          iconTheme = "material-icon-theme";
           startupEditor = "none";
           statusBar.visible = true;
         };
-
-        prettier = {
-          arrowParens = "avoid";
-          bracketSpacing = false;
-          htmlWhitespaceSensitivity = "ignore";
-          printWidth = 80;
-          proseWrap = "preserve";
-          trailingComma = "es5";
-          tabWidth = 4;
-          semi = false;
-          singleQuote = true;
-          useTabs = true;
-          endOfLine = "auto";
-          quoteProps = "as-needed";
-          bracketSameLine = false;
-          singleAttributePerLine = false;
-        };
-
-        "C_Cpp.autocompleteAddParentheses" = true;
-        "C_Cpp.clang_format_sortIncludes" = true;
-        "C_Cpp.default.browse.path" = [''
-          ''${workspaceFolder}/**
-        ''];
-        "C_Cpp.default.cStandard" = "gnu11";
-        "C_Cpp.doxygen.generatedStyle" = "/**";
-        "C_Cpp.formatting" = "clangFormat";
-        "C_Cpp.inlayHints.parameterNames.hideLeadingUnderscores" = false;
-        "C_Cpp.intelliSenseCacheSize" = 2048;
-        "C_Cpp.intelliSenseMemoryLimit" = 2048;
-        "C_Cpp.intelliSenseUpdateDelay" = 500;
-        "C_Cpp.vcFormat.indent.caseLabels" = true;
-        "C_Cpp.vcFormat.newLine.beforeCatch" = false;
-        "C_Cpp.vcFormat.newLine.beforeElse" = false;
-        "C_Cpp.vcFormat.newLine.beforeOpenBrace.block" = "sameLine";
-        "C_Cpp.vcFormat.newLine.beforeOpenBrace.function" = "sameLine";
-        "C_Cpp.vcFormat.newLine.beforeOpenBrace.type" = "sameLine";
-        "C_Cpp.vcFormat.newLine.closeBraceSameLine.emptyFunction" = true;
-        "C_Cpp.vcFormat.newLine.closeBraceSameLine.emptyType" = true;
-        "C_Cpp.vcFormat.space.beforeEmptySquareBrackets" = true;
-        "C_Cpp.vcFormat.space.betweenEmptyBraces" = true;
-        "C_Cpp.vcFormat.space.betweenEmptyLambdaBrackets" = true;
-        "C_Cpp.workspaceParsingPriority" = "medium";
-
-        # Golang
-        go = {
-          languageServerExperimentalFeatures = {
-            diagnostics = true;
-            documentLink = true;
-            documentSymbol = true;
-            formatting = true;
-            goToDefinition = true;
-            hover = true;
-            references = true;
-            rename = true;
-            signatureHelp = true;
-          };
-          useLanguageServer = true;
-        };
-
-        # JSON
-        "[jsonc]" = {
-          editor.defaultFormatter = "esbenp.prettier-vscode";
-        };
-
-        yaml = {
-          format = {
-            enable = true;
-            bracketSpacing = false;
-            singleQuote = true;
-            tabSize = 4;
-            useTabs = false;
-          };
-          validate = true;
-          schemas = {
-            "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/github-workflow.json" =
-              [
-                ".github/workflows/*"
-              ];
-            "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/pre-commit-config.json" =
-              [
-                ".pre-commit-config.yaml"
-              ];
-          };
-        };
-
-        zig = {
-          checkForUpdate = false;
-          zls = {
-            path = "zls";
-            args = [ "--stdio" ];
-            enable = true;
-            enableInlayHints = false;
-            enableInlayHintsForTypes = false;
-            enableInlayHintsForParameterNames = false;
-            enableInlayHintsForParameterTypes = false;
-            enableInlayHintsForReturnTypes = false;
-          };
-          path = "zig";
-          revealOutputChannelOnFormattingError = false;
-          format = {
-            enable = true;
-            insertSpaces = true;
-            tabSize = 4;
-          };
-          linting = {
-            enable = true;
-            run = "onType";
-          };
-          validate = true;
-          languageServer = {
-            enable = true;
-            path = "zls";
-            args = [ "--stdio" ];
-          };
-          languageServerExperimentalFeatures = {
-            diagnostics = true;
-            documentLink = true;
-            documentSymbol = true;
-            formatting = true;
-            goToDefinition = true;
-            hover = true;
-            references = true;
-            rename = true;
-            signatureHelp = true;
-          };
-          languageServerSettings = {
-            zig = {
-              buildMode = "Debug";
-              buildOptions = [ "--build-mode=Debug" ];
-              cachePath = "${pkgs.zig}/share/zig";
-              cachePathEnabled = true;
-              cachePathMode = "auto";
-              checkOnSave = {
-                enable = true;
-                command = "check";
-                args = [ "--all" ];
-                onType = false;
-              };
-              formatOnSave = true;
-              lintOnSave = true;
-            };
-          };
-        };
-
-        # Nix
-        nix = {
-          formatterPath = "${pkgs.nixfmt}/bin/nixfmt";
-          enableLanguageServer = true;
-          enableNixShellIntegration = {
-            enable = true;
-            autoDetect = true;
-            autoDetectNixShell = true;
-          };
-          serverPath = "${pkgs.nixd}/bin/nixd";
-          serverSettings = {
-            nixd = {
-              formatting = {
-                command = [ "nixfmt" ];
-              };
-              options = {
-                nixos = {
-                  expr = "(builtins.getFlake (builtins.toString ./.)).nixosConfigurations.laptop.options";
-                };
-                home-manager = {
-                  expr = "(builtins.getFlake (builtins.toString ./.)).homeConfigurations.laptop.options";
-                };
-              };
-            };
-          };
-          languageServerExperimentalFeatures = {
-            diagnostics = true;
-            documentLink = true;
-            documentSymbol = true;
-            formatting = true;
-            goToDefinition = true;
-            hover = true;
-            references = true;
-            rename = true;
-            signatureHelp = true;
-          };
-          languageServerSettings = {
+      }
+      # Language server settings (synchronized with language-servers.nix)
+      // (
+        if lspLanguages.go then
+          {
+            go.useLanguageServer = true;
+          }
+        else
+          { }
+      )
+      // (
+        if lspLanguages.nix then
+          {
             nix = {
-              cachePathEnabled = false;
-              cachePathMode = "auto";
-              checkOnSave.enable = false;
-              formatOnSave.enable = false;
-              lintOnSave.enable = false;
-              useLanguageServer.enable = true;
+              formatterPath = "${pkgs.nixfmt}/bin/nixfmt";
+              enableLanguageServer = true;
+              serverPath = "${pkgs.nixd}/bin/nixd";
+              serverSettings = {
+                nixd = {
+                  formatting.command = [ "nixfmt" ];
+                };
+              };
             };
-          };
-        };
-      };
-      # Keybindings
+          }
+        else
+          { }
+      )
+      // (
+        if lspLanguages.zig then
+          {
+            zig = {
+              checkForUpdate = false;
+              path = "zig";
+            };
+          }
+        else
+          { }
+      );
+
       keybindings = [
         {
           key = "ctrl+q";
@@ -418,11 +177,6 @@ in
         {
           key = "ctrl+i";
           command = "composerMode.agent";
-        }
-        {
-          key = "shift+enter";
-          command = "claude-code.submitMessage";
-          when = "inputFocus && claudeCodeInputFocused";
         }
       ];
     };

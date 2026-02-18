@@ -1,21 +1,15 @@
-{
-  ...
-}:
+# WSL core imports (no pipewire, no steam, no samba, no wayland)
+{ ... }:
 {
   imports = [
     ./bootloader.nix
-    ./hardware.nix
-    ./xserver.nix
+    ./system.nix
     ./network.nix
-    #./pipewire.nix
-    ./program.nix
     ./security.nix
     ./services.nix
-    #./steam.nix
-    ./system.nix
-    ./flatpak.nix
+    ./fonts.nix
     ./user.nix
-    ./wayland.nix
-    ./virtualization.nix
+    ./program.nix
+    ./wsl-overrides.nix
   ];
 }

@@ -1,166 +1,78 @@
+# Fastfetch system info display (catnap-inspired box layout)
 { pkgs, ... }:
 {
-  home.packages = with pkgs; [ fastfetch ];
-
-  xdg.configFile."fastfetch/config.jsonc".text = ''
-    {
-      "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
-      "logo": {
-        "source": "nixos",
-        "type": "builtin",
-        "padding": {
-          "top": 2
+  programs.fastfetch = {
+    enable = true;
+    settings = {
+      logo = {
+        type = "builtin";
+        source = "nixos";
+        padding = {
+          top = 1;
+          right = 4;
+          left = 1;
+        };
+      };
+      display = {
+        separator = " ";
+      };
+      modules = [
+        {
+          key = "╭───────────╮";
+          type = "custom";
         }
-      },
-      "display": {
-        "separator": "",
-        "size": {
-            "binaryPrefix": "si",
-          "ndigits": 0
-        },
-        "percent": {
-          "type": 1
-        },
-        "key":{
-         "Width": 1
-         },
-      },
-      "modules": [
         {
-          "type": "title",
-          "color": {
-            "user": "35",
-            "host": "36"
-          }
-        },
+          key = "│ {#34}{icon} distro  {#keys}│";
+          type = "os";
+        }
         {
-          "type": "separator",
-          "string": "▔"
-        },
+          key = "│ {#35}󰌽 kernel  {#keys}│";
+          type = "kernel";
+        }
         {
-          "type": "os",
-          "key": "╭─ ",
-          "format": "{3} ({12})",
-          "keyColor": "32"
-        },
+          key = "│ {#36}󰍹 wm      {#keys}│";
+          type = "wm";
+        }
         {
-          "type": "host",
-          "key": "├─󰟀 ",
-          "keyColor": "32"
-        },
+          key = "│ {#31}󰆍 term    {#keys}│";
+          type = "terminal";
+        }
         {
-          "type": "kernel",
-          "key": "├─󰒔 ",
-          "format": "{1} {2}",
-          "keyColor": "32"
-        },
+          key = "│ {#32}󰆍 shell   {#keys}│";
+          type = "shell";
+        }
         {
-          "type": "shell",
-          "key": "├─$ ",
-          "format": "{1} {4}",
-          "keyColor": "32"
-        },
+          key = "│ {#33}󰍛 cpu     {#keys}│";
+          type = "cpu";
+          showPeCoreCount = true;
+        }
         {
-          "type": "packages",
-          "key": "├─ ",
-          "keyColor": "32"
-        },
+          key = "│ {#34}󰉉 disk    {#keys}│";
+          type = "disk";
+          folders = "/";
+        }
         {
-          "type": "uptime",
-          "key": "╰─󰔚 ",
-          "keyColor": "32"
-        },
-        "break",
-       /* {
-          "type": "cpu",
-          "key": "╭─ ",
-          "keyColor": "34",
-          "freqNdigits": 1
-        },
+          key = "│ {#36}󰍛 memory  {#keys}│";
+          type = "memory";
+        }
         {
-          "type": "gpu",
-          "key": "├─󰢮 ",
-          "format": "{1} {2} ({3})",
-          "keyColor": "34"
-        },
+          key = "│ {#33}󰅐 uptime  {#keys}│";
+          type = "uptime";
+        }
         {
-          "type": "sound",
-          "key": "├─󰓃 ",
-          "format": "{2}",
-          "keyColor": "34"
-        },
+          key = "├───────────┤";
+          type = "custom";
+        }
         {
-          "type": "battery",
-          "key": "├─󰁹 ",
-          "keyColor": "34"
-        },
+          key = "│ {#39}󰏘 colors  {#keys}│";
+          type = "colors";
+          symbol = "circle";
+        }
         {
-          "type": "memory",
-          "key": "├─ ",
-          "keyColor": "34"
-        },
-        {
-          "type": "disk",
-          "key": "├─󰋊 ",
-          "keyColor": "34"
-        },
-        {
-          "type": "localip",
-          "key": "╰─󱦂 ",
-          "keyColor": "34",
-          "showIpv4": true,
-          "compact": true
-        },
-        "break", */
-        {
-          "type": "display",
-          "key": "╭─󰹑 ",
-          "keyColor": "33",
-          "compactType": "original"
-        },
-        {
-          "type": "de",
-          "key": "├─󰧨 ",
-          "keyColor": "33"
-        },
-        {
-          "type": "wm",
-          "key": "├─ ",
-          "keyColor": "33"
-        },
-        {
-          "type": "theme",
-          "key": "├─󰉼 ",
-          "keyColor": "33"
-        },
-        {
-          "type": "icons",
-          "key": "├─ ",
-          "keyColor": "33"
-        },
-        {
-          "type": "cursor",
-          "key": "├─󰳽 ",
-          "keyColor": "33"
-        },
-        {
-          "type": "font",
-          "key": "├─ ",
-          "format": "{2}",
-          "keyColor": "33"
-        },
-        {
-          "type": "terminal",
-          "key": "╰─ ",
-          "format": "{3}",
-          "keyColor": "33"
-        },
-        "break",
-        {
-          "type": "colors",
-          "symbol": "block"
-        },
-      ]
-    }
-  '';
+          key = "╰───────────╯";
+          type = "custom";
+        }
+      ];
+    };
+  };
 }

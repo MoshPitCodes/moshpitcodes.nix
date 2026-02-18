@@ -1,7 +1,5 @@
+# Obsidian notes
+{ pkgs, ... }:
 {
-  pkgs,
-  ...
-}:
-{
-  home.packages = with pkgs; [ obsidian ];
+  home.packages = [ pkgs.obsidian ];
 }

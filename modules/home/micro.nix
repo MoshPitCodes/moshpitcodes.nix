@@ -1,70 +1,89 @@
-_:
+# micro text editor (Everforest theme)
+{ ... }:
 {
   programs.micro = {
     enable = true;
-
     settings = {
-      "colorscheme" = "rose-pine";
-      "*.nix" = {
-        "tabsize" = 2;
+      colorscheme = "everforest";
+      autoindent = true;
+      cursorline = true;
+      mkparents = true;
+      rmtrailingws = true;
+      savecursor = true;
+      saveundo = true;
+      scrollbar = true;
+      tabsize = 4;
+      tabstospaces = true;
+      ruler = true;
+      colorcolumn = 80;
+      ft = {
+        nix = {
+          tabsize = 2;
+        };
       };
-      "*.ml" = {
-        "tabsize" = 2;
-      };
-      "*.asm" = {
-        "tabsize" = 2;
-      };
-      "ft:asm" = {
-        "commenttype" = "; %s";
-      };
-      "makefile" = {
-        "tabstospaces" = false;
-      };
-      "tabstospaces" = true;
-      "tabsize" = 4;
-      "mkparents" = true;
-      "colorcolumn" = 80;
     };
   };
 
-  xdg.configFile."micro/bindings.json".text = ''
-    {
-      "Ctrl-Up": "CursorUp,CursorUp,CursorUp,CursorUp,CursorUp",
-      "Ctrl-Down": "CursorDown,CursorDown,CursorDown,CursorDown,CursorDown",
-      "Ctrl-Backspace": "DeleteWordLeft",
-      "Ctrl-Delete": "DeleteWordRight",
-      "CtrlShiftUp": "ScrollUp,ScrollUp,ScrollUp,ScrollUp,ScrollUp",
-      "CtrlShiftDown": "ScrollDown,ScrollDown,ScrollDown,ScrollDown,ScrollDown"
-    }
+  # Custom Everforest colorscheme for micro
+  xdg.configFile."micro/colorschemes/everforest.micro".text = ''
+    color-link default "#d3c6aa,#2d353b"
+    color-link comment "#859289,#2d353b"
+    color-link comment.bright "#9da9a0,#2d353b"
+    color-link identifier "#83c092"
+    color-link identifier.class "#83c092,bold"
+    color-link identifier.var "#d3c6aa"
+    color-link constant "#d699b6"
+    color-link constant.number "#d699b6"
+    color-link constant.string "#a7c080"
+    color-link constant.string.char "#a7c080"
+    color-link constant.bool "#d699b6"
+    color-link statement "#e67e80"
+    color-link symbol "#d3c6aa"
+    color-link symbol.operator "#e69875"
+    color-link symbol.brackets "#d3c6aa"
+    color-link symbol.tag "#e67e80"
+    color-link preproc "#dbbc7f"
+    color-link type "#dbbc7f"
+    color-link type.keyword "#e67e80"
+    color-link special "#7fbbb3"
+    color-link underlined "#7fbbb3,underline"
+    color-link error "#e67e80,bold"
+    color-link todo "#dbbc7f,bold"
+    color-link statusline "#d3c6aa,#3d484d"
+    color-link tabbar "#d3c6aa,#3d484d"
+    color-link indent-char "#475258"
+    color-link line-number "#859289,#2d353b"
+    color-link current-line-number "#d3c6aa,#3d484d"
+    color-link gutter-error "#e67e80"
+    color-link gutter-warning "#dbbc7f"
+    color-link cursor-line "#3d484d"
+    color-link color-column "#3d484d"
+    color-link diff-added "#a7c080"
+    color-link diff-modified "#dbbc7f"
+    color-link diff-deleted "#e67e80"
+    color-link selection "#d3c6aa,#475258"
+    color-link hlsearch "#2d353b,#dbbc7f"
+    color-link matchingbrace "#dbbc7f,underline"
   '';
 
-  xdg.configFile."micro/colorschemes/rose-pine.micro".text = ''
-    color-link default "#e0def4"
-    color-link comment "#6e6a86"
-    color-link symbol "#f6c177"
-    color-link constant "#c4a7e7"
-    color-link constant.string "#f6c177"
-    color-link constant.string.char "#f6c177"
-    color-link identifier "#9ccfd8"
-    color-link statement "#eb6f92"
-    color-link preproc "#eb6f92,235"
-    color-link type "#eb6f92"
-    color-link special "#f6c177"
-    color-link underlined "underline #191724"
-    color-link error "#eb6f92"
-    color-link hlsearch "#191724,#f6c177"
-    color-link diff-added "#9ccfd8"
-    color-link diff-modified "#f6c177"
-    color-link diff-deleted "#eb6f92"
-    color-link gutter-error "#eb6f92"
-    color-link gutter-warning "#f6c177"
-    color-link line-number "#6e6a86"
-    color-link current-line-number "#9ccfd8"
-    color-link cursor-line "#26233a"
-    color-link color-column "#6e6a86"
-    color-link statusline "#9ccfd8"
-    color-link tabbar "#e0def4,#26233a"
-    color-link type "#ebbcba"
-    color-link todo "#f6c177"
+  # Keybindings
+  xdg.configFile."micro/bindings.json".text = builtins.toJSON {
+    "CtrlUp" = "CursorUp,CursorUp,CursorUp,CursorUp,CursorUp";
+    "CtrlDown" = "CursorDown,CursorDown,CursorDown,CursorDown,CursorDown";
+    "CtrlShiftUp" = "ScrollUp,ScrollUp,ScrollUp,ScrollUp,ScrollUp";
+    "CtrlShiftDown" = "ScrollDown,ScrollDown,ScrollDown,ScrollDown,ScrollDown";
+    "CtrlBackspace" = "DeleteWordLeft";
+    "CtrlDelete" = "DeleteWordRight";
+  };
+
+  # Assembly comment syntax
+  xdg.configFile."micro/syntax/asm.yaml".text = ''
+    filetype: asm
+    detect:
+      filename: "\\.(asm|s|S)$"
+    rules:
+      - comment:
+          start: ";"
+          end: "$"
   '';
 }
