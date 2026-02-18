@@ -42,11 +42,6 @@
       flake = false;
     };
 
-    nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     nvf = {
       url = "github:notashelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -232,7 +227,7 @@
                       ;
                     username = customsecrets.username;
                   };
-                  users.${customsecrets.username} = import ./modules/home/default.vm.nix;
+                  users.${customsecrets.username} = import ./modules/home/default.vmware-guest.nix;
                 };
               }
             ];

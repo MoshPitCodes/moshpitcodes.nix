@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        host: [desktop, laptop, vm, vmware-guest, wsl]
+        host: [desktop, laptop, vmware-guest]
       fail-fast: false
 
     steps:

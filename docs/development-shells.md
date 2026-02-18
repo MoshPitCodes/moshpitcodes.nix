@@ -28,7 +28,6 @@ nix develop .#default
 - `nix-check` - Run flake check with trace
 - `nix-update` - Update flake inputs
 - `rebuild [host]` - Rebuild system configuration
-- `build-wsl` - Build WSL tarball
 
 ### devshell
 
@@ -54,49 +53,6 @@ deadnix .                    # Find dead Nix code
 statix check .               # Lint Nix files
 scripts/rebuild.sh [host]    # Rebuild system configuration
 ```
-
-### claude-flow
-
-Enterprise AI agent orchestration platform development environment.
-
-**Features:**
-- Node.js 20 LTS with npm
-- Python 3 + C/C++ build toolchain
-- TypeScript development tools
-- AgentDB vector storage (persists in `.swarm/memory.db`)
-- 100+ MCP integrated tools
-- 25+ specialized skills
-- Multi-agent workflows (2.8-4.4x faster than single-agent)
-
-**Usage:**
-```bash
-nix develop .#claude-flow
-
-# Install claude-flow (npx method - recommended)
-npx claude-flow@alpha init --force
-npx claude-flow@alpha --help
-
-# Or clone and develop locally
-git clone https://github.com/ruvnet/claude-flow
-cd claude-flow
-nix develop /path/to/moshpitcodes.nix#claude-flow
-npm install
-npm run dev
-```
-
-**Data Persistence:**
-- AgentDB data stored in: `.swarm/memory.db`
-- Persists across shell sessions and reboots
-- Automatically excluded from git
-- 96x-164x faster vector search
-
-**Optional Configuration:**
-```bash
-# For enhanced embeddings (optional)
-export OPENAI_API_KEY="sk-..."
-```
-
-**Repository:** https://github.com/ruvnet/claude-flow
 
 ## Adding New Shells
 

@@ -37,7 +37,6 @@ Relates to #
 ### Test Environment
 
 - [ ] Tested on Windows 11
-- [ ] Tested on WSL2 Ubuntu
 - [ ] PowerShell version:
 - [ ] Ansible version:
 

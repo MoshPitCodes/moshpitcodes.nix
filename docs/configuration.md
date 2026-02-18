@@ -73,7 +73,7 @@ For subsequent rebuilds after initial installation, use the rebuild script:
 
 **Arguments:**
 - `HOST` - Host configuration (default: laptop)
-  - Available hosts: desktop, laptop, vm, vmware-guest, wsl
+  - Available hosts: desktop, laptop, vmware-guest
 
 **Options:**
 - `--clear-cache` - Clear `~/.cache/nix` before rebuild
@@ -90,7 +90,7 @@ For subsequent rebuilds after initial installation, use the rebuild script:
 ./scripts/rebuild.sh desktop --gc
 
 # Dry run to see what would change
-./scripts/rebuild.sh wsl --dry-run
+./scripts/rebuild.sh vmware-guest --dry-run
 
 # Clear cache and rebuild
 ./scripts/rebuild.sh laptop --clear-cache

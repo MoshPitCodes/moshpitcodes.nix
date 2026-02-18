@@ -33,7 +33,7 @@ Interactive installer for initial NixOS system setup.
 ```
 
 **Features:**
-- Interactive host selection (desktop, laptop, VM, WSL, VMware)
+- Interactive host selection (desktop, laptop, VMware)
 - Automatic directory creation and wallpaper copying
 - SSH key management from secrets.nix
 - Hardware configuration detection
@@ -66,10 +66,10 @@ Rebuild NixOS configuration with optional optimizations.
 **Examples:**
 ```bash
 # Basic rebuild
-./scripts/rebuild.sh wsl
+./scripts/rebuild.sh vmware-guest
 
 # Rebuild with garbage collection
-./scripts/rebuild.sh wsl --gc
+./scripts/rebuild.sh vmware-guest --gc
 
 # Preview what would be rebuilt
 ./scripts/rebuild.sh desktop --dry-run
@@ -129,9 +129,9 @@ Exclusion patterns for `copy-to-home.sh`. Each line is a pattern passed to rsync
 **Excluded by default:**
 - Version control (`.git/`, `.github/`, `.gitignore`, etc.)
 - IDE files (`.vscode/`, `.idea/`)
-- Claude AI (`.claude/`, `.claude-plugin/`)
+- AI tool state directories
 - Documentation (`docs/`)
-- Build artifacts (`result`, `*.tar.gz`, `nixos.wsl`)
+- Build artifacts (`result`, `*.tar.gz`)
 
 ## User Scripts
 

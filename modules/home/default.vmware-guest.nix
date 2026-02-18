@@ -1,4 +1,4 @@
-# VM-specific home configuration
+# VMware guest-specific home configuration
 { lib, pkgs, ... }:
 {
   imports = [
@@ -6,10 +6,10 @@
     ./hyprland/vm-overrides.nix
   ];
 
-  # Enable hyprlock for VM
+  # Enable hyprlock for VMware guests
   programs.hyprlock.enable = lib.mkForce true;
 
-  # Disable automatic suspend on idle for VMs
+  # Disable automatic suspend on idle for VMware guests
   # Keep screen dim, lock, and DPMS off, but remove suspend timeout
   services.hypridle.settings.listener = lib.mkForce [
     {
@@ -26,6 +26,6 @@
       on-timeout = "${pkgs.hyprland}/bin/hyprctl dispatch dpms off";
       on-resume = "${pkgs.hyprland}/bin/hyprctl dispatch dpms on";
     }
-    # Suspend listener removed - VMs should never auto-suspend
+    # Suspend listener removed - VMware guests should never auto-suspend
   ];
 }

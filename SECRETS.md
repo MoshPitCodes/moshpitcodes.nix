@@ -24,7 +24,7 @@ This NixOS configuration uses environment variables for secure credential manage
    NIXOS_REPO_NAME=moshpitcodes.nix
    
    # Optional for development tools
-   ANTHROPIC_API_KEY=your-claude-api-key
+   ANTHROPIC_API_KEY=your-anthropic-api-key
    OPENAI_API_KEY=your-openai-api-key
    ```
 

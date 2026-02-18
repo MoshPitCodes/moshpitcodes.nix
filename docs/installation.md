@@ -73,7 +73,7 @@ Example `secrets.nix` structure:
   };
 
   apiKeys = {
-    anthropic = "";  # Optional - for Claude AI
+    anthropic = "";  # Optional - for Anthropic-compatible tooling
     openai = "";     # Optional - for OpenAI
   };
 
@@ -145,14 +145,12 @@ The wallpapers will be copied into `~/Pictures/wallpapers/`.
 SSH keys are automatically copied from the `sourceDir` path defined in your `secrets.nix` to `~/.ssh/` with proper permissions.
 
 ### 7. Get the Hardware Configuration
-Automatically copies the hardware configuration from `/etc/nixos/hardware-configuration.nix` to `./hosts/${host}/hardware-configuration.nix`. This step is skipped for WSL hosts.
+Automatically copies the hardware configuration from `/etc/nixos/hardware-configuration.nix` to `./hosts/${host}/hardware-configuration.nix`.
 
 ### 8. Choose a Host
 Select your target host configuration:
 - **Desktop** - Full desktop workstation
 - **Laptop** - Laptop configuration
-- **VM** - QEMU/KVM virtual machine
-- **WSL** - Windows Subsystem for Linux
 - **VMware** - VMware guest
 
 ### 9. Build the System
@@ -161,5 +159,4 @@ Runs `nixos-rebuild switch --flake .#<host>` to build and activate the configura
 ## Next Steps
 
 - [Configuration Guide](configuration.md) - Customize your setup
-- [WSL Setup](wsl.md) - For Windows integration
 - [Development Shells](development-shells.md) - Set up dev environments
