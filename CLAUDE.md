@@ -1,6 +1,6 @@
-# OpenCode Configuration
+# Claude Code Configuration
 
-This file provides context and instructions for AI assistants working in this repository.
+This file provides context and instructions for Claude Code (AI assistant) working in this repository.
 
 ---
 
@@ -9,13 +9,10 @@ This file provides context and instructions for AI assistants working in this re
 ## Table of Contents
 
 - [General Instructions (Project-Independent)](#general-instructions-project-independent)
-  - [OpenCode File Locations](#opencode-file-locations)
-  - [Plugin System Infrastructure (Optional)](#plugin-system-infrastructure-optional)
-  - [Custom Tools](#custom-tools)
+  - [Documentation Conventions](#documentation-conventions)
   - [Task-Driven Development with TD](#task-driven-development-with-td)
   - [Git Workflow](#git-workflow)
   - [Coding Standards](#coding-standards)
-  - [Available Components](#available-components)
 - [Project-Specific Context](#project-specific-context)
   - [Project Overview](#project-overview)
   - [Technology Stack](#technology-stack)
@@ -26,340 +23,94 @@ This file provides context and instructions for AI assistants working in this re
 
 # General Instructions (Project-Independent)
 
-## OpenCode File Locations
+## Documentation Conventions
 
-When creating OpenCode components, always use the correct directory:
+When Claude Code creates documentation, plans, or notes during work:
 
-| Component Type | Location | Purpose | Naming Convention |
-|----------------|----------|---------|-------------------|
-| **Plans** | `.opencode/plans/` | Implementation plans and design documents | `kebab-case.md` |
-| **Notes** | `.opencode/notes/` | Session notes, research, and observations | `YYYY-MM-DD-topic.md` |
-| **Commands** | `.opencode/commands/` | Slash commands (workflows, processes) | `kebab-case.md` |
-| **Agents** | `.opencode/agents/` | Specialized domain expertise agents | `kebab-case.md` |
-| **Skills** | `.opencode/skills/` | Bundled resources with scripts | `kebab-case/` |
-| **Documentation** | `.opencode/docs/` | Guides and reference documentation | `kebab-case.md` |
+| Document Type | Location | Purpose | Naming Convention |
+|---------------|----------|---------|-------------------|
+| **Project Documentation** | `docs/` | Guides, references, and project documentation | `kebab-case.md` |
+| **Investigation Notes** | `docs/investigations/` | Research, comparisons, and decision analysis | `kebab-case.md` or `YYYY-MM-DD-topic.md` |
+| **Architecture Docs** | `docs/architecture/` | System design, ADRs, diagrams | `kebab-case.md` |
 
-**Important:**
-- Never create plans, notes, or commands outside their designated directories
-- Use kebab-case for all filenames (e.g., `my-new-command.md`)
-- Commands are invoked as `/filename` (without `.md` extension)
-- Agent names should not include model identifiers in the filename
+**Guidelines:**
+- Prefer discussing findings directly in chat over creating persistent documents
+- Only create documents for complex investigations that benefit from persistence
+- Use kebab-case for all filenames (e.g., `notification-daemon-comparison.md`)
+- Place investigation documents in `docs/investigations/` when needed
 
----
-
-## Plugin System Infrastructure (Optional)
-
-**Note:** This section is optional. Include it if your project uses OpenCode native TypeScript plugins.
-
-OpenCode supports native TypeScript plugins that execute at key moments during AI assistant sessions. Plugins enable custom automation, logging, notifications, validation, and workflow integration.
-
-### Overview
-
-Projects can use **OpenCode Native Plugins** (TypeScript) instead of legacy Python hooks. Plugins hook into OpenCode's event system to provide:
-
-- **Security Controls** - Block dangerous operations, protect sensitive files
-- **Comprehensive Logging** - JSONL-formatted event tracking
-- **File Validation** - Validate agent, skill, and command file structure
-- **Post-Session Monitoring** - Detect orphaned file changes
-- **Session Analytics** - Track git context, tool usage, and session statistics
-- **System Notifications** - Cross-platform desktop notifications
-
-### Example Plugins
-
-The template includes reference plugins in `.opencode/plugins/`:
-
-| Plugin | Purpose | Event Hooks |
-|--------|---------|-------------|
-| `security.ts` | Blocks dangerous commands, protects `.env` and credential files | `tool.execute.before` |
-| `logging.ts` | Comprehensive JSONL event logging for all operations | All events |
-| `markdown-validator.ts` | Validates agent/skill/command frontmatter (warn-only mode) | `file.edited` |
-| `post-stop-detector.ts` | Detects files created/modified after session ends | `session.idle` |
-| `session-context.ts` | Tracks git context, tool usage, and session statistics | `session.created`, `session.idle`, `tool.execute.after`, `file.edited` |
-| `notifications.ts` | Sends system notifications for session events | `session.idle`, `session.error` |
-| `td-enforcer.ts` | Enforces task-driven development with TD CLI integration | `permission.ask`, `tool.execute.after`, `session.created`, `session.idle`, `session.error` |
-
-### Setup
-
-1. **Install dependencies:**
-   ```bash
-   cd .opencode
-   bun install  # or: npm install
-   ```
-
-2. **Plugins auto-load** from `.opencode/plugins/` at startup - no configuration needed!
-
-3. **Dependencies** are declared in `.opencode/package.json` and installed by OpenCode via `bun install`.
-
-### Resources
-
-- [Plugin README](.opencode/plugins/README.md) - Complete plugin documentation (if included in template)
-- [OpenCode Plugin SDK](https://www.npmjs.com/package/@opencode-ai/plugin) - Official SDK documentation
+**Note:** The user may prefer verbal discussion over document creation. Always confirm before creating extensive documentation files.
 
 ---
 
-## Custom Tools
+## Task-Driven Development with TD
 
-OpenCode supports custom tools that extend the AI's capabilities with project-specific functionality. Tools are defined as TypeScript modules in `.opencode/tools/`.
+This project can optionally use **[TD (sidecar/td)](https://github.com/marcus/td)** for task-driven development.
 
-### TD Task Tool (`td.ts`)
+### What is TD?
 
-**Purpose**: Direct integration with the [TD](https://github.com/marcus/td) task-management CLI for task-driven development workflows.
+TD is a lightweight task management CLI that enforces focused, trackable work sessions:
+- **One task at a time** - Focus on a single task during each work session
+- **Automatic file tracking** - All code changes are linked to tasks
+- **Change logging** - Every modification is logged with context
+- **Review workflow** - Tasks transition through defined states (todo → in_progress → in_review → done)
 
-**Location**: `.opencode/tools/td.ts`
+### TD Commands (If Used)
 
 **Available Actions**:
-- `status` - Get current task status (JSON format)
-- `whoami` - Get current session identity (JSON format)
-- `usage` - Get usage overview and open work (use `newSession: true` for `--new-session`)
-- `create` - Create a new task (supports `type`, `priority`, `labels`, `description`, `parent`, `minor` parameters)
-- `start` - Start working on a task
-- `focus` - Focus on a specific task
-- `link` - Link files to a task
-- `log` - Add log entry to current task
-- `review` - Submit task for review
-- `handoff` - Capture handoff context for next session (supports `done`, `remaining`, `decision`, `uncertain` parameters)
+- `td status` - Get current task status
+- `td whoami` - Get current session identity
+- `td usage --new-session` - Get usage overview and open work
+- `td create` - Create a new task
+- `td start TASK-123` - Start working on a task
+- `td focus TASK-123` - Focus on a specific task
+- `td link file.nix` - Link files to current task
+- `td log "message"` - Add log entry to current task
+- `td review TASK-123` - Submit task for review
 
 **Usage Examples**:
 
-```typescript
-// Check usage and open work at session start
-TD(action: "usage", newSession: true)
+```bash
+# Check usage at session start
+td usage --new-session
 
-// Check current task status
-TD(action: "status")
+# Check current task status
+td status
 
-// Start working on a task
-TD(action: "start", task: "TASK-123")
+# Start working on a task
+td start TASK-123
 
-// Link files to current task
-TD(action: "link", task: "TASK-123", files: ["src/foo.ts", "src/bar.ts"])
+# Link files to current task
+td link modules/home/hyprland.nix
 
-// Add log entry
-TD(action: "log", message: "Implemented feature X")
+# Add log entry
+td log "Updated Hyprland configuration"
 
-// Submit for review
-TD(action: "review", task: "TASK-123")
-
-// Handoff with full context (MANDATORY at session end)
-TD(
-  action: "handoff",
-  task: "TASK-123",
-  done: "Implemented authentication middleware with JWT validation",
-  remaining: "Add refresh token logic, write unit tests",
-  decision: "Using RS256 for token signing, storing keys in environment variables",
-  uncertain: "Should we support multiple JWT issuers? Need product input on token expiry duration"
-)
+# Submit for review
+td review TASK-123
 ```
 
 **Requirements**:
 - TD CLI installed and in PATH
 - Initialized TD project (`td init` in project root)
 
-**Integration**: The `td-enforcer.ts` plugin automates much of the TD workflow, but this tool provides direct manual control when needed.
+**Note:** This project doesn't currently use TD, but it's available if needed for task tracking.
 
----
+### When to Use TD (If Enabled)
 
-## Task-Driven Development with TD
-
-This project uses **[TD (sidecar/td)](https://github.com/marcus/td)** for task-driven development. TD integrates tightly with OpenCode through the `td-enforcer.ts` plugin and custom `td.ts` tool.
-
-### What is TD?
-
-TD is a lightweight task management CLI that enforces focused, trackable work sessions. It ensures:
-- **One task at a time** - Focus on a single task during each work session
-- **Automatic file tracking** - All code changes are linked to tasks
-- **Change logging** - Every modification is logged with context
-- **Review workflow** - Tasks transition through defined states (todo → in_progress → in_review → done)
-
-### Plugin Integration
-
-The `td-enforcer.ts` plugin automatically:
-
-1. **Gates file writes** - Prompts you to start a task before making changes
-2. **Auto-tracks files** - Links edited files to the focused task
-3. **Auto-logs changes** - Adds change entries to the task log
-4. **Monitors reviews** - Notifies when tasks are ready for review
-5. **Tracks sessions** - Associates OpenCode sessions with TD work sessions
-
-### Typical Workflow
-
-```typescript
-// 1. Check usage and start a task (via TD Tool)
-TD(action: "usage", newSession: true)
-TD(action: "start", task: "TASK-123")
-
-// 2. Work in OpenCode
-// → Plugin auto-tracks all file changes to TASK-123
-
-// 3. Submit for review (via TD Tool)
-TD(action: "review", task: "TASK-123")
-
-// 4. Handoff context when done (via TD Tool)
-TD(
-  action: "handoff",
-  task: "TASK-123",
-  done: "Completed work description",
-  remaining: "Outstanding tasks",
-  decision: "Key decisions made",
-  uncertain: "Open questions"
-)
-```
-
-### When to Use TD
-
-**Always use TD when:**
-- Writing or modifying code files
-- Working on specific tasks or features
-- Collaborating with team members
+**Use TD when:**
+- Working on specific features or bugs
 - Need to track what changed and why
+- Collaborating with team members
 
 **TD is optional for:**
 - Quick exploratory work
 - Reading code without modifications
 - Running tests or build commands
 
-### Quick Reference (TD Tool Actions)
-
-| Action | Purpose | Example |
-|--------|---------|---------|
-| `status` | Check current focused task | `TD(action: "status")` |
-| `create` | Create a new task | `TD(action: "create", task: "Task title", type: "bug", priority: "P1", labels: "bug,critical")` |
-| `start` | Start working on a task | `TD(action: "start", task: "TASK-123")` |
-| `focus` | Switch focus to different task | `TD(action: "focus", task: "TASK-456")` |
-| `link` | Manually link files to task | `TD(action: "link", task: "TASK-123", files: ["file.ts"])` |
-| `log` | Add log entry to current task | `TD(action: "log", message: "Implemented feature")` |
-| `review` | Submit task for review | `TD(action: "review", task: "TASK-123")` |
-| `handoff` | Capture handoff context | `TD(action: "handoff", task: "TASK-123", done: "...", ...)` |
-
-### Best Practices
-
-1. **Start tasks before coding** - Use `TD(action: "start", task: "TASK-123")` before making changes
-2. **Review status regularly** - Use `TD(action: "status")` to check current task
-3. **Meaningful log entries** - Let the plugin auto-log or add manual context with `TD(action: "log", message: "...")`
-4. **Handoff at session end** - Always use `TD(action: "handoff", ...)` when finishing work
-5. **One task per session** - Focus on a single task for better tracking
-
-### Mandatory TD Instructions for Agents
-
-**CRITICAL: All AI agents MUST follow these TD requirements:**
-
-#### 1. **Before ANY File Modifications** (MANDATORY)
-
-**Check TD status first using TD Tool:**
-```typescript
-TD(action: "status")
-```
-
-**Verify:**
-- Active task exists (`focus` or `inProgress` not empty)
-- Task is appropriate for planned changes
-
-**If NO active task:**
-- **STOP immediately**
-- **DO NOT write/edit any files**
-- **Ask user to start a task:**
-  ```typescript
-  TD(action: "start", task: "TASK-123")
-  ```
-
-**Example Check:**
-```typescript
-// Check status
-TD(action: "status")
-
-// Response shows:
-{
-  "focus": null,           // NO TASK ACTIVE
-  "inProgress": [],
-  "blocked": []
-}
-// → STOP and ask user to start task before proceeding
-```
-
-#### 2. **When Using Sub-Agents via Task Tool** (CRITICAL)
-
-When you invoke other agents using the Task tool, sub-agents **do NOT inherit TD enforcement**. You MUST:
-
-**Before invoking sub-agent:**
-```typescript
-// 1. Check TD status
-TD(action: "status")
-
-// 2. If no task, start one FIRST
-TD(action: "start", task: "TASK-123")
-
-// 3. Include TD reminder in sub-agent prompt
-```
-
-**Prompt Template for Sub-Agents:**
-```
-CRITICAL TD REQUIREMENT:
-Before modifying ANY files, you MUST:
-1. Run: TD(action: "status")
-2. Verify active task exists (focus or inProgress not empty)
-3. If no task: STOP and notify user to start task via TD Tool
-
-Current TD Context: [paste TD status output here]
-
-Do NOT proceed with file modifications without active TD task.
-```
-
-**After sub-agent completes:**
-```typescript
-// Link all modified files to task
-TD(action: "link", task: "TASK-123", files: ["file1.ts", "file2.ts"])
-```
-
-#### 3. **At Session Start** (MANDATORY)
-
-```typescript
-TD(action: "usage", newSession: true)
-```
-Run this to see all open work and current task context before beginning any work.
-
-#### 4. **Before Context Ends** (ALWAYS MANDATORY)
-
-```typescript
-TD(
-  action: "handoff",
-  task: "TASK-123",
-  done: "what was completed",
-  remaining: "what still needs to be done",
-  decision: "key decisions made",
-  uncertain: "areas of uncertainty or questions"
-)
-```
-
-This handoff is **MANDATORY** at the end of every session. Capture:
-   - `done` - Concrete accomplishments and completed work
-   - `remaining` - Outstanding tasks and next steps
-   - `decision` - Important architectural or implementation decisions
-   - `uncertain` - Open questions, blockers, or areas needing clarification
-
-**Example:**
-```typescript
-// Session start
-TD(action: "usage", newSession: true)
-
-// ... work on task ...
-
-// Session end (MANDATORY)
-TD(
-  action: "handoff",
-  task: "TASK-123",
-  done: "Implemented authentication middleware with JWT validation",
-  remaining: "Add refresh token logic, write unit tests",
-  decision: "Using RS256 for token signing, storing keys in environment variables",
-  uncertain: "Should we support multiple JWT issuers? Need product input on token expiry duration"
-)
-```
-
 ### Documentation
 
-- **[TD Integration Guide](.opencode/docs/td-integration.md)** - Complete integration documentation
 - **[TD CLI Repository](https://github.com/marcus/td)** - Official TD documentation
-- **[TD Tool](.opencode/tools/td.ts)** - OpenCode tool implementation
-- **[TD Enforcer Plugin](.opencode/plugins/td-enforcer.ts)** - Plugin source code
 
 ---
 
@@ -396,7 +147,7 @@ Git operations (branching, commits, PRs, releases) are managed by the `git-flow-
 - `chore:` - Maintenance tasks
 - `perf:` - Performance improvements
 
-**Reference:** See `.opencode/agents/git-flow-manager.md` for complete conventions.
+**Note:** Follow these conventions for all git operations in this repository.
 
 ---
 
@@ -431,89 +182,6 @@ Git operations (branching, commits, PRs, releases) are managed by the `git-flow-
 
 ---
 
-## Available Components
-
-### Slash Commands
-
-Slash commands provide structured workflows and processes. Invoke with `/command-name`.
-
-**Common Commands:**
-- `/contemplation` - Expert guide for contemplation and problem-solving
-- `/create-architecture` - Generate architecture documentation with diagrams
-- `/diagnosis` - Issue diagnosis and root cause analysis
-- `/refactor-code` - Code refactoring assistance
-- `/reflection` - Expert guide for reflection techniques
-- `/structured-thinking` - Reflection and problem-solving framework
-- `/ultrathink` - Deep analysis and complex problem solving
-
-**Reference:** See `.opencode/AGENTS_INDEX.md` for complete command list.
-
-### Specialized Agents
-
-Agents provide domain-specific expertise. Reference the agent name when requesting specialized help.
-
-| Agent | Use Case |
-|-------|----------|
-| agent-creation | Creating specialized agents |
-| architecture-review | Review code for best practices and architectural consistency |
-| code-review | Code review for quality, security, and maintainability |
-| command-creation | Creating slash commands |
-| database-specialist | Database schema design, query optimization, migrations |
-| devops-infrastructure | DevOps, Kubernetes, Terraform, CI/CD |
-| discord-golang | Discord bots with Go |
-| error-detective | Log analysis and debugging |
-| git-flow-manager | Git Flow workflows and branch management |
-| golang-backend-api | Go backend APIs |
-| golang-tui-bubbletea | Go TUI with Bubbletea |
-| hytale-modding | Hytale server mods/plugins with Java/Kotlin |
-| java-kotlin-backend | Java/Kotlin Spring backend |
-| linearapp | Linear.app project management |
-| markdown-formatter | Markdown formatting |
-| mcp-server | MCP server integration |
-| mlops-engineer | ML pipelines and MLOps |
-| nextjs-fullstack | Next.js App Router full-stack |
-| nixos | NixOS, Nix Flakes, Home Manager |
-| prompt-engineering | LLM prompt optimization |
-| react-typescript | React + TypeScript frontend |
-| rpg-mmo-systems-designer | RPG/MMO game systems design |
-| security-engineer | Security and compliance |
-| sveltekit-frontend | Svelte 5 + SvelteKit frontend |
-| sveltekit-fullstack | SvelteKit full-stack apps |
-| testing-engineer | Test strategies and automation |
-| typescript-backend | TypeScript backend APIs |
-
-**Agent Categories:**
-- **Frontend**: React, Next.js, Svelte
-- **Backend**: Go, Java/Kotlin, TypeScript
-- **DevOps**: Kubernetes, Terraform, CI/CD, NixOS
-- **Quality**: Code review, architecture review, security, testing
-- **Meta**: Agent creation, command creation, prompt engineering
-
-**Model Selection:**
-- Agents use different AI models based on task complexity
-- See `.opencode/docs/model-selection-guide.md` for rationale
-- Haiku (fast), Sonnet (balanced), Opus (complex reasoning)
-
-**Reference:** See `.opencode/AGENTS_INDEX.md` for complete agent catalog.
-
-### Skills
-
-Skills bundle resources, scripts, and guides for specific tasks.
-
-| Skill | Purpose |
-|-------|---------|
-| artifacts-builder | Build complex React/Tailwind HTML artifacts |
-| document-skills | Document manipulation (docx, pdf, pptx, xlsx) |
-| mcp-builder | Build Model Context Protocol servers |
-| skill-creator | Create new OpenCode skills |
-| theme-factory | Apply professional themes to artifacts (10 presets) |
-
-**Usage:** Skills are loaded dynamically when needed for specific tasks.
-
-**Reference:** See `.opencode/AGENTS_INDEX.md` for complete skill list.
-
----
-
 # Project-Specific Context
 
 ## Project Overview
@@ -528,7 +196,7 @@ Declarative, reproducible system configuration for all personal machines using N
 - Multi-host support (desktop, laptop, VM, VMware guest, WSL2)
 - Hyprland Wayland compositor with full rice (waybar, rofi, swaync)
 - Modular NixOS + Home Manager configuration
-- Custom development environment provisioning (OpenCode, MCP servers)
+- Custom development environment provisioning
 - Secrets management via git-ignored `secrets.nix` with Doppler runtime integration
 - Custom packages (MonoLisa font, reposync)
 - CI/CD with GitHub Actions (flake checks, configuration builds, Cachix caching)
@@ -596,7 +264,7 @@ moshpitcodes.nix/
 - `secrets.nix.example` - Template for creating `secrets.nix`
 - `modules/core/default.nix` - Aggregates all system-level modules
 - `modules/home/default.nix` - Aggregates all user-level modules
-- `modules/home/development/opencode.nix` - OpenCode + MCP server configuration
+- `modules/home/development/` - Development environment configuration
 - `treefmt.toml` - Code formatting (nixfmt + shfmt)
 
 ---
@@ -610,82 +278,6 @@ moshpitcodes.nix/
 - API keys use `or ""` fallback pattern: `customsecrets.apiKeys.anthropic or ""`
 - Environment variables are conditionally set with `lib.optionalAttrs`
 - Activation scripts handle runtime file operations (copying keys, writing credentials)
-
-### Agent Naming
-
-**Format:** `domain-technology.md` or `role-specialization.md`
-
-**Guidelines:**
-- Use kebab-case (lowercase with hyphens)
-- Avoid model names in filenames
-- Be descriptive but concise
-- Examples: `golang-backend-api.md`, `code-review.md`, `nixos.md`
-
-### Agent Frontmatter Structure
-
-```yaml
----
-name: agent-name
-description: Use this agent when [use case]. Specializes in [areas]. Examples - [example 1], [example 2]
-type: subagent
-model: anthropic/claude-opus-4-5
-model_metadata:
-  complexity: high
-  reasoning_required: true
-  code_generation: true
-  cost_tier: premium
-  description: "Brief explanation"
-fallbacks:
-  - openai/gpt-5.2
-  - anthropic/claude-sonnet-4-5
-tools:
-  write: true
-  edit: true
-permission:
-  bash:
-    "*": ask
-    "specific-command*": allow
----
-```
-
-**Required Fields:**
-- `name` - Agent identifier (matches filename without `.md`)
-- `description` - Clear use case with examples
-- `type` - `primary` or `subagent`
-- `model` - Primary AI model to use
-
-**Recommended Fields:**
-- `model_metadata` - Complexity, reasoning needs, cost tier
-- `fallbacks` - Alternative models if primary unavailable
-- `tools` - Which file operations are allowed
-- `permission` - Granular bash command permissions
-
-### Command Structure
-
-```yaml
----
-allowed-tools: Read, Write, Edit, Bash
-argument-hint: [mode] | --option1 | --option2
-description: Brief description of command purpose
----
-
-Command content with workflow instructions...
-```
-
-### Skill Structure
-
-```
-skill-name/
-├── SKILL.md              # Main skill file with YAML frontmatter
-├── scripts/              # Executable scripts
-│   ├── init.sh
-│   └── validate.py
-├── reference/            # Reference documentation
-│   └── api-docs.md
-├── assets/              # Static assets
-│   └── template.json
-└── LICENSE.txt          # License information
-```
 
 ---
 
@@ -723,15 +315,27 @@ Secrets flow through the system as follows:
 ### Rebuilding the System
 
 ```bash
-# Standard rebuild
-sudo nixos-rebuild switch --flake . --impure
+# Standard rebuild (replace 'laptop' with your host: desktop, laptop, vmware-guest, wsl)
+sudo nixos-rebuild switch --flake .#laptop --impure
 
 # With Doppler secrets
-doppler run -- sudo nixos-rebuild switch --flake .
+doppler run -- sudo nixos-rebuild switch --flake .#laptop
 
 # Test build without switching
-nix build .#nixosConfigurations.desktop.config.system.build.toplevel
+nix build .#nixosConfigurations.laptop.config.system.build.toplevel --impure
 ```
+
+**Laptop Deployment**:
+⚠️ **IMPORTANT**: Before deploying to the laptop:
+1. Boot NixOS installer on the laptop
+2. Generate the real hardware configuration:
+   ```bash
+   sudo nixos-generate-config --show-hardware-config > hosts/laptop/hardware-configuration.nix
+   ```
+3. Commit the updated `hardware-configuration.nix`
+4. Deploy: `sudo nixos-rebuild switch --flake .#laptop --impure`
+
+The placeholder `hardware-configuration.nix` uses dummy UUIDs and must be replaced with actual hardware detection.
 
 ### Formatting Code
 

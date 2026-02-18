@@ -1,17 +1,21 @@
+# Rofi application launcher (Everforest theme)
 { pkgs, ... }:
 {
-  home.packages = with pkgs; [ rofi ]; # rofi-wayland has been merged into rofi
+  home.packages = with pkgs; [
+    rofi
+    rofi-power-menu
+  ];
 
   xdg.configFile."rofi/theme.rasi".text = ''
     * {
-      bg-col: #191724;
-      bg-col-light: #1f1d2e;
-      border-col: #908caa;
-      selected-col: #26233a;
-      green: #9ccfd8;
-      fg-col: #e0def4;
-      fg-col2: #e0def4;
-      grey: #6e6a86;
+      bg-col: #2d353b;
+      bg-col-light: #3d484d;
+      border-col: #859289;
+      selected-col: #3d484d;
+      green: #a7c080;
+      fg-col: #d3c6aa;
+      fg-col2: #d3c6aa;
+      grey: #859289;
       highlight: @green;
     }
   '';
@@ -32,7 +36,6 @@
       display-drun: " Apps ";
       display-run: " Run ";
       display-window: " Window ";
-      /* display-Network: " Network"; */
       sidebar-mode: true;
       sorting-method: "fzf";
     }

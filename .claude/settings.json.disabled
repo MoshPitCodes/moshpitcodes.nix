@@ -1,0 +1,207 @@
+{
+  "permission": {
+    "*": "ask",
+    "bash": {
+      "*": "ask",
+      "mkdir *": "allow",
+      "find *": "allow",
+      "mv *": "allow",
+      "grep *": "allow",
+      "npm *": "allow",
+      "bun *": "allow",
+      "ls *": "allow",
+      "cp *": "allow",
+      "chmod *": "allow",
+      "touch *": "allow",
+      "git *": "allow",
+      "uv *": "allow",
+      "rm -rf*": "deny",
+      "rm --recursive*": "deny"
+    },
+    "edit": "allow",
+    "write": "allow"
+  },
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "uv run $CLAUDE_PROJECT_DIR/.claude/status_lines/status_line_v11.py",
+    "padding": 0
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/scripts/session_start.py --load-context",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/scripts/session_end.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/scripts/user_prompt_submit.py --store-last-prompt",
+            "async": true,
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Read|Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/scripts/security_check.py",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/scripts/td_enforcer.py",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/scripts/tool_logger.py",
+            "async": true,
+            "timeout": 10
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/scripts/markdown_validator.py",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/scripts/post_tool_use_failure.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/scripts/pre_compact.py",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/scripts/subagent_start.py --notify",
+            "async": true,
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/scripts/subagent_stop.py --notify",
+            "async": true,
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/scripts/notification.py",
+            "async": true,
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/scripts/idle_detector.py",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/scripts/permission_request.py --log-only",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Setup": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/scripts/setup.py",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

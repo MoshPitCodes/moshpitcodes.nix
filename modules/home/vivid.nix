@@ -1,66 +1,64 @@
+# vivid LS_COLORS + eza color theme (Everforest palette)
 { pkgs, ... }:
 let
-  # Generate Rose Pine LS_COLORS at build time using vivid
-  # This ensures consistent directory/file colors with the Rose Pine theme
+  # Generate LS_COLORS using vivid with one-dark (neutral dark theme)
   lsColors = builtins.readFile (
     pkgs.runCommand "ls-colors" { } ''
-      ${pkgs.vivid}/bin/vivid generate rose-pine > $out
+      ${pkgs.vivid}/bin/vivid generate one-dark > $out
     ''
   );
 
-  # Rose Pine color palette for eza
-  # Uses the main Rose Pine palette to ensure consistent theming
-  # Reference: https://rosepinetheme.com/palette/
+  # Everforest color palette for eza
   ezaColors = [
-    # Permission bits (user/group/other read/write/execute)
-    "ur=38;5;250" # user read (subtle: #908caa)
-    "uw=38;5;203" # user write (love: #eb6f92)
-    "ux=38;5;117" # user execute (foam: #9ccfd8)
-    "ue=38;5;117" # user execute (file)
-    "gr=38;5;243" # group read (muted: #6e6a86)
-    "gw=38;5;203" # group write
-    "gx=38;5;110" # group execute (pine: #31748f)
-    "tr=38;5;243" # other read
-    "tw=38;5;203" # other write
-    "tx=38;5;110" # other execute
+    # Permission bits
+    "ur=38;5;250" # user read (light grey)
+    "uw=38;5;167" # user write (red: #e67e80)
+    "ux=38;5;108" # user execute (aqua: #83c092)
+    "ue=38;5;108" # user execute (file)
+    "gr=38;5;102" # group read (grey: #859289)
+    "gw=38;5;167" # group write
+    "gx=38;5;109" # group execute (blue: #7fbbb3)
+    "tr=38;5;102" # other read
+    "tw=38;5;167" # other write
+    "tx=38;5;109" # other execute
 
     # File types
-    "di=38;5;117" # directories (foam: #9ccfd8)
-    "ex=38;5;222" # executables (gold: #f6c177)
-    "fi=38;5;253" # regular files (text: #e0def4)
-    "ln=38;5;204" # symlinks (love: #eb6f92)
-    "or=38;5;204" # orphaned symlinks
+    "di=38;5;108" # directories (aqua: #83c092)
+    "ex=38;5;179" # executables (yellow: #dbbc7f)
+    "fi=38;5;187" # regular files (fg: #d3c6aa)
+    "ln=38;5;167" # symlinks (red: #e67e80)
+    "or=38;5;167" # orphaned symlinks
 
     # Special files
-    "pi=38;5;183" # named pipes (iris: #c4a7e7)
-    "so=38;5;183" # sockets
-    "bd=38;5;183" # block devices
-    "cd=38;5;183" # character devices
+    "pi=38;5;175" # named pipes (purple: #d699b6)
+    "so=38;5;175" # sockets
+    "bd=38;5;175" # block devices
+    "cd=38;5;175" # character devices
 
     # Git status colors
-    "ga=38;5;117" # added (foam)
-    "gm=38;5;222" # modified (gold)
-    "gd=38;5;203" # deleted (love)
-    "gv=38;5;110" # renamed (pine)
-    "gt=38;5;183" # type changed (iris)
+    "ga=38;5;108" # added (aqua)
+    "gm=38;5;179" # modified (yellow)
+    "gd=38;5;167" # deleted (red)
+    "gv=38;5;109" # renamed (blue)
+    "gt=38;5;175" # type changed (purple)
 
     # Metadata
-    "sn=38;5;243" # file size (muted)
-    "sb=38;5;243" # file blocks
-    "df=38;5;110" # major device number (pine)
-    "ds=38;5;110" # minor device number
-    "uu=38;5;222" # user (you) (gold)
-    "un=38;5;250" # user (other) (subtle)
-    "gu=38;5;243" # group (yours) (muted)
-    "gn=38;5;243" # group (other)
-    "lc=38;5;243" # symlink count
-    "lm=38;5;243" # multi-link file
+    "sn=38;5;102" # file size (grey)
+    "sb=38;5;102" # file blocks
+    "df=38;5;109" # major device number (blue)
+    "ds=38;5;109" # minor device number
+    "uu=38;5;179" # user (you) (yellow)
+    "un=38;5;250" # user (other)
+    "gu=38;5;102" # group (yours) (grey)
+    "gn=38;5;102" # group (other)
+    "lc=38;5;102" # symlink count
+    "lm=38;5;102" # multi-link file
 
     # Dates
-    "da=38;5;250" # timestamp (subtle)
+    "da=38;5;250" # timestamp
 
     # File attributes
-    "xa=38;5;243" # extended attributes
+    "xa=38;5;102" # extended attributes
   ];
 in
 {

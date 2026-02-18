@@ -1,105 +1,96 @@
+# XDG MIME type associations
 { lib, ... }:
-with lib;
 let
+  # Default application handlers
   defaultApps = {
-    browser = [ "zen-beta.desktop" ];
-    text = [ "org.gnome.TextEditor.desktop" ];
-    image = [ "imv-dir.desktop" ];
-    audio = [ "mpv.desktop" ];
-    video = [ "mpv.desktop" ];
-    directory = [ "nemo.desktop" ];
-    office = [ "libreoffice.desktop" ];
-    pdf = [ "org.gnome.Evince.desktop" ];
-    terminal = [ "ghostty.desktop" ];
-    archive = [ "org.gnome.FileRoller.desktop" ];
-    discord = [ "discord.desktop" ];
+    browser = "zen-beta.desktop";
+    editor = "org.gnome.TextEditor.desktop";
+    image = "imv.desktop";
+    video = "mpv.desktop";
+    audio = "mpv.desktop";
+    filemanager = "org.gnome.Nautilus.desktop";
+    pdf = "org.gnome.Evince.desktop";
+    archive = "org.gnome.FileRoller.desktop";
+    terminal = "com.mitchellh.ghostty.desktop";
   };
 
+  # MIME type to category mapping
   mimeMap = {
-    text = [ "text/plain" ];
-    image = [
-      "image/bmp"
-      "image/gif"
-      "image/jpeg"
-      "image/jpg"
-      "image/png"
-      "image/svg+xml"
-      "image/tiff"
-      "image/vnd.microsoft.icon"
-      "image/webp"
-    ];
-    audio = [
-      "audio/aac"
-      "audio/mpeg"
-      "audio/ogg"
-      "audio/opus"
-      "audio/wav"
-      "audio/webm"
-      "audio/x-matroska"
-    ];
-    video = [
-      "video/mp2t"
-      "video/mp4"
-      "video/mpeg"
-      "video/ogg"
-      "video/webm"
-      "video/x-flv"
-      "video/x-matroska"
-      "video/x-msvideo"
-    ];
-    directory = [ "inode/directory" ];
     browser = [
       "text/html"
-      "x-scheme-handler/about"
       "x-scheme-handler/http"
       "x-scheme-handler/https"
+      "x-scheme-handler/about"
       "x-scheme-handler/unknown"
     ];
-    office = [
-      "application/vnd.oasis.opendocument.text"
-      "application/vnd.oasis.opendocument.spreadsheet"
-      "application/vnd.oasis.opendocument.presentation"
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-      "application/vnd.openxmlformats-officedocument.presentationml.presentation"
-      "application/msword"
-      "application/vnd.ms-excel"
-      "application/vnd.ms-powerpoint"
-      "application/rtf"
+    editor = [
+      "text/plain"
+      "text/x-csrc"
+      "text/x-chdr"
+      "text/x-python"
+      "text/x-shellscript"
+      "text/x-makefile"
+      "text/x-java"
+      "text/x-go"
+      "text/x-rust"
+      "application/json"
+      "application/xml"
+      "application/x-yaml"
+      "application/toml"
     ];
-    pdf = [ "application/pdf" ];
-    terminal = [ "terminal" ];
+    image = [
+      "image/jpeg"
+      "image/png"
+      "image/gif"
+      "image/webp"
+      "image/svg+xml"
+      "image/bmp"
+      "image/tiff"
+    ];
+    video = [
+      "video/mp4"
+      "video/x-matroska"
+      "video/webm"
+      "video/x-msvideo"
+      "video/quicktime"
+    ];
+    audio = [
+      "audio/mpeg"
+      "audio/flac"
+      "audio/ogg"
+      "audio/wav"
+      "audio/x-wav"
+    ];
+    filemanager = [
+      "inode/directory"
+    ];
+    pdf = [
+      "application/pdf"
+    ];
     archive = [
       "application/zip"
-      "application/rar"
-      "application/7z"
-      "application/*tar"
+      "application/x-tar"
+      "application/gzip"
+      "application/x-7z-compressed"
+      "application/x-rar-compressed"
     ];
-    discord = [ "x-scheme-handler/discord" ];
   };
 
-  associations =
-    with lists;
-    listToAttrs (
-      flatten (
-        mapAttrsToList (
-          key: map (type: attrsets.nameValuePair type defaultApps."${key}")
-        ) mimeMap
-      )
-    );
+  # Build the associations attrset
+  associations = lib.foldlAttrs (
+    acc: category: mimeTypes:
+    acc // lib.genAttrs mimeTypes (_: [ (defaultApps.${category}) ])
+  ) { } mimeMap;
 in
 {
-  xdg = {
-    configFile."mimeapps.list".force = true;
-    mimeApps = {
-      enable = true;
-      associations.added = associations;
-      defaultApplications = associations;
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = associations // {
+      # CKAN URL handler for Kerbal Space Program mod manager
+      "x-scheme-handler/ckan" = [ "ckan.desktop" ];
     };
   };
 
-  home.sessionVariables = {
-    # prevent wine from creating file associations
-    WINEDLLOVERRIDES = "winemenubuilder.exe=d";
-  };
+  # Prevent Wine from hijacking file associations
+  home.sessionVariables.WINEDLLOVERRIDES = "winemenubuilder.exe=d";
 }

@@ -1,3 +1,4 @@
+# Flatpak support with Wayland forcing
 { inputs, ... }:
 {
   imports = [ inputs.nix-flatpak.nixosModules.nix-flatpak ];
@@ -6,7 +7,6 @@
     enable = true;
     packages = [
       "com.github.tchx84.Flatseal"
-      # "io.github.everestapi.Olympus"
     ];
     overrides = {
       global = {

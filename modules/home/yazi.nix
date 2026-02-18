@@ -1,8 +1,10 @@
+# yazi - terminal file manager with plugins
 { inputs, ... }:
 {
   programs.yazi = {
     enable = true;
     enableZshIntegration = true;
+    shellWrapperName = "yy"; # Keep legacy wrapper name (y is aliased to yazi in zsh)
 
     settings = {
       mgr = {

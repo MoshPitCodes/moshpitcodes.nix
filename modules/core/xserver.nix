@@ -1,4 +1,5 @@
-{ username, ... }:
+# X server, keyboard layout, and input configuration
+{ ... }:
 {
   services = {
     xserver = {
@@ -6,19 +7,14 @@
       xkb.layout = "de";
     };
 
-    displayManager.autoLogin = {
-      enable = true;
-      user = "${username}";
-    };
     libinput = {
       enable = true;
       mouse.accelProfile = "flat";
     };
   };
-  # To prevent getting stuck at shutdown
-  systemd.settings = {
-    Manager = {
-      DefaultTimeoutStopSec = "10s";
-    };
+
+  # Prevent getting stuck at shutdown
+  systemd.settings.Manager = {
+    DefaultTimeoutStopSec = "10s";
   };
 }

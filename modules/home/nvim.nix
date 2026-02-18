@@ -1,4 +1,11 @@
-{ pkgs, inputs, ... }:
+# Neovim configuration with Everforest theme
+# LSP configuration is centralized in language-servers.nix
+{
+  pkgs,
+  inputs,
+  lspLanguages,
+  ...
+}:
 {
   imports = [ inputs.nvf.homeManagerModules.default ];
 
@@ -10,10 +17,7 @@
   programs.nvf = {
     enable = true;
 
-    settings.vim.extraPackages = with pkgs; [
-      nixd # Nix language server
-      nixfmt # Nix formatter
-    ];
+    # Extra packages are now managed in language-servers.nix
 
     settings.vim = {
       vimAlias = true;
@@ -21,8 +25,8 @@
 
       theme = {
         enable = true;
-        name = "rose-pine";
-        style = "main";
+        name = "everforest";
+        style = "medium"; # hard, medium, or soft
         transparent = true;
       };
 
@@ -49,22 +53,19 @@
         enableTreesitter = true;
         enableExtraDiagnostics = true;
 
-        clang.enable = true;
-        css.enable = true;
-        go.enable = true;
-        # Temporarily disabled due to superhtml build failure
-        # https://github.com/NixOS/nixpkgs/issues/superhtml-symlink-issue
-        html.enable = false;
-        java.enable = true;
-        lua.enable = true;
-        nix.enable = true;
-        python.enable = true;
-        rust.enable = true;
-        ts.enable = true;
-        yaml.enable = true;
-        # Temporarily disabled due to zls build failure (same /p symlink issue)
-        zig.enable = false;
-
+        # Language enablement synchronized with language-servers.nix
+        clang.enable = lspLanguages.c-cpp;
+        css.enable = lspLanguages.css;
+        go.enable = lspLanguages.go;
+        html.enable = lspLanguages.html;
+        java.enable = lspLanguages.java;
+        lua.enable = lspLanguages.lua;
+        nix.enable = lspLanguages.nix;
+        python.enable = lspLanguages.python;
+        rust.enable = lspLanguages.rust;
+        ts.enable = lspLanguages.javascript-typescript;
+        yaml.enable = lspLanguages.yaml;
+        zig.enable = lspLanguages.zig;
       };
 
       visuals = {
@@ -72,12 +73,8 @@
         nvim-cursorline.enable = true;
         cinnamon-nvim.enable = true;
         fidget-nvim.enable = true;
-
         highlight-undo.enable = true;
         indent-blankline.enable = true;
-
-        # Fun
-        # cellular-automaton.enable = false;
       };
 
       statusline = {
@@ -88,7 +85,6 @@
       };
 
       autopairs.nvim-autopairs.enable = true;
-
       autocomplete.nvim-cmp.enable = true;
       snippets.luasnip.enable = true;
 
@@ -106,7 +102,7 @@
       git = {
         enable = true;
         gitsigns.enable = true;
-        gitsigns.codeActions.enable = false; # throws an annoying debug message
+        gitsigns.codeActions.enable = false;
       };
 
       dashboard = {
@@ -118,7 +114,7 @@
         nvim-notify = {
           enable = true;
           setupOpts = {
-            background_colour = "#191724";
+            background_colour = "#2d353b"; # Everforest dark background
             render = "compact";
             timeout = 3000;
             top_down = true;
@@ -138,7 +134,6 @@
           leap.enable = true;
           precognition.enable = false;
         };
-
         images = {
           image-nvim.enable = false;
         };

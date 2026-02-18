@@ -1,26 +1,20 @@
+# VS Code extension definitions
 { pkgs, ... }:
 let
-  # Custom VSCode extensions that need to be built
+  vscode-utils = pkgs.vscode-utils;
+
+  # Custom marketplace extensions not in nixpkgs
   customExtensions = {
-    gruvbox-material-icon-theme = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
+    everforest = vscode-utils.buildVscodeMarketplaceExtension {
       mktplcRef = {
-        name = "gruvbox-material-icon-theme";
-        publisher = "JonathanHarty";
-        version = "1.1.5";
-        hash = "sha256-86UWUuWKT6adx4hw4OJw3cSZxWZKLH4uLTO+Ssg75gY=";
+        name = "everforest";
+        publisher = "sainnhe";
+        version = "0.3.0";
+        hash = "sha256-nZirzVvM160ZTpBLTimL2X35sIGy5j2LQOok7a2Yc7U=";
       };
     };
 
-    vscode-zig = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
-      mktplcRef = {
-        name = "vscode-zig";
-        publisher = "ziglang";
-        version = "0.6.10";
-        hash = "sha256-Tptl+tJ2ZlnKyswdTjnPJakhiiJn+1XmB82rbk8aO1w=";
-      };
-    };
-
-    claude-code = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
+    claude-code = vscode-utils.buildVscodeMarketplaceExtension {
       mktplcRef = {
         name = "claude-code";
         publisher = "anthropic";
@@ -29,7 +23,7 @@ let
       };
     };
 
-    makefile-tools = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
+    makefile-tools = vscode-utils.buildVscodeMarketplaceExtension {
       mktplcRef = {
         name = "makefile-tools";
         publisher = "ms-vscode";
@@ -38,7 +32,7 @@ let
       };
     };
 
-    vscode-mermaid-chart = pkgs.vscode-utils.buildVscodeMarketplaceExtension {
+    vscode-mermaid-chart = vscode-utils.buildVscodeMarketplaceExtension {
       mktplcRef = {
         name = "vscode-mermaid-chart";
         publisher = "MermaidChart";
@@ -46,88 +40,62 @@ let
         hash = "sha256-JqHVqMGeE1FYY9Q5U4Q01H8K7C2gXs+YAV08ZzABgZM=";
       };
     };
+
+    vscode-zig = vscode-utils.buildVscodeMarketplaceExtension {
+      mktplcRef = {
+        name = "vscode-zig";
+        publisher = "ziglang";
+        version = "0.6.10";
+        hash = "sha256-Tptl+tJ2ZlnKyswdTjnPJakhiiJn+1XmB82rbk8aO1w=";
+      };
+    };
   };
-
-  # List of all extensions (for programs.vscode.extensions)
-  # These are from pkgs.vscode-extensions or custom built above
-  extensionsList = with pkgs.vscode-extensions; [
-    # Custom built extensions
-    customExtensions.makefile-tools
-    customExtensions.claude-code
-    customExtensions.vscode-mermaid-chart
-    customExtensions.vscode-zig
-    customExtensions.gruvbox-material-icon-theme
-
-    # Official Microsoft extensions
-    ms-azuretools.vscode-docker
-    ms-kubernetes-tools.vscode-kubernetes-tools
-    ms-python.python
-
-    # 3rd party extensions
-    dbaeumer.vscode-eslint
-    github.copilot
-    github.copilot-chat
-    github.vscode-pull-request-github
-    golang.go
-    hashicorp.hcl
-    hashicorp.terraform
-    bierner.markdown-mermaid
-    jnoortheen.nix-ide
-    ocamllabs.ocaml-platform
-    esbenp.prettier-vscode
-    jgclark.vscode-todo-highlight
-    redhat.ansible
-    redhat.java
-    redhat.vscode-yaml
-    yzhang.markdown-all-in-one
-    mvllow.rose-pine
-  ];
-
-  # Extension identifiers for recommendations (publisher.extension-id format)
-  extensionIds = [
-    # Custom extensions
-    "ms-vscode.makefile-tools"
-    "anthropic.claude-code"
-    "Google.geminicodeassist"
-    "MermaidChart.vscode-mermaid-chart"
-    "ziglang.vscode-zig"
-    "JonathanHarty.gruvbox-material-icon-theme"
-
-    # Official Microsoft extensions
-    "ms-azuretools.vscode-docker"
-    "ms-kubernetes-tools.vscode-kubernetes-tools"
-    "ms-python.python"
-
-    # 3rd party extensions
-    "dbaeumer.vscode-eslint"
-    "github.copilot"
-    "github.copilot-chat"
-    "github.vscode-pull-request-github"
-    "golang.go"
-    "hashicorp.hcl"
-    "hashicorp.terraform"
-    "bierner.markdown-mermaid"
-    "jnoortheen.nix-ide"
-    "ocamllabs.ocaml-platform"
-    "esbenp.prettier-vscode"
-    "jgclark.vscode-todo-highlight"
-    "redhat.ansible"
-    "redhat.java"
-    "redhat.vscode-yaml"
-    "yzhang.markdown-all-in-one"
-    "mvllow.rose-pine"
-  ];
 in
 {
-  # Export both the extension packages and their IDs
   vscodeExtensions = {
-    # For use in programs.vscode.extensions
-    packages = extensionsList;
+    packages =
+      (with pkgs.vscode-extensions; [
+        # Language support
+        golang.go
+        jnoortheen.nix-ide
+        ms-python.python
+        ms-vscode.cpptools
+        redhat.vscode-yaml
+        redhat.ansible
+        redhat.java
+        esbenp.prettier-vscode
+        timonwong.shellcheck
+        foxundermoon.shell-format
+        hashicorp.terraform
+        hashicorp.hcl
+        ms-azuretools.vscode-docker
+        ms-kubernetes-tools.vscode-kubernetes-tools
+        dbaeumer.vscode-eslint
+        ocamllabs.ocaml-platform
 
-    # For use in extensions.json recommendations
-    ids = extensionIds;
+        # GitHub
+        github.copilot
+        github.copilot-chat
+        github.vscode-pull-request-github
 
-    # Custom extensions that may need to be referenced directly
-    custom = customExtensions;
+        # Markdown
+        yzhang.markdown-all-in-one
+        bierner.markdown-mermaid
+
+        # Editor enhancements
+        eamodio.gitlens
+        streetsidesoftware.code-spell-checker
+        jgclark.vscode-todo-highlight
+
+        # Icons
+        pkief.material-icon-theme
+      ])
+      ++ (with customExtensions; [
+        everforest
+        claude-code
+        makefile-tools
+        vscode-mermaid-chart
+        vscode-zig
+      ]);
   };
 }

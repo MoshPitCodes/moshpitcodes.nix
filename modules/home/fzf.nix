@@ -1,5 +1,5 @@
-_:
-{
+# fzf - fuzzy finder with fd/bat/eza integration (Everforest theme)
+_: {
   programs.fzf = {
     enable = true;
 
@@ -15,12 +15,12 @@ _:
       "--preview 'eza --tree --color=always {} | head -200'"
     ];
 
-    ## Theme - Rose Pine
+    # Everforest color theme
     defaultOptions = [
-      "--color=fg:-1,fg+:#e0def4,bg:-1,bg+:#26233a"
-      "--color=hl:#eb6f92,hl+:#eb6f92,info:#908caa,marker:#f6c177"
-      "--color=prompt:#eb6f92,spinner:#9ccfd8,pointer:#c4a7e7,header:#31748f"
-      "--color=border:#6e6a86,label:#908caa,query:#e0def4"
+      "--color=fg:-1,fg+:#d3c6aa,bg:-1,bg+:#3d484d"
+      "--color=hl:#a7c080,hl+:#a7c080,info:#7fbbb3,marker:#dbbc7f"
+      "--color=prompt:#e67e80,spinner:#83c092,pointer:#d699b6,header:#7fbbb3"
+      "--color=border:#475258,label:#9da9a0,query:#d3c6aa"
       "--border='double' --border-label='' --preview-window='border-sharp' --prompt='> '"
       "--marker='>' --pointer='>' --separator='─' --scrollbar='│'"
       "--info='right'"

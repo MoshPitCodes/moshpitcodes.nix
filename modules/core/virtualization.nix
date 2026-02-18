@@ -1,3 +1,4 @@
+# Virtualization: libvirt, Docker, SPICE
 {
   lib,
   pkgs,
@@ -5,32 +6,37 @@
   ...
 }:
 {
-  # Add user to libvirtd and kvm groups (merged with existing groups from user.nix)
+  # Add user to virtualization groups
   users.users.${username}.extraGroups = lib.mkAfter [
     "libvirtd"
     "kvm"
   ];
 
   # System-level virtualization support libraries
-  # GUI tools (virt-manager, virt-viewer) and Docker CLI tools are in home-manager
   environment.systemPackages = with pkgs; [
     spice
     spice-gtk
     spice-protocol
     virtio-win
     win-spice
+    docker-compose
   ];
 
   # Manage the virtualisation services
   virtualisation = {
     libvirtd = {
       enable = true;
-      qemu = {
-        swtpm.enable = true;
+      qemu.swtpm.enable = true;
+    };
+    docker = {
+      enable = true;
+      autoPrune = {
+        enable = true;
+        dates = "weekly";
       };
     };
-    docker.enable = true;
     spiceUSBRedirection.enable = true;
   };
+
   services.spice-vdagentd.enable = true;
 }

@@ -1,3 +1,4 @@
+# Swaylock screen lock (Everforest theme)
 {
   pkgs,
   ...
@@ -21,29 +22,30 @@
       effect-vignette = "0.75:0.75";
       effect-pixelate = 5;
 
-      font = "Maple Mono NF";
+      font = "FiraCode Nerd Font";
 
-      text-wrong-color = "FBF1C7FF";
-      text-ver-color = "FBF1C7FF";
-      text-clear-color = "FBF1C7FF";
-      key-hl-color = "fabd2fFF";
-      bs-hl-color = "fb4934FF";
-      ring-clear-color = "d65d0eFF";
-      ring-wrong-color = "cc241dff";
-      ring-ver-color = "b8bb26FF";
-      ring-color = "689d6aff";
+      # Everforest color scheme
+      text-wrong-color = "d3c6aaFF";
+      text-ver-color = "d3c6aaFF";
+      text-clear-color = "d3c6aaFF";
+      key-hl-color = "dbbc7fFF"; # Everforest yellow/accent
+      bs-hl-color = "e67e80FF"; # Everforest red
+      ring-clear-color = "7fbbb3FF"; # Everforest blue
+      ring-wrong-color = "e67e80ff"; # Everforest red
+      ring-ver-color = "a7c080FF"; # Everforest green
+      ring-color = "859289ff"; # Everforest gray-green
       line-clear-color = "FFFFFF00";
       line-ver-color = "FFFFFF00";
       line-wrong-color = "FFFFFF00";
       separator-color = "FFFFFF00";
       line-color = "FFFFFF00";
-      text-color = "FBF1C7FF";
-      inside-color = "3C3836DD";
-      inside-ver-color = "3C3836DD";
-      inside-clear-color = "3C3836DD";
-      inside-wrong-color = "3C3836DD";
+      text-color = "d3c6aaFF"; # Everforest foreground
+      inside-color = "2d353bDD"; # Everforest background
+      inside-ver-color = "2d353bDD";
+      inside-clear-color = "2d353bDD";
+      inside-wrong-color = "2d353bDD";
       layout-bg-color = "FFFFFF00";
-      layout-text-color = "FBF1C7FF";
+      layout-text-color = "d3c6aaFF";
     };
   };
 }
