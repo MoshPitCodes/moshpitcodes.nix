@@ -48,7 +48,7 @@
         "browser.send_pings" = false;
         "browser.urlbar.speculativeConnect.enabled" = false;
         "dom.event.clipboardevents.enabled" = false;
-        "media.navigator.enabled" = false;
+        "media.navigator.enabled" = true;
         "network.cookie.cookieBehavior" = 1;
         "network.http.referer.XOriginPolicy" = 2;
         "network.http.referer.XOriginTrimmingPolicy" = 2;

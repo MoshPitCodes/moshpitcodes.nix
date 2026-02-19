@@ -78,3 +78,4 @@ package-lock.json
 # AI runtime/session state
 .opencode/
 .todos
+.todos/
