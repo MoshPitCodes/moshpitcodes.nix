@@ -19,7 +19,7 @@
         }
         {
           timeout = 600;
-          on-timeout = "pidof swaylock || ${pkgs.swaylock-effects}/bin/swaylock";
+          on-timeout = "${pkgs.systemd}/bin/loginctl lock-session";
         }
         {
           timeout = 660;

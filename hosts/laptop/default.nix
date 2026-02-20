@@ -9,8 +9,8 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./nas-mount.nix
     ../../modules/core
+    ../../modules/core/nas-mount.nix
     ../../modules/core/samba.nix
     ../../modules/core/flatpak.nix
     ../../modules/core/virtualization.nix
@@ -75,6 +75,14 @@
       "kernel.sched_autogroup_enabled" = 0; # Disable autogroup for better desktop scheduling
     };
   };
+
+  # Reduce systemd timeout for faster boot (matches desktop)
+  systemd.services = {
+    systemd-udev-settle.serviceConfig.TimeoutSec = "10s"; # Reduce from default 180s
+  };
+
+  # Disable network-wait-online for faster boot (matches desktop)
+  systemd.network.wait-online.enable = false;
 
   # Laptop-specific packages
   environment.systemPackages = with pkgs; [
@@ -162,4 +170,8 @@
 
   # Firewall configuration
   networking.firewall.allowedTCPPorts = [ 22 ];
+
+  # GNOME Keyring - auto-unlock with PAM (matches desktop)
+  services.gnome.gnome-keyring.enable = true;
+  security.pam.services.greetd.enableGnomeKeyring = true;
 }

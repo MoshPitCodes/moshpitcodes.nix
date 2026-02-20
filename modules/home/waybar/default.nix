@@ -83,24 +83,12 @@
               }
             else if host == "laptop" then
               {
-                # Laptop: Support both docked and undocked configurations
-                # Docked: USB-C dock monitors (DP-5, DP-6, DP-7)
-                "DP-5" = [
-                  1
-                  2
-                  3
-                ];
-                "DP-6" = [
-                  4
-                  5
-                  6
-                ];
-                "DP-7" = [
-                  7
-                  8
-                  9
-                ];
-                # Undocked: Built-in display gets all workspaces
+                # Laptop: Only declare workspaces for eDP-1
+                # When docked, Hyprland workspace rules (laptop-overrides.nix)
+                # assign workspaces to DP-5/DP-6/DP-7 automatically.
+                # Waybar's all-outputs=false ensures each bar shows only its
+                # monitor's workspaces. Declaring DP-5/6/7 here as persistent
+                # causes phantom workspaces when undocked (10 instead of 9).
                 "eDP-1" = [
                   1
                   2
