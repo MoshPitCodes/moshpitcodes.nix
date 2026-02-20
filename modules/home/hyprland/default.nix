@@ -105,7 +105,7 @@
         force_default_wallpaper = 0;
         disable_hyprland_logo = true;
         enable_swallow = true;
-        focus_on_activate = true;
+        focus_on_activate = false;
         middle_click_paste = false;
         layers_hog_keyboard_focus = true;
       };

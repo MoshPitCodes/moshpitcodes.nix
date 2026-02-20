@@ -8,8 +8,8 @@
 {
   imports = [
     ./hardware-configuration.nix
-    ./nas-mount.nix
     ../../modules/core
+    ../../modules/core/nas-mount.nix
     ../../modules/core/nvidia.nix
     ../../modules/core/samba.nix
     ../../modules/core/steam.nix
@@ -95,7 +95,7 @@
     enable = true;
     ports = [ 22 ];
     settings = {
-      PasswordAuthentication = true;
+      PasswordAuthentication = false; # Key-only authentication (matches laptop)
       AllowUsers = [ username ];
       PermitRootLogin = "no";
     };

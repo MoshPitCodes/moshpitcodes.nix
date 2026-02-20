@@ -37,11 +37,6 @@
       "SUPER SHIFT, D, exec, ${pkgs.discord}/bin/discord --enable-features=UseOzonePlatform --ozone-platform=wayland" # Open Discord (workspace 1 via window rule)
     ];
 
-    # Window focus behavior - prevents ALL windows from stealing focus
-    misc = {
-      focus_on_activate = lib.mkForce false;
-    };
-
     # Desktop has full Nvidia GPU - keep all effects enabled
     decoration = {
       blur.enabled = lib.mkDefault true;
