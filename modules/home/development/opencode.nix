@@ -32,6 +32,16 @@ in
         model = "openrouter/openai/gpt-5.2";
         theme = "rosepine";
         autoupdate = false;
+        # Prevent file watcher from tracking plugin logs and session data.
+        # Without this, diff summaries include full log file contents on every
+        # turn, causing multi-MB messages that bloat the SQLite database and
+        # drive memory usage into the tens of gigabytes.
+        watcher = {
+          ignore = [
+            ".opencode/logs/**"
+            ".opencode/data/**"
+          ];
+        };
       };
     };
 
