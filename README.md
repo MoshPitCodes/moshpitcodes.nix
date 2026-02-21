@@ -105,7 +105,7 @@ My personal NixOS system configuration. This is something I have been working on
 | **Icon Theme**              | [Papirus-Dark][Papirus-Dark]                                                        |
 | **Lockscreen**              | [Hyprlock][Hyprlock] + [Swaylock-effects][Swaylock-effects]                         |
 | **Image Viewer**            | [imv][imv]                                                                          |
-| **Screenshot Tool**         | [grimblast][grimblast]                                                              |
+| **Screenshot Tool**         | [Flameshot][Flameshot]                                                              |
 | **Screen Recording Tool**   | [wf-recorder][wf-recorder] + [OBS][OBS]                                             |
 | **Media Player**            | [mpv][mpv]                                                                          |
 | **Music Player**            | [audacious][audacious]                                                              |
@@ -368,7 +368,7 @@ Other dotfiles that have inspired me greatly:
 [VSCode]: https://code.visualstudio.com/
 [Neovim]: https://github.com/neovim/neovim
 [OpenCode]: https://opencode.ai/
-[grimblast]: https://github.com/hyprwm/contrib
+[Flameshot]: https://github.com/flameshot-org/flameshot
 [Rose Pine]: https://rosepinetheme.com/
 [hyprpicker]: https://github.com/hyprwm/hyprpicker
 [imv]: https://sr.ht/~exec64/imv/
