@@ -48,7 +48,14 @@ let
 
   # Screen recording and screenshots
   record = pkgs.writeScriptBin "record" (builtins.readFile ./scripts/record.sh);
-  screenshot = pkgs.writeScriptBin "screenshot" (builtins.readFile ./scripts/screenshot.sh);
+  screenshot = pkgs.writeShellApplication {
+    name = "screenshot";
+    runtimeInputs = with pkgs; [
+      grimblast
+      coreutils
+    ];
+    text = builtins.readFile ./scripts/screenshot.sh;
+  };
 
   # Power menu (rofi-power-menu)
   power-menu = pkgs.writeScriptBin "power-menu" (builtins.readFile ./scripts/power-menu.sh);
