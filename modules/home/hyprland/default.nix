@@ -133,6 +133,12 @@
 
       # Window rules (matching old config syntax)
       windowrule = [
+        # Flameshot (multi-monitor support on wlroots compositors)
+        # Note: Flameshot on Wayland reports empty class, match by title
+        # Absolute positioning handled by screenshot wrapper script (keybinds)
+        "float on, match:title ^(flameshot)$"
+        "pin on, match:title ^(flameshot)$"
+
         # Rofi launcher
         "pin on, match:class ^(rofi)$"
 
@@ -382,10 +388,10 @@
         "$mod, mouse_down, workspace, e+1"
         "$mod, mouse_up, workspace, e-1"
 
-        # Screenshots
-        ", Print, exec, ${pkgs.grimblast}/bin/grimblast --notify copy area"
-        "$mod, Print, exec, ${pkgs.grimblast}/bin/grimblast --notify save area ~/Pictures/Screenshots/Screenshot_$(date +%Y-%m-%d_%H-%M-%S).png"
-        "$mod SHIFT, Print, exec, ${pkgs.grimblast}/bin/grimblast --notify copy output"
+        # Screenshots (using wrapper script for multi-monitor fix)
+        ", Print, exec, screenshot --copy"
+        "$mod, Print, exec, screenshot --save"
+        "$mod SHIFT, Print, exec, screenshot --full"
 
         # Media keys
         ", XF86AudioMute, exec, ${pkgs.swayosd}/bin/swayosd-client --output-volume mute-toggle"

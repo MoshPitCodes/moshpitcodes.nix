@@ -1,6 +1,21 @@
 # User packages
 { pkgs, lib, ... }:
 {
+  # Flameshot configuration - use grim adapter to bypass dbus for Wayland screenshots
+  # Written as a real file (not symlink) so Flameshot's QSettings can read/write it
+  home.activation.flameshot-config = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+        config_dir="$HOME/.config/flameshot"
+        config_file="$config_dir/flameshot.ini"
+        mkdir -p "$config_dir"
+        if [ ! -f "$config_file" ] || ! grep -q "useGrimAdapter" "$config_file"; then
+          cat > "$config_file" << 'EOF'
+    [General]
+    useGrimAdapter=true
+    disabledTrayIcon=true
+    EOF
+        fi
+  '';
+
   home.packages =
     with pkgs;
     [
@@ -56,7 +71,8 @@
       wl-clip-persist
       cliphist
       slurp
-      grimblast
+      grim
+      flameshot
       wf-recorder
 
       # Desktop utilities
