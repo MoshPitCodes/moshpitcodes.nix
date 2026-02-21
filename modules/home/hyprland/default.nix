@@ -128,17 +128,12 @@
         "ignore_alpha 1, match:namespace ^(rofi)$"
         "blur 1, match:namespace ^(notifications)$"
         "ignore_alpha 0.5, match:namespace ^(notifications)$"
+        "no_anim 1, match:namespace ^(selection)$"
         "no_anim 1, match:namespace ^(hyprpicker)$"
       ];
 
       # Window rules (matching old config syntax)
       windowrule = [
-        # Flameshot (multi-monitor support on wlroots compositors)
-        # Note: Flameshot on Wayland reports empty class, match by title
-        # Absolute positioning handled by screenshot wrapper script (keybinds)
-        "float on, match:title ^(flameshot)$"
-        "pin on, match:title ^(flameshot)$"
-
         # Rofi launcher
         "pin on, match:class ^(rofi)$"
 
