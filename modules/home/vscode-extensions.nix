@@ -18,8 +18,8 @@ let
       mktplcRef = {
         name = "claude-code";
         publisher = "anthropic";
-        version = "1.0.31";
-        hash = "sha256-3brSSb6ERY0In5QRmv5F0FKPm7Ka/0wyiudLNRSKGBg=";
+        version = "2.1.49";
+        hash = "sha256-9WwA1TUM/h8kLoZV/ukh/4s3w9DnJ/cVAxypz4jlj6A=";
       };
     };
 

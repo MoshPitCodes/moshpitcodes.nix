@@ -6,6 +6,6 @@
   # TD - Task management for AI-assisted development
   (import ./td.nix { inherit inputs; })
 
-  # Reposync - Interactive repository synchronization tool
-  (import ./reposync.nix { inherit inputs; })
+  # Reposync - disabled (re-enable when needed)
+  # (import ./reposync.nix { inherit inputs; })
 ]
