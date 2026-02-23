@@ -5,7 +5,6 @@
     with pkgs;
     [
       # CLI tools
-      reposync
       ripgrep
       fd
       eza

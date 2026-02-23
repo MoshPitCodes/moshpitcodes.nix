@@ -8,7 +8,7 @@ final: prev: {
 
     # Go module vendoring hash
     # Computed from go.mod and go.sum
-    vendorHash = "sha256-OMmNgun7bbutlfs3g5zXfykDQUIA8TAfaVhYfprtK2w=";
+    vendorHash = "sha256-NoEPSYOOepfCqRr4O2sQkpUdck6aQlOzzfhO9KXL5gc=";
 
     # Build the main reposync binary
     subPackages = [ "." ];

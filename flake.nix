@@ -48,19 +48,20 @@
     };
 
     sidecar = {
-      url = "github:marcus/sidecar/v0.74.0";
+      url = "github:marcus/sidecar/v0.74.1";
       flake = false;
     };
 
     td = {
-      url = "github:marcus/td/v0.37.0";
+      url = "github:marcus/td/v0.38.0";
       flake = false;
     };
 
-    reposync = {
-      url = "github:MoshPitCodes/reposync";
-      flake = false;
-    };
+    # reposync - disabled (re-enable when needed)
+    # reposync = {
+    #   url = "github:MoshPitCodes/reposync";
+    #   flake = false;
+    # };
   };
 
   outputs =
