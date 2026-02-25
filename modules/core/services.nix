@@ -20,5 +20,8 @@
 
     # GNOME Keyring
     gnome.gnome-keyring.enable = true;
+
+    # TeamViewer remote desktop
+    teamviewer.enable = true;
   };
 }
