@@ -603,16 +603,16 @@
     "sidecar": {
       "flake": false,
       "locked": {
-        "lastModified": 1771521536,
-        "narHash": "sha256-kR75cLe8ZYcsG/tGunKf91l4E2g1MKEGcCfQNVyqk5I=",
+        "lastModified": 1772177211,
+        "narHash": "sha256-strL2tX9/wMb91FlstCh1kUNAh/n07KOtoB6XJrrP60=",
         "owner": "marcus",
         "repo": "sidecar",
-        "rev": "2b7c63b0e49e3bf8a94f0acfdfcea9ef9f6fa18b",
+        "rev": "79c46a84d4b1aaf3de6cbdf2318bc33ba63ff9ed",
         "type": "github"
       },
       "original": {
         "owner": "marcus",
-        "ref": "v0.74.1",
+        "ref": "v0.75.0",
         "repo": "sidecar",
         "type": "github"
       }
