@@ -84,7 +84,7 @@ in
     scd = "sidecar --debug";
 
     # Launch sidecar in specific project
-    scp = "sidecar --project";
+    scproject = "sidecar --project";
 
     # Show sidecar configuration
     sidecar-config = "cat ~/.config/sidecar/config.json | ${pkgs.jq}/bin/jq";
@@ -405,7 +405,7 @@ in
   programs.bash.shellAliases = {
     sc = "sidecar";
     scd = "sidecar --debug";
-    scp = "sidecar --project";
+    scproject = "sidecar --project";
     sidecar-help = "sidecar --help";
     sidecar-config = "cat ~/.config/sidecar/config.json | ${pkgs.jq}/bin/jq";
     sidecar-edit = "\${EDITOR:-nvim} ~/.config/sidecar/config.json";

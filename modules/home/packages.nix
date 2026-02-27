@@ -20,6 +20,7 @@
       gtrash
       viu
       nitch
+      nss
       openssl
       mimeo
       programmer-calculator

@@ -1,0 +1,55 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "team-lead",
+  "plugin": [],
+  "permission": {
+    "*": "ask",
+    "read": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "**/secrets/**": "deny",
+      "**/*.pem": "deny",
+      "**/*.key": "deny",
+      "**/credentials*.json": "deny",
+      "**/id_rsa*": "deny",
+      "**/id_ed25519*": "deny",
+      "*.env.example": "allow",
+      "*.env.sample": "allow",
+      "*.env.template": "allow"
+    },
+    "edit": {
+      "*": "allow",
+      "*.env": "deny",
+      "*.env.*": "deny",
+      "**/secrets/**": "deny",
+      "**/*.pem": "deny",
+      "**/*.key": "deny",
+      "**/credentials*.json": "deny",
+      "**/id_rsa*": "deny",
+      "**/id_ed25519*": "deny"
+    },
+    "bash": {
+      "*": "allow",
+      "rm -rf*": "deny",
+      "rm --recursive*": "deny",
+      "sudo *": "deny",
+      "chmod 777*": "deny",
+      "kubectl apply*": "ask",
+      "kubectl delete*": "ask",
+      "terraform apply*": "ask",
+      "terraform destroy*": "ask",
+      "nixos-rebuild*": "ask",
+      "rm -r*": "deny"
+    },
+    "external_directory": {
+      "/home/moshpitcodes/Development/MoshPitLabs/worktrees/**": "allow"
+    }
+  },
+  "watcher": {
+    "ignore": [
+      ".opencode/logs/**",
+      ".opencode/data/**"
+    ]
+  }
+}
