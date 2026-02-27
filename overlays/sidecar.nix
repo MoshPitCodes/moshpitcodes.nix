@@ -2,7 +2,7 @@
 final: prev: {
   sidecar = prev.buildGoModule rec {
     pname = "sidecar";
-    version = "0.74.1";
+    version = "0.75.0";
 
     src = inputs.sidecar;
 
