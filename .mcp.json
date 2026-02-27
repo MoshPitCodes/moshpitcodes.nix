@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "td": {
+      "command": "node",
+      "args": ["/home/moshpitcodes/Development/MoshPitLabs/template-claude/.claude/mcp-servers/td/dist/index.js"]
+    }
+  }
+}
