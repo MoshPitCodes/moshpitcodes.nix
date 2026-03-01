@@ -1,4 +1,4 @@
-# Rofi application launcher (Everforest theme)
+# Rofi application launcher (TokyoNight Storm theme)
 { pkgs, ... }:
 {
   home.packages = with pkgs; [
@@ -8,14 +8,14 @@
 
   xdg.configFile."rofi/theme.rasi".text = ''
     * {
-      bg-col: #2d353b;
-      bg-col-light: #3d484d;
-      border-col: #859289;
-      selected-col: #3d484d;
-      green: #a7c080;
-      fg-col: #d3c6aa;
-      fg-col2: #d3c6aa;
-      grey: #859289;
+      bg-col: #24283b;
+      bg-col-light: #292e42;
+      border-col: #7aa2f7;
+      selected-col: #292e42;
+      green: #9ece6a;
+      fg-col: #c0caf5;
+      fg-col2: #f7768e;
+      grey: #545c7e;
       highlight: @green;
     }
   '';

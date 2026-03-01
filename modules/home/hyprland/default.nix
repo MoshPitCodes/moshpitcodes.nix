@@ -1,4 +1,4 @@
-# Hyprland user configuration (Everforest theme)
+# Hyprland user configuration (TokyoNight Storm theme)
 { pkgs, ... }:
 {
   wayland.windowManager.hyprland = {
@@ -18,8 +18,8 @@
         gaps_in = 2;
         gaps_out = 4;
         border_size = 3;
-        "col.active_border" = "rgba(D3C6AAff)";
-        "col.inactive_border" = "rgba(3D484Dff)";
+        "col.active_border" = "rgba(c0caf5ff)";
+        "col.inactive_border" = "rgba(414868ff)";
         layout = "dwindle";
         resize_on_border = false;
       };
@@ -435,8 +435,8 @@
         pad = "8x8";
       };
       colors = {
-        background = "2d353b";
-        foreground = "d3c6aa";
+        background = "24283b";
+        foreground = "c0caf5";
       };
     };
   };
