@@ -686,16 +686,16 @@
     "td": {
       "flake": false,
       "locked": {
-        "lastModified": 1771521255,
-        "narHash": "sha256-PMSbdGBDMlrhqNH5DpTDAu721d0sMY0Dyk7ZTuHw3Ng=",
+        "lastModified": 1772330350,
+        "narHash": "sha256-0mj+mCYcc8i2my0FVlQSpecEsFXB5AyvjEdvSSz2bJM=",
         "owner": "marcus",
         "repo": "td",
-        "rev": "ce04f20724029e7f9394b7edc1e5b4cc2659194c",
+        "rev": "7b613c64c904dfaaf755ee0695b2e510d3c88134",
         "type": "github"
       },
       "original": {
         "owner": "marcus",
-        "ref": "v0.38.0",
+        "ref": "v0.41.0",
         "repo": "td",
         "type": "github"
       }

@@ -53,7 +53,7 @@
     };
 
     td = {
-      url = "github:marcus/td/v0.38.0";
+      url = "github:marcus/td/v0.41.0";
       flake = false;
     };
 
