@@ -20,11 +20,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772292445,
-        "narHash": "sha256-4F1Q7U313TKUDDovCC96m/Za4wZcJ3yqtu4eSrj8lk8=",
+        "lastModified": 1771610171,
+        "narHash": "sha256-+DeInuhbm6a6PpHDNUS7pozDouq2+8xSDefoNaZLW0E=",
         "owner": "hyprwm",
         "repo": "aquamarine",
-        "rev": "1dbbba659c1cef0b0202ce92cadfe13bae550e8f",
+        "rev": "7f9eb087703ec4acc6b288d02fa9ea3db803cd3d",
         "type": "github"
       },
       "original": {
@@ -226,15 +226,16 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1772360122,
-        "narHash": "sha256-IwfjSqC5XSgijGoopQCP34yq9+YEyfUU5J861JsGFgE=",
+        "lastModified": 1772215399,
+        "narHash": "sha256-iD/OJ5f7cyYluA0aQgTPTYuY0l12oF/mowyzcR8IQOY=",
         "owner": "hyprwm",
         "repo": "Hyprland",
-        "rev": "f41e3c220366c4432cbef04c7d7a3f28a5d702b4",
+        "rev": "0002f148c9a4fe421a9d33c0faa5528cdc411e62",
         "type": "github"
       },
       "original": {
         "owner": "hyprwm",
+        "ref": "v0.54.0",
         "repo": "Hyprland",
         "type": "github"
       }
@@ -573,11 +574,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772024342,
-        "narHash": "sha256-+eXlIc4/7dE6EcPs9a2DaSY3fTA9AE526hGqkNID3Wg=",
+        "lastModified": 1771858127,
+        "narHash": "sha256-Gtre9YoYl3n25tJH2AoSdjuwcqij5CPxL3U3xysYD08=",
         "owner": "cachix",
         "repo": "git-hooks.nix",
-        "rev": "6e34e97ed9788b17796ee43ccdbaf871a5c2b476",
+        "rev": "49bbbfc218bf3856dfa631cead3b052d78248b83",
         "type": "github"
       },
       "original": {
