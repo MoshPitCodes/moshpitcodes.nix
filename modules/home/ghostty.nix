@@ -1,4 +1,4 @@
-# Ghostty terminal configuration (Everforest theme)
+# Ghostty terminal configuration (TokyoNight Storm theme)
 { pkgs, ... }:
 {
   home.packages = [ pkgs.ghostty ];
@@ -8,7 +8,7 @@
     font-family = FiraCode Nerd Font
     font-size = 12
 
-    theme = Everforest Dark Hard
+    theme = tokyonight_storm
 
     cursor-style = block
     cursor-style-blink = true

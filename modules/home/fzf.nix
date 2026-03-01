@@ -1,4 +1,4 @@
-# fzf - fuzzy finder with fd/bat/eza integration (Everforest theme)
+# fzf - fuzzy finder with fd/bat/eza integration (TokyoNight Storm theme)
 _: {
   programs.fzf = {
     enable = true;
@@ -15,12 +15,12 @@ _: {
       "--preview 'eza --tree --color=always {} | head -200'"
     ];
 
-    # Everforest color theme
+    # TokyoNight Storm color theme
     defaultOptions = [
-      "--color=fg:-1,fg+:#d3c6aa,bg:-1,bg+:#3d484d"
-      "--color=hl:#a7c080,hl+:#a7c080,info:#7fbbb3,marker:#dbbc7f"
-      "--color=prompt:#e67e80,spinner:#83c092,pointer:#d699b6,header:#7fbbb3"
-      "--color=border:#475258,label:#9da9a0,query:#d3c6aa"
+      "--color=fg:-1,fg+:#c0caf5,bg:-1,bg+:#292e42"
+      "--color=hl:#9ece6a,hl+:#9ece6a,info:#7aa2f7,marker:#e0af68"
+      "--color=prompt:#f7768e,spinner:#73daca,pointer:#bb9af7,header:#7aa2f7"
+      "--color=border:#414868,label:#545c7e,query:#c0caf5"
       "--border='double' --border-label='' --preview-window='border-sharp' --prompt='> '"
       "--marker='>' --pointer='>' --separator='─' --scrollbar='│'"
       "--info='right'"
