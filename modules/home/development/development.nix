@@ -64,6 +64,7 @@
 
     # Utilities
     jq
+    just
     yq
     ripgrep
   ];
