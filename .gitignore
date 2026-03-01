@@ -79,3 +79,10 @@ package-lock.json
 .opencode/
 .todos
 .todos/
+.sidecar/
+.sidecar-agent
+.sidecar-task
+.sidecar-pr
+.sidecar-start.sh
+.sidecar-base
+.td-root
