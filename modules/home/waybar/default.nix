@@ -1,4 +1,4 @@
-# Waybar status bar configuration (TokyoNight Storm theme)
+# Waybar status bar configuration (Everforest theme)
 {
   pkgs,
   lib,
@@ -206,14 +206,14 @@
           tooltip = false;
           format = "{icon} ";
           format-icons = {
-            notification = "<span foreground='#f7768e'>󰂞</span>";
-            none = "<span foreground='#9ece6a'>󰂚</span>";
-            dnd-notification = "<span foreground='#f7768e'>󰂞</span>";
-            dnd-none = "<span foreground='#9ece6a'>󰂚</span>";
-            inhibited-notification = "<span foreground='#f7768e'>󰂞</span>";
-            inhibited-none = "<span foreground='#9ece6a'>󰂚</span>";
-            dnd-inhibited-notification = "<span foreground='#f7768e'>󰂞</span>";
-            dnd-inhibited-none = "<span foreground='#9ece6a'>󰂚</span>";
+            notification = "<span foreground='#e67e80'>󰂞</span>";
+            none = "<span foreground='#a7c080'>󰂚</span>";
+            dnd-notification = "<span foreground='#e67e80'>󰂞</span>";
+            dnd-none = "<span foreground='#a7c080'>󰂚</span>";
+            inhibited-notification = "<span foreground='#e67e80'>󰂞</span>";
+            inhibited-none = "<span foreground='#a7c080'>󰂚</span>";
+            dnd-inhibited-notification = "<span foreground='#e67e80'>󰂞</span>";
+            dnd-inhibited-none = "<span foreground='#a7c080'>󰂚</span>";
           };
           return-type = "json";
           exec-if = "which ${pkgs.swaynotificationcenter}/bin/swaync-client";
@@ -260,14 +260,14 @@
     };
 
     style = ''
-      /* TokyoNight Storm color scheme */
-      @define-color foreground #c0caf5;
-      @define-color background #24283b;
-      @define-color accent #7aa2f7;
-      @define-color red #f7768e;
-      @define-color green #9ece6a;
-      @define-color blue #7dcfff;
-      @define-color hover #292e42;
+      /* Everforest color scheme */
+      @define-color foreground #d3c6aa;
+      @define-color background #2d353b;
+      @define-color accent #dbbc7f;
+      @define-color red #e67e80;
+      @define-color green #a7c080;
+      @define-color blue #7fbbb3;
+      @define-color hover #3d484d;
 
       /* Global Styles */
       * {
@@ -334,8 +334,8 @@
 
       #workspaces button.active {
         color: @accent;
-        background-color: rgba(122, 162, 247, 0.1);
-        box-shadow: inset 0 0 0 1px rgba(122, 162, 247, 0.2);
+        background-color: rgba(219, 188, 127, 0.1);
+        box-shadow: inset 0 0 0 1px rgba(219, 188, 127, 0.2);
       }
 
       #workspaces button:hover {
@@ -349,7 +349,7 @@
         padding: 0.3rem 0.7rem;
         margin: 5px 0px;
         border-radius: 6px;
-        box-shadow: 0 1px 3px rgba(125, 207, 255, 0.2);
+        box-shadow: 0 1px 3px rgba(127, 187, 179, 0.2);
         min-width: 0;
         border: none;
         transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
@@ -358,7 +358,7 @@
       }
 
       #clock:hover {
-        background-color: rgba(125, 207, 255, 0.1);
+        background-color: rgba(127, 187, 179, 0.1);
       }
 
       /* Right Modules - Seamless Bar */

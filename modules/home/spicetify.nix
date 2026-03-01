@@ -1,4 +1,4 @@
-# Spotify customization via spicetify (TokyoNight Storm theme)
+# Spotify customization via spicetify (Everforest-compatible theme)
 {
   pkgs,
   inputs,
@@ -18,6 +18,6 @@ in
       shuffle
     ];
     theme = spicePkgs.themes.dribbblish;
-    colorScheme = "tokyo-night";
+    colorScheme = "rosepine";
   };
 }

@@ -35,24 +35,24 @@
       # Reload config
       bind r source-file ~/.config/tmux/tmux.conf \; display-message "Config reloaded"
 
-      # TokyoNight Storm status bar
-      set -g status-style "bg=#1f2335,fg=#c0caf5"
+      # Osaka Jade status bar
+      set -g status-style "bg=#11221C,fg=#e6d8ba"
       set -g status-left-length 30
       set -g status-right-length 50
-      set -g status-left "#[bg=#7aa2f7,fg=#1f2335,bold] #S #[default] "
-      set -g status-right "#[fg=#c0caf5] %Y-%m-%d #[fg=#7aa2f7]| #[fg=#c0caf5]%H:%M "
+      set -g status-left "#[bg=#71CEAD,fg=#11221C,bold] #S #[default] "
+      set -g status-right "#[fg=#e6d8ba] %Y-%m-%d #[fg=#71CEAD]| #[fg=#e6d8ba]%H:%M "
 
       # Window status
-      set -g window-status-format "#[fg=#414868] #I:#W "
-      set -g window-status-current-format "#[bg=#7aa2f7,fg=#1f2335,bold] #I:#W "
+      set -g window-status-format "#[fg=#214237] #I:#W "
+      set -g window-status-current-format "#[bg=#71CEAD,fg=#11221C,bold] #I:#W "
       set -g window-status-separator ""
 
       # Pane borders
-      set -g pane-border-style "fg=#414868"
-      set -g pane-active-border-style "fg=#7aa2f7"
+      set -g pane-border-style "fg=#214237"
+      set -g pane-active-border-style "fg=#71CEAD"
 
       # Message style
-      set -g message-style "bg=#1f2335,fg=#c0caf5"
+      set -g message-style "bg=#11221C,fg=#e6d8ba"
     '';
   };
 }

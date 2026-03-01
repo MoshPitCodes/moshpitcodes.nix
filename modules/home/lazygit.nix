@@ -1,4 +1,4 @@
-# lazygit - terminal git UI (TokyoNight Storm theme)
+# lazygit - terminal git UI (Everforest theme)
 { pkgs, ... }:
 {
   home.packages = [ pkgs.lazygit ];
@@ -8,28 +8,28 @@
       nerdFontsVersion: "3"
       theme:
         activeBorderColor:
-          - "#73daca"
+          - "#83c092"
           - bold
         inactiveBorderColor:
-          - "#414868"
+          - "#859289"
         searchingActiveBorderColor:
-          - "#e0af68"
+          - "#dbbc7f"
           - bold
         optionsTextColor:
-          - "#7dcfff"
+          - "#7fbbb3"
         selectedLineBgColor:
-          - "#292e42"
+          - "#3d484d"
         cherryPickedCommitFgColor:
-          - "#7aa2f7"
+          - "#7fbbb3"
         cherryPickedCommitBgColor:
-          - "#292e42"
+          - "#3d484d"
         markedBaseCommitFgColor:
-          - "#7dcfff"
+          - "#7fbbb3"
         markedBaseCommitBgColor:
-          - "#292e42"
+          - "#3d484d"
         unstagedChangesColor:
-          - "#f7768e"
+          - "#e67e80"
         defaultFgColor:
-          - "#c0caf5"
+          - "#d3c6aa"
   '';
 }

@@ -1,4 +1,4 @@
-# SwayNotificationCenter configuration (TokyoNight Storm colors)
+# SwayNotificationCenter configuration (Everforest colors)
 { pkgs, ... }:
 {
   xdg.configFile."swaync/config.json".text = builtins.toJSON {
@@ -38,9 +38,9 @@
     }
 
     .control-center {
-      background: rgba(36, 40, 59, 0.95);
+      background: rgba(45, 53, 59, 0.95);
       border-radius: 5px;
-      border: 2px solid #414868;
+      border: 2px solid #3d484d;
       margin: 10px;
       padding: 10px;
     }
@@ -53,8 +53,8 @@
       border-radius: 5px;
       margin: 5px 0px;
       padding: 0px;
-      background: #24283b;
-      border: 1px solid #414868;
+      background: #3d484d;
+      border: 1px solid #3d484d;
     }
 
     .notification-content {
@@ -62,44 +62,44 @@
     }
 
     .close-button {
-      background: #7aa2f7;
-      color: #1f2335;
+      background: #a7c080;
+      color: #2d353b;
       border-radius: 50%;
       padding: 2px;
       margin: 5px;
     }
 
     .notification-default-action:hover {
-      background: #292e42;
+      background: #3d484d;
     }
 
     .widget-title {
-      color: #c0caf5;
+      color: #d3c6aa;
       font-weight: bold;
       font-size: 16px;
       margin: 5px 10px;
     }
 
     .widget-title button {
-      background: #7aa2f7;
-      color: #1f2335;
+      background: #a7c080;
+      color: #2d353b;
       border-radius: 5px;
       padding: 4px 12px;
       border: none;
     }
 
     .widget-dnd {
-      color: #c0caf5;
+      color: #d3c6aa;
       margin: 5px 10px;
     }
 
     .widget-dnd > switch {
       border-radius: 5px;
-      background: #414868;
+      background: #3d484d;
     }
 
     .widget-dnd > switch:checked {
-      background: #7aa2f7;
+      background: #a7c080;
     }
   '';
 }
