@@ -2,13 +2,13 @@
 final: prev: {
   sidecar = prev.buildGoModule rec {
     pname = "sidecar";
-    version = "0.75.0";
+    version = "0.77.0";
 
     src = inputs.sidecar;
 
     # Go module vendoring hash
     # Computed from go.mod and go.sum
-    vendorHash = "sha256-EwgUInjo7zpRX/Lc0dCsiBrNxW8Ki9QxAKBA6dvjX3M=";
+    vendorHash = "sha256-UpccauexSoMQy76Xdyf7AcVlomMVd0M9PtISjWa5bio=";
 
     # Only build the main sidecar binary
     subPackages = [ "cmd/sidecar" ];

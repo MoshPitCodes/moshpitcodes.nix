@@ -48,7 +48,7 @@
     };
 
     sidecar = {
-      url = "github:marcus/sidecar/v0.75.0";
+      url = "github:marcus/sidecar/v0.77.0";
       flake = false;
     };
 
