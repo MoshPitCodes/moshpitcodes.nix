@@ -106,6 +106,7 @@
       gimp
       libreoffice
       obs-studio
+      slack
       gnome-calculator
       mission-center
       soundwireserver
