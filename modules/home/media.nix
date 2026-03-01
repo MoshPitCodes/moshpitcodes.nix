@@ -11,20 +11,20 @@
     };
   };
 
-  # PDF viewer with osaka-jade theme
+  # PDF viewer with TokyoNight Storm theme
   programs.zathura = {
     enable = true;
     options = {
-      default-bg = "#11221C";
-      default-fg = "#e6d8ba";
-      statusbar-bg = "#11221C";
-      statusbar-fg = "#e6d8ba";
+      default-bg = "#1f2335";
+      default-fg = "#c0caf5";
+      statusbar-bg = "#1f2335";
+      statusbar-fg = "#c0caf5";
       inputbar-bg = "#072820";
-      inputbar-fg = "#e6d8ba";
-      highlight-color = "#71CEAD";
-      highlight-active-color = "#71CEAD";
-      recolor-lightcolor = "#11221C";
-      recolor-darkcolor = "#e6d8ba";
+      inputbar-fg = "#c0caf5";
+      highlight-color = "#73daca";
+      highlight-active-color = "#73daca";
+      recolor-lightcolor = "#1f2335";
+      recolor-darkcolor = "#c0caf5";
       recolor = true;
     };
   };
