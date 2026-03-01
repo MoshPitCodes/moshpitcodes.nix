@@ -1,10 +1,10 @@
-# micro text editor (Everforest theme)
+# micro text editor (TokyoNight Storm theme)
 { ... }:
 {
   programs.micro = {
     enable = true;
     settings = {
-      colorscheme = "everforest";
+      colorscheme = "tokyonight";
       autoindent = true;
       cursorline = true;
       mkparents = true;
@@ -24,46 +24,46 @@
     };
   };
 
-  # Custom Everforest colorscheme for micro
-  xdg.configFile."micro/colorschemes/everforest.micro".text = ''
-    color-link default "#d3c6aa,#2d353b"
-    color-link comment "#859289,#2d353b"
-    color-link comment.bright "#9da9a0,#2d353b"
-    color-link identifier "#83c092"
-    color-link identifier.class "#83c092,bold"
-    color-link identifier.var "#d3c6aa"
-    color-link constant "#d699b6"
-    color-link constant.number "#d699b6"
-    color-link constant.string "#a7c080"
-    color-link constant.string.char "#a7c080"
-    color-link constant.bool "#d699b6"
-    color-link statement "#e67e80"
-    color-link symbol "#d3c6aa"
-    color-link symbol.operator "#e69875"
-    color-link symbol.brackets "#d3c6aa"
-    color-link symbol.tag "#e67e80"
-    color-link preproc "#dbbc7f"
-    color-link type "#dbbc7f"
-    color-link type.keyword "#e67e80"
-    color-link special "#7fbbb3"
-    color-link underlined "#7fbbb3,underline"
-    color-link error "#e67e80,bold"
-    color-link todo "#dbbc7f,bold"
-    color-link statusline "#d3c6aa,#3d484d"
-    color-link tabbar "#d3c6aa,#3d484d"
-    color-link indent-char "#475258"
-    color-link line-number "#859289,#2d353b"
-    color-link current-line-number "#d3c6aa,#3d484d"
-    color-link gutter-error "#e67e80"
-    color-link gutter-warning "#dbbc7f"
-    color-link cursor-line "#3d484d"
-    color-link color-column "#3d484d"
-    color-link diff-added "#a7c080"
-    color-link diff-modified "#dbbc7f"
-    color-link diff-deleted "#e67e80"
-    color-link selection "#d3c6aa,#475258"
-    color-link hlsearch "#2d353b,#dbbc7f"
-    color-link matchingbrace "#dbbc7f,underline"
+  # Custom TokyoNight Storm colorscheme for micro
+  xdg.configFile."micro/colorschemes/tokyonight.micro".text = ''
+    color-link default "#c0caf5,#24283b"
+    color-link comment "#545c7e,#24283b"
+    color-link comment.bright "#a9b1d6,#24283b"
+    color-link identifier "#7dcfff"
+    color-link identifier.class "#7dcfff,bold"
+    color-link identifier.var "#c0caf5"
+    color-link constant "#bb9af7"
+    color-link constant.number "#bb9af7"
+    color-link constant.string "#9ece6a"
+    color-link constant.string.char "#9ece6a"
+    color-link constant.bool "#bb9af7"
+    color-link statement "#7aa2f7"
+    color-link symbol "#c0caf5"
+    color-link symbol.operator "#ff9e64"
+    color-link symbol.brackets "#c0caf5"
+    color-link symbol.tag "#7aa2f7"
+    color-link preproc "#bb9af7"
+    color-link type "#73daca"
+    color-link type.keyword "#7aa2f7"
+    color-link special "#e0af68"
+    color-link underlined "#7dcfff,underline"
+    color-link error "#f7768e,bold"
+    color-link todo "#e0af68,bold"
+    color-link statusline "#c0caf5,#1f2335"
+    color-link tabbar "#a9b1d6,#1f2335"
+    color-link indent-char "#414868"
+    color-link line-number "#414868,#24283b"
+    color-link current-line-number "#c0caf5,#292e42"
+    color-link gutter-error "#f7768e"
+    color-link gutter-warning "#e0af68"
+    color-link cursor-line "#292e42"
+    color-link color-column "#292e42"
+    color-link diff-added "#9ece6a"
+    color-link diff-modified "#e0af68"
+    color-link diff-deleted "#f7768e"
+    color-link selection "#c0caf5,#292e42"
+    color-link hlsearch "#24283b,#e0af68"
+    color-link matchingbrace "#e0af68,underline"
   '';
 
   # Keybindings

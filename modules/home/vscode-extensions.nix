@@ -5,12 +5,12 @@ let
 
   # Custom marketplace extensions not in nixpkgs
   customExtensions = {
-    everforest = vscode-utils.buildVscodeMarketplaceExtension {
+    tokyo-night = vscode-utils.buildVscodeMarketplaceExtension {
       mktplcRef = {
-        name = "everforest";
-        publisher = "sainnhe";
-        version = "0.3.0";
-        hash = "sha256-nZirzVvM160ZTpBLTimL2X35sIGy5j2LQOok7a2Yc7U=";
+        name = "tokyo-night";
+        publisher = "enkia";
+        version = "1.0.5";
+        hash = "sha256-CIVYoiaAZrOd4TDO+18aWjkXSx8p1zcCMexm6kmcmlM=";
       };
     };
 
@@ -91,7 +91,7 @@ in
         pkief.material-icon-theme
       ])
       ++ (with customExtensions; [
-        everforest
+        tokyo-night
         claude-code
         makefile-tools
         vscode-mermaid-chart

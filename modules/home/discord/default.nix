@@ -1,4 +1,4 @@
-# Discord
+# Discord (TokyoNight Storm CSS available at discord/tokyonight.css — not yet wired)
 { pkgs, ... }:
 {
   home.packages = with pkgs; [

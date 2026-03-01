@@ -1,4 +1,4 @@
-# Swaylock screen lock (Everforest theme)
+# Swaylock screen lock (TokyoNight Storm theme)
 {
   pkgs,
   ...
@@ -24,28 +24,28 @@
 
       font = "FiraCode Nerd Font";
 
-      # Everforest color scheme
-      text-wrong-color = "d3c6aaFF";
-      text-ver-color = "d3c6aaFF";
-      text-clear-color = "d3c6aaFF";
-      key-hl-color = "dbbc7fFF"; # Everforest yellow/accent
-      bs-hl-color = "e67e80FF"; # Everforest red
-      ring-clear-color = "7fbbb3FF"; # Everforest blue
-      ring-wrong-color = "e67e80ff"; # Everforest red
-      ring-ver-color = "a7c080FF"; # Everforest green
-      ring-color = "859289ff"; # Everforest gray-green
+      # TokyoNight Storm color scheme
+      text-wrong-color = "c0caf5FF";
+      text-ver-color = "c0caf5FF";
+      text-clear-color = "c0caf5FF";
+      key-hl-color = "9ece6aFF"; # TokyoNight green
+      bs-hl-color = "f7768eFF"; # TokyoNight red
+      ring-clear-color = "7dcfffFF"; # TokyoNight cyan
+      ring-wrong-color = "f7768eff"; # TokyoNight red
+      ring-ver-color = "9ece6aFF"; # TokyoNight green
+      ring-color = "7aa2f7ff"; # TokyoNight blue
       line-clear-color = "FFFFFF00";
       line-ver-color = "FFFFFF00";
       line-wrong-color = "FFFFFF00";
-      separator-color = "FFFFFF00";
+      separator-color = "414868FF"; # TokyoNight terminal_black
       line-color = "FFFFFF00";
-      text-color = "d3c6aaFF"; # Everforest foreground
-      inside-color = "2d353bDD"; # Everforest background
-      inside-ver-color = "2d353bDD";
-      inside-clear-color = "2d353bDD";
-      inside-wrong-color = "2d353bDD";
+      text-color = "c0caf5FF"; # TokyoNight fg
+      inside-color = "24283bDD"; # TokyoNight bg
+      inside-ver-color = "24283bDD";
+      inside-clear-color = "24283bDD";
+      inside-wrong-color = "24283bDD";
       layout-bg-color = "FFFFFF00";
-      layout-text-color = "d3c6aaFF";
+      layout-text-color = "c0caf5FF";
     };
   };
 }

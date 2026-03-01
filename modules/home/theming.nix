@@ -1,4 +1,4 @@
-# GTK/Qt theming configuration (Osaka Jade theme)
+# GTK/Qt theming configuration (TokyoNight Storm theme)
 { pkgs, ... }:
 {
   gtk = {
@@ -38,21 +38,21 @@
     gtk.enable = true;
   };
 
-  # Everforest GTK color overrides
+  # TokyoNight Storm GTK color overrides
   xdg.configFile."gtk-3.0/gtk.css".text = ''
-    @define-color accent_color #D3C6AA;
-    @define-color accent_fg_color #D3C6AA;
-    @define-color accent_bg_color #232A2E;
-    @define-color window_bg_color #232A2E;
-    @define-color window_fg_color #D3C6AA;
-    @define-color headerbar_bg_color #232A2E;
-    @define-color headerbar_fg_color #D3C6AA;
-    @define-color popover_bg_color #232A2E;
-    @define-color popover_fg_color #D3C6AA;
-    @define-color view_bg_color #2D353B;
-    @define-color view_fg_color #D3C6AA;
-    @define-color card_bg_color #2D353B;
-    @define-color card_fg_color #D3C6AA;
+    @define-color accent_color #7aa2f7;
+    @define-color accent_fg_color #c0caf5;
+    @define-color accent_bg_color #1f2335;
+    @define-color window_bg_color #1f2335;
+    @define-color window_fg_color #c0caf5;
+    @define-color headerbar_bg_color #1f2335;
+    @define-color headerbar_fg_color #c0caf5;
+    @define-color popover_bg_color #1f2335;
+    @define-color popover_fg_color #c0caf5;
+    @define-color view_bg_color #24283b;
+    @define-color view_fg_color #c0caf5;
+    @define-color card_bg_color #24283b;
+    @define-color card_fg_color #c0caf5;
     @define-color sidebar_bg_color @window_bg_color;
     @define-color sidebar_fg_color @window_fg_color;
     @define-color sidebar_border_color @window_bg_color;
@@ -60,19 +60,19 @@
   '';
 
   xdg.configFile."gtk-4.0/gtk.css".text = ''
-    @define-color accent_color #D3C6AA;
-    @define-color accent_fg_color #D3C6AA;
-    @define-color accent_bg_color #232A2E;
-    @define-color window_bg_color #232A2E;
-    @define-color window_fg_color #D3C6AA;
-    @define-color headerbar_bg_color #232A2E;
-    @define-color headerbar_fg_color #D3C6AA;
-    @define-color popover_bg_color #232A2E;
-    @define-color popover_fg_color #D3C6AA;
-    @define-color view_bg_color #2D353B;
-    @define-color view_fg_color #D3C6AA;
-    @define-color card_bg_color #2D353B;
-    @define-color card_fg_color #D3C6AA;
+    @define-color accent_color #7aa2f7;
+    @define-color accent_fg_color #c0caf5;
+    @define-color accent_bg_color #1f2335;
+    @define-color window_bg_color #1f2335;
+    @define-color window_fg_color #c0caf5;
+    @define-color headerbar_bg_color #1f2335;
+    @define-color headerbar_fg_color #c0caf5;
+    @define-color popover_bg_color #1f2335;
+    @define-color popover_fg_color #c0caf5;
+    @define-color view_bg_color #24283b;
+    @define-color view_fg_color #c0caf5;
+    @define-color card_bg_color #24283b;
+    @define-color card_fg_color #c0caf5;
     @define-color sidebar_bg_color @window_bg_color;
     @define-color sidebar_fg_color @window_fg_color;
     @define-color sidebar_border_color @window_bg_color;

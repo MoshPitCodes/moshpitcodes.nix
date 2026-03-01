@@ -1,4 +1,4 @@
-# SwayOSD on-screen display configuration (Everforest theme)
+# SwayOSD on-screen display configuration (TokyoNight Storm theme)
 { pkgs, ... }:
 {
   home.packages = [ pkgs.swayosd ];
@@ -17,12 +17,12 @@
     Install.WantedBy = [ "graphical-session.target" ];
   };
 
-  # Everforest SwayOSD styling
+  # TokyoNight Storm SwayOSD styling
   xdg.configFile."swayosd/style.css".text = ''
-    @define-color background-color #2d353b;
-    @define-color border-color #d3c6aa;
-    @define-color label #d3c6aa;
-    @define-color image #d3c6aa;
-    @define-color progress #d3c6aa;
+    @define-color background-color #24283b;
+    @define-color border-color #c0caf5;
+    @define-color label #c0caf5;
+    @define-color image #c0caf5;
+    @define-color progress #c0caf5;
   '';
 }
