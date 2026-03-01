@@ -5,6 +5,7 @@
     ./development.nix
     ./claude-code.nix
     ./opencode.nix
+    ./agent-browser.nix
     ./pi-mono.nix
   ];
 }
