@@ -10,7 +10,7 @@ let
         name = "tokyo-night";
         publisher = "enkia";
         version = "1.0.5";
-        hash = "sha256-uQ/IaZMOs9vQen22+t7CeuY54Xgh7s+UP4skhQyMgGU=";
+        hash = "sha256-CIVYoiaAZrOd4TDO+18aWjkXSx8p1zcCMexm6kmcmlM=";
       };
     };
 
