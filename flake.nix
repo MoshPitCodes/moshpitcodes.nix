@@ -255,6 +255,7 @@
             name = "dev-environment";
             packages = with pkgs; [
               git
+              just
               nixfmt
               nil
               treefmt
