@@ -18,6 +18,6 @@ in
       shuffle
     ];
     theme = spicePkgs.themes.dribbblish;
-    colorScheme = "tokyonight";
+    colorScheme = "tokyo-night";
   };
 }

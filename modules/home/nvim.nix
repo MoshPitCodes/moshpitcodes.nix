@@ -26,7 +26,7 @@
       theme = {
         enable = true;
         name = "tokyonight";
-        style = "storm"; # hard, medium, soft, or storm
+        style = "storm"; # storm, night, moon, or day
         transparent = true;
       };
 
