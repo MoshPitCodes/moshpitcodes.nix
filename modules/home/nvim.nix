@@ -1,4 +1,4 @@
-# Neovim configuration with TokyoNight Storm theme
+# Neovim configuration with Everforest theme
 # LSP configuration is centralized in language-servers.nix
 {
   pkgs,
@@ -25,8 +25,8 @@
 
       theme = {
         enable = true;
-        name = "tokyonight";
-        style = "storm"; # storm, night, moon, or day
+        name = "everforest";
+        style = "medium"; # hard, medium, or soft
         transparent = true;
       };
 
@@ -114,7 +114,7 @@
         nvim-notify = {
           enable = true;
           setupOpts = {
-            background_colour = "#24283b"; # TokyoNight Storm background
+            background_colour = "#2d353b"; # Everforest dark background
             render = "compact";
             timeout = 3000;
             top_down = true;

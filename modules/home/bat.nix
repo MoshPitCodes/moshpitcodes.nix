@@ -1,17 +1,11 @@
-# bat - cat replacement with syntax highlighting (TokyoNight Storm theme)
+# bat - cat replacement with syntax highlighting (Everforest theme)
 { pkgs, ... }:
 {
   programs.bat = {
     enable = true;
     config = {
       pager = "less -FR";
-      theme = "tokyonight_storm";
-    };
-    themes = {
-      tokyonight_storm = {
-        src = pkgs.vimPlugins.tokyonight-nvim.src;
-        file = "extras/sublime/tokyonight_storm.tmTheme";
-      };
+      theme = "base16";
     };
     extraPackages = with pkgs.bat-extras; [
       batman

@@ -1,4 +1,4 @@
-# CAVA audio visualizer (TokyoNight Storm gradient)
+# CAVA audio visualizer (Everforest gradient)
 { ... }:
 {
   programs.cava = {
@@ -13,10 +13,10 @@
     [color]
     gradient = 1
     gradient_count = 5
-    gradient_color_1 = '#7aa2f7'
-    gradient_color_2 = '#7dcfff'
-    gradient_color_3 = '#bb9af7'
-    gradient_color_4 = '#ff9e64'
-    gradient_color_5 = '#f7768e'
+    gradient_color_1 = '#83c092'
+    gradient_color_2 = '#7fbbb3'
+    gradient_color_3 = '#a7c080'
+    gradient_color_4 = '#dbbc7f'
+    gradient_color_5 = '#e67e80'
   '';
 }

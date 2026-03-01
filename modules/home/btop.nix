@@ -1,10 +1,10 @@
-# Btop system monitor configuration (TokyoNight Storm theme)
+# Btop system monitor configuration (Everforest theme)
 { pkgs, ... }:
 {
   programs.btop = {
     enable = true;
     settings = {
-      color_theme = "tokyonight";
+      color_theme = "everforest";
       shown_boxes = "cpu mem net proc";
       vim_keys = true;
       rounded_corners = true;
@@ -12,93 +12,93 @@
     };
   };
 
-  # TokyoNight Storm btop theme
-  xdg.configFile."btop/themes/tokyonight.theme".text = ''
+  # Everforest btop theme
+  xdg.configFile."btop/themes/everforest.theme".text = ''
     # Main background
-    theme[main_bg]="#24283b"
+    theme[main_bg]="#2d353b"
 
     # Main text color
-    theme[main_fg]="#c0caf5"
+    theme[main_fg]="#d3c6aa"
 
     # Title color for boxes
-    theme[title]="#c0caf5"
+    theme[title]="#d3c6aa"
 
     # Highlight color for keyboard shortcuts
-    theme[hi_fg]="#f7768e"
+    theme[hi_fg]="#e67e80"
 
     # Background color of selected items
-    theme[selected_bg]="#292e42"
+    theme[selected_bg]="#3d484d"
 
     # Foreground color of selected items
-    theme[selected_fg]="#e0af68"
+    theme[selected_fg]="#dbbc7f"
 
     # Color of inactive/disabled text
-    theme[inactive_fg]="#414868"
+    theme[inactive_fg]="#2d353b"
 
     # Color of text appearing on top of graphs
-    theme[graph_text]="#c0caf5"
+    theme[graph_text]="#d3c6aa"
 
     # Misc colors for processes box
-    theme[proc_misc]="#9ece6a"
+    theme[proc_misc]="#a7c080"
 
     # Cpu box outline color
-    theme[cpu_box]="#414868"
+    theme[cpu_box]="#3d484d"
 
     # Memory/disks box outline color
-    theme[mem_box]="#414868"
+    theme[mem_box]="#3d484d"
 
     # Net up/down box outline color
-    theme[net_box]="#414868"
+    theme[net_box]="#3d484d"
 
     # Processes box outline color
-    theme[proc_box]="#414868"
+    theme[proc_box]="#3d484d"
 
     # Box divider line and small boxes line color
-    theme[div_line]="#414868"
+    theme[div_line]="#3d484d"
 
     # Temperature graph colors
-    theme[temp_start]="#9ece6a"
-    theme[temp_mid]="#e0af68"
-    theme[temp_end]="#f7768e"
+    theme[temp_start]="#a7c080"
+    theme[temp_mid]="#dbbc7f"
+    theme[temp_end]="#f85552"
 
     # CPU graph colors
-    theme[cpu_start]="#9ece6a"
-    theme[cpu_mid]="#e0af68"
-    theme[cpu_end]="#f7768e"
+    theme[cpu_start]="#a7c080"
+    theme[cpu_mid]="#dbbc7f"
+    theme[cpu_end]="#f85552"
 
     # Mem/Disk free meter
-    theme[free_start]="#f7768e"
-    theme[free_mid]="#e0af68"
-    theme[free_end]="#9ece6a"
+    theme[free_start]="#f85552"
+    theme[free_mid]="#dbbc7f"
+    theme[free_end]="#a7c080"
 
     # Mem/Disk cached meter
-    theme[cached_start]="#7dcfff"
-    theme[cached_mid]="#73daca"
-    theme[cached_end]="#9ece6a"
+    theme[cached_start]="#7fbbb3"
+    theme[cached_mid]="#83c092"
+    theme[cached_end]="#a7c080"
 
     # Mem/Disk available meter
-    theme[available_start]="#f7768e"
-    theme[available_mid]="#e0af68"
-    theme[available_end]="#9ece6a"
+    theme[available_start]="#f85552"
+    theme[available_mid]="#dbbc7f"
+    theme[available_end]="#a7c080"
 
     # Mem/Disk used meter
-    theme[used_start]="#9ece6a"
-    theme[used_mid]="#e0af68"
-    theme[used_end]="#f7768e"
+    theme[used_start]="#a7c080"
+    theme[used_mid]="#dbbc7f"
+    theme[used_end]="#f85552"
 
     # Download graph colors
-    theme[download_start]="#9ece6a"
-    theme[download_mid]="#73daca"
-    theme[download_end]="#7dcfff"
+    theme[download_start]="#a7c080"
+    theme[download_mid]="#83c092"
+    theme[download_end]="#7fbbb3"
 
     # Upload graph colors
-    theme[upload_start]="#e0af68"
-    theme[upload_mid]="#ff9e64"
-    theme[upload_end]="#f7768e"
+    theme[upload_start]="#dbbc7f"
+    theme[upload_mid]="#e69875"
+    theme[upload_end]="#e67e80"
 
     # Process box color gradient for threads, mem and cpu usage
-    theme[process_start]="#9ece6a"
-    theme[process_mid]="#f7768e"
-    theme[process_end]="#f7768e"
+    theme[process_start]="#a7c080"
+    theme[process_mid]="#e67e80"
+    theme[process_end]="#f85552"
   '';
 }

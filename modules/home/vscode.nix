@@ -1,4 +1,4 @@
-# VS Code editor (TokyoNight Storm theme)
+# VS Code editor (Everforest theme)
 # LSP configuration is centralized in language-servers.nix
 { pkgs, lspLanguages, ... }:
 let
@@ -112,7 +112,7 @@ in
 
         workbench = {
           activityBar.location = "default";
-          colorTheme = "Tokyo Night Storm";
+          colorTheme = "Everforest Dark";
           editor = {
             limit = {
               enabled = true;

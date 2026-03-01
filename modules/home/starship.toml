@@ -1,33 +1,33 @@
-# Starship prompt configuration (TokyoNight Storm colors + Nerd Font Symbols preset)
+# Starship prompt configuration (Everforest colors + Nerd Font Symbols preset)
 
 add_newline = true
 
 [character]
-success_symbol = "[➜](bold #9ece6a)"
-error_symbol = "[✗](bold #f7768e)"
+success_symbol = "[➜](bold #a7c080)"
+error_symbol = "[✗](bold #e67e80)"
 
 [directory]
 truncation_length = 3
 truncate_to_repo = true
 read_only = " 󰳎"
-style = "bold #c0caf5"
+style = "bold #d3c6aa"
 
 [git_branch]
-symbol = " "
-style = "bold #7aa2f7"
+symbol = " "
+style = "bold #7fbbb3"
 
 [git_status]
-style = "bold #f7768e"
+style = "bold #e67e80"
 
 [nix_shell]
 symbol = " "
 format = "via [$symbol$state]($style) "
-style = "bold #73daca"
+style = "bold #83c092"
 
 [cmd_duration]
 min_time = 2000
 format = "took [$duration]($style) "
-style = "bold #e0af68"
+style = "bold #dbbc7f"
 
 # Nerd Font Symbols preset
 [aws]

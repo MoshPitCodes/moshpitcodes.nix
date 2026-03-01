@@ -1,4 +1,4 @@
-# Hyprlock screen locking configuration (TokyoNight Storm colors)
+# Hyprlock screen locking configuration (Everforest colors - Layout 4 inspired)
 { pkgs, username, ... }:
 {
   programs.hyprlock = {
@@ -25,7 +25,7 @@
         {
           monitor = "";
           text = "Hi ${username} :)";
-          color = "rgba(192, 202, 245, 1.0)"; # TokyoNight fg
+          color = "rgba(211, 198, 170, 1.0)"; # Everforest foreground
           font_size = 35;
           font_family = "FiraCode Nerd Font";
           position = "0, 260";
@@ -36,7 +36,7 @@
         {
           monitor = "";
           text = "cmd[update:1000] echo \"$(date +\"%H:%M\")\"";
-          color = "rgba(122, 162, 247, 1.0)"; # TokyoNight blue accent
+          color = "rgba(219, 188, 127, 1.0)"; # Everforest accent (yellow)
           font_size = 80;
           font_family = "FiraCode Nerd Font";
           position = "0, 100";
@@ -47,7 +47,7 @@
         {
           monitor = "";
           text = "cmd[update:60000] echo \"$(date +\"%A, %B %d\")\"";
-          color = "rgba(192, 202, 245, 0.8)"; # TokyoNight fg (dimmed)
+          color = "rgba(211, 198, 170, 0.8)";
           font_size = 20;
           font_family = "FiraCode Nerd Font";
           position = "0, 40";
@@ -58,7 +58,7 @@
         {
           monitor = "";
           text = "cmd[update:1000] hyprctl splash";
-          color = "rgba(125, 207, 255, 0.8)"; # TokyoNight cyan
+          color = "rgba(127, 187, 179, 0.8)"; # Everforest blue
           font_size = 14;
           font_family = "FiraCode Nerd Font";
           position = "0, 30";
@@ -77,20 +77,20 @@
           dots_spacing = 0.30;
           dots_center = true;
           dots_rounding = -1; # Circle
-          outer_color = "rgba(122, 162, 247, 0.9)"; # TokyoNight blue
-          inner_color = "rgba(31, 35, 53, 0.5)"; # TokyoNight bg_dark (transparent)
-          font_color = "rgba(192, 202, 245, 1.0)"; # TokyoNight fg
+          outer_color = "rgba(219, 188, 127, 0.9)"; # Everforest accent
+          inner_color = "rgba(45, 53, 59, 0.5)"; # Everforest background (transparent)
+          font_color = "rgba(211, 198, 170, 1.0)"; # Everforest foreground
           font_family = "FiraCode Nerd Font";
           fade_on_empty = true;
           fade_timeout = 1000;
           placeholder_text = "<i>Input Password...</i>";
           hide_input = false;
           rounding = -1; # Complete rounding (oval)
-          check_color = "rgba(158, 206, 106, 0.9)"; # TokyoNight green
-          fail_color = "rgba(247, 118, 142, 0.9)"; # TokyoNight red
+          check_color = "rgba(167, 192, 128, 0.9)"; # Everforest green
+          fail_color = "rgba(230, 126, 128, 0.9)"; # Everforest red
           fail_text = "<i>$FAIL <b>($ATTEMPTS)</b></i>";
           fail_transition = 300;
-          capslock_color = "rgba(247, 118, 142, 0.5)"; # TokyoNight red (dimmed)
+          capslock_color = "rgba(230, 126, 128, 0.5)";
           swap_font_color = true;
           position = "0, -100";
           halign = "center";

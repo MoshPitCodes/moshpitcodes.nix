@@ -104,7 +104,6 @@
       discord
       filezilla
       gimp
-      libreoffice
       obs-studio
       slack
       gnome-calculator

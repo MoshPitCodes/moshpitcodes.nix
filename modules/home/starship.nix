@@ -1,4 +1,4 @@
-# Starship prompt configuration (TokyoNight Storm colors + nerd font symbols preset)
+# Starship prompt configuration (Everforest colors + nerd font symbols preset)
 # Config stored in starship.toml to preserve Nerd Font icons from nixfmt stripping
 { ... }:
 {
