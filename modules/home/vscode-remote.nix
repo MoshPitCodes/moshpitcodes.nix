@@ -6,6 +6,7 @@ let
     # Custom extensions
     "ms-vscode.makefile-tools"
     "anthropic.claude-code"
+    "kilocode.kilo-code"
     "Google.geminicodeassist"
     "MermaidChart.vscode-mermaid-chart"
     "ziglang.vscode-zig"

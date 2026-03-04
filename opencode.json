@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "default_agent": "team-lead",
+  "default_agent": "build",
   "plugin": [
     ".opencode/plugins/security.ts",
     ".opencode/plugins/logging.ts",
@@ -155,8 +155,7 @@
       "rm*": "ask"
     },
     "external_directory": {
-      "/home/moshpitcodes/Development/MoshPitLabs/worktrees/**": "allow",
-      "/home/moshpitcodes/Development/MoshPitCodes/worktrees/**": "allow"
+      "/home/moshpitcodes/Development/**": "allow"
     }
   },
   "watcher": {

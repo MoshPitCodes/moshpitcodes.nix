@@ -4,6 +4,7 @@
   imports = [
     ./development.nix
     ./claude-code.nix
+    ./kiro-code.nix
     ./opencode.nix
     ./agent-browser.nix
     ./pi-mono.nix

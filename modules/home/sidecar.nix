@@ -126,7 +126,7 @@ in
         # These are opinionated recommendations for AI-assisted development
 
         # Launch AI agent + sidecar in split terminal
-        # Usage: sidecar-split [claude|cursor|opencode]
+        # Usage: sidecar-split [claude|cursor|opencode|kilo|kiro]
         sidecar-split() {
           local agent="''${1:-claude}"
 
@@ -165,12 +165,32 @@ in
                 sidecar
               fi
               ;;
-            *)
-              echo "Usage: sidecar-split [claude|cursor|opencode]"
-              echo "Launches an AI coding agent with sidecar in split-pane view"
+            kilo)
+              echo "🚀 Launching Kilo Code + Sidecar split workflow..."
+              if command -v tmux &> /dev/null && [ -n "$TMUX" ]; then
+                tmux split-window -h -p 35 "sidecar"
+                tmux select-pane -L
+                kilo
+              else
+                sidecar
+              fi
               ;;
-          esac
-        }
+            kiro)
+              echo "🚀 Launching Kiro + Sidecar split workflow..."
+              if command -v tmux &> /dev/null && [ -n "$TMUX" ]; then
+                tmux split-window -h -p 35 "sidecar"
+                tmux select-pane -L
+                kiro
+              else
+                sidecar
+              fi
+              ;;
+             *)
+               echo "Usage: sidecar-split [claude|cursor|opencode|kilo|kiro]"
+               echo "Launches an AI coding agent with sidecar in split-pane view"
+               ;;
+           esac
+         }
 
         # Dual sidecar dashboard - two sidecar instances side-by-side
         # One for tasks (TD monitor), one for git status
@@ -390,10 +410,10 @@ in
        - Live preview as you navigate
        - Derived from iTerm2-Color-Schemes
 
-    🔗 Integration:
-       - Works with Claude Code, Cursor, OpenCode, Gemini CLI
-       - Conversations plugin tracks all AI sessions
-       - Git plugin auto-refreshes on file changes
+     🔗 Integration:
+        - Works with Claude Code, Cursor, OpenCode, Kilo, Kiro
+        - Conversations plugin tracks all AI sessions
+        - Git plugin auto-refreshes on file changes
 
     📚 Documentation:
        https://marcus.github.io/sidecar/
