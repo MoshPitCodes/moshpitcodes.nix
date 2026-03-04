@@ -4,6 +4,8 @@ let
   vscode-utils = pkgs.vscode-utils;
 
   # Custom marketplace extensions not in nixpkgs
+  # TODO: Add Kiro VS Code extension when available in nixpkgs
+  # (Not yet available in nixpkgs or VS Code marketplace as of 2026-03-04)
   customExtensions = {
     everforest = vscode-utils.buildVscodeMarketplaceExtension {
       mktplcRef = {
@@ -20,6 +22,15 @@ let
         publisher = "anthropic";
         version = "2.1.49";
         hash = "sha256-9WwA1TUM/h8kLoZV/ukh/4s3w9DnJ/cVAxypz4jlj6A=";
+      };
+    };
+
+    kilo-code = vscode-utils.buildVscodeMarketplaceExtension {
+      mktplcRef = {
+        name = "kilo-code";
+        publisher = "kilocode";
+        version = "5.10.0";
+        hash = "sha256-DWtBaj5QWBqYpSxLUJNM+uuq79KMoc0Wjhq3q3HWp4c=";
       };
     };
 
@@ -93,6 +104,7 @@ in
       ++ (with customExtensions; [
         everforest
         claude-code
+        kilo-code
         makefile-tools
         vscode-mermaid-chart
         vscode-zig
