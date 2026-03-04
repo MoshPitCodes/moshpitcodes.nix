@@ -28,6 +28,7 @@ in
             bash
             gnutar
             gzip
+            unzip
           ]
         )
       }:$PATH"
