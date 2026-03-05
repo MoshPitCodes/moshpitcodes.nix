@@ -1,5 +1,10 @@
 # Home Manager modules aggregator
-{ username, host, ... }:
+{
+  username,
+  host,
+  lib,
+  ...
+}:
 {
   imports = [
     # Core
@@ -50,7 +55,6 @@
     ./discord
     ./micro.nix
     ./viewnior.nix
-    ./rider.nix
 
     # Media & entertainment
     ./audacious.nix
@@ -61,6 +65,9 @@
     # Development
     ./development
     ./backup-repos.nix
+  ]
+  ++ lib.optionals (host != "laptop") [
+    ./rider.nix
   ];
 
   # Basic home configuration

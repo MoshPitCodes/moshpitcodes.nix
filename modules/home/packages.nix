@@ -1,5 +1,10 @@
 # User packages
-{ pkgs, ... }:
+{
+  pkgs,
+  lib,
+  host,
+  ...
+}:
 {
   home.packages =
     with pkgs;
@@ -97,7 +102,6 @@
       virt-viewer
 
       # GUI Applications
-      aseprite
       audacity
       bleachbit
       chatterino7
@@ -127,6 +131,9 @@
       noto-fonts-color-emoji
       fantasque-sans-mono
       maple-mono.NF
+    ]
+    ++ lib.optionals (host != "laptop") [
+      aseprite
     ]
     ++ builtins.filter lib.isDerivation (builtins.attrValues pkgs.nerd-fonts)
     ++ [
