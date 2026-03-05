@@ -6,8 +6,8 @@
 
     settings = {
       general = {
-        lock_cmd = "pidof swaylock || ${pkgs.swaylock-effects}/bin/swaylock";
-        before_sleep_cmd = "pidof swaylock || ${pkgs.swaylock-effects}/bin/swaylock";
+        lock_cmd = "pidof hyprlock || ${pkgs.hyprlock}/bin/hyprlock";
+        before_sleep_cmd = "pidof hyprlock || ${pkgs.hyprlock}/bin/hyprlock";
         after_sleep_cmd = "${pkgs.hyprland}/bin/hyprctl dispatch dpms on";
       };
 

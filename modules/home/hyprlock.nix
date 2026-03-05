@@ -2,7 +2,7 @@
 { pkgs, username, ... }:
 {
   programs.hyprlock = {
-    enable = false; # Disabled - using swaylock in VMware (hyprlock crashes)
+    enable = false; # Disabled by default; enabled per-host via mkForce
 
     settings = {
       general = {
