@@ -259,7 +259,7 @@
         "$mod, F, fullscreen,"
         "$mod, M, fullscreen, 1"
         "$mod SHIFT, Escape, exec, power-menu"
-        "$mod CTRL, L, exec, ${pkgs.swaylock-effects}/bin/swaylock"
+        "$mod CTRL, L, exec, ${pkgs.systemd}/bin/loginctl lock-session"
         "$mod CTRL, R, exec, ${pkgs.hyprland}/bin/hyprctl reload"
 
         # Waybar reload
