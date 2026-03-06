@@ -736,3 +736,9 @@
 {"ts":"2026-03-06T10:10:12.94850989+01:00","cmd":"version","session":"ses_8dd422","ok":true,"dur_ms":0}
 {"ts":"2026-03-06T10:10:13.013521843+01:00","cmd":"link","session":"ses_8dd422","ok":true,"dur_ms":52}
 {"ts":"2026-03-06T10:10:13.010061404+01:00","cmd":"log","flags":{"result":"true"},"session":"ses_8dd422","ok":true,"dur_ms":84}
+{"ts":"2026-03-06T10:11:32.517919196+01:00","cmd":"version","session":"ses_8dd422","ok":true,"dur_ms":0}
+{"ts":"2026-03-06T10:11:32.582684172+01:00","cmd":"handoff","flags":{"decision":"[\"Used ignore-rule exceptions so `.todos` database files override the existing generic `*.db` ignore patterns, while leaving unrelated local/runtime directories ignored.\"]","done":"[\"Updated `.gitignore` so `.todos/` and `.sidecar/` are no longer ignored, and committed the tracked TD workspace snapshot in `bb34554` (`chore: track TD workspace state`). Verified `.sidecar/shells.json.lock` was already tracked in git.\"]","remaining":"[\"If a perfectly clean working tree is desired, refresh and commit the live `.todos` database snapshot again after TD writes settle; `.todos/issues.db-wal` changed again during task bookkeeping.\"]","uncertain":"[\"`.todos` is an actively mutating TD SQLite workspace, so it may continue to appear modified whenever TD commands run during future sessions.\"]"},"session":"ses_8dd422","ok":true,"dur_ms":63}
+{"ts":"2026-03-06T10:11:42.751449664+01:00","cmd":"status","flags":{"json":"true"},"session":"ses_8dd422","ok":true,"dur_ms":39}
+{"ts":"2026-03-06T10:11:42.752808441+01:00","cmd":"status","flags":{"json":"true"},"session":"ses_8dd422","ok":true,"dur_ms":48}
+{"ts":"2026-03-06T10:12:49.686072398+01:00","cmd":"version","session":"ses_8dd422","ok":true,"dur_ms":0}
+{"ts":"2026-03-06T10:12:49.744721848+01:00","cmd":"status","flags":{"json":"true"},"session":"ses_8dd422","ok":true,"dur_ms":49}
