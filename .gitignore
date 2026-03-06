@@ -79,10 +79,15 @@ package-lock.json
 .opencode/
 .todos
 .todos/
-.sidecar/
 .sidecar-agent
 .sidecar-task
 .sidecar-pr
 .sidecar-start.sh
 .sidecar-base
 .td-root
+
+# Keep TD and sidecar workspace state in git
+!.todos/
+!.todos/**
+!.sidecar/
+!.sidecar/**
