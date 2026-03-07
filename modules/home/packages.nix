@@ -104,6 +104,7 @@
       # GUI Applications
       audacity
       bleachbit
+      blender
       chatterino7
       discord
       filezilla
