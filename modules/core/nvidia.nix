@@ -36,7 +36,6 @@
       # Alpha quality for RTX 40 series as of 2024-2025, use `false` for stability
       open = false;
 
-      # Enable the Nvidia settings menu
       nvidiaSettings = true;
 
       # Use production drivers for maximum stability
@@ -69,8 +68,7 @@
   # Nvidia utilities
   environment.systemPackages = with pkgs; [
     nvtopPackages.nvidia # GPU monitoring
-    gwe # GreenWithEnvy: fan curve editor and OC tool
-    corectrl # GPU + CPU tuning with per-app profiles
+    corectrl # GPU + CPU tuning with per-app profiles (Wayland-compatible)
   ];
 
   # Enable Coolbits to unlock clock offsets, fan control, and power limits
