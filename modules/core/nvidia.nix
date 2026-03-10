@@ -40,7 +40,7 @@
       nvidiaSettings = true;
 
       # Use production drivers for maximum stability
-      package = config.boot.kernelPackages.nvidiaPackages.production;
+      package = config.boot.kernelPackages.nvidiaPackages.beta;
     };
   };
 
@@ -69,5 +69,13 @@
   # Nvidia utilities
   environment.systemPackages = with pkgs; [
     nvtopPackages.nvidia # GPU monitoring
+    gwe # GreenWithEnvy: fan curve editor and OC tool
+    corectrl # GPU + CPU tuning with per-app profiles
   ];
+
+  # Enable Coolbits to unlock clock offsets, fan control, and power limits
+  # Coolbits=28: bit 2 (manual fan) + bit 3 (OC clocks) + bit 4 (power limit)
+  services.xserver.deviceSection = ''
+    Option "Coolbits" "28"
+  '';
 }
