@@ -1,10 +1,8 @@
 # Development toolchains and utilities
-{
-  pkgs,
-  ...
-}:
+{ pkgs, ... }:
 {
   home.packages = with pkgs; [
+    worktrunk
     # Language runtimes (compilers/interpreters)
     # Note: LSP servers, formatters, linters are in language-servers.nix
     gcc # C/C++ compiler
