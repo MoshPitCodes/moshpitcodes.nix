@@ -3,7 +3,10 @@
 {
   boot = {
     loader = {
-      systemd-boot.enable = true;
+      systemd-boot = {
+        enable = true;
+        configurationLimit = 10; # Prevent /boot from filling up with old generations
+      };
       efi.canTouchEfiVariables = true;
     };
 
