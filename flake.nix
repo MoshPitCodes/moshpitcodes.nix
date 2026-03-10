@@ -48,13 +48,18 @@
     };
 
     sidecar = {
-      url = "github:marcus/sidecar/v0.77.0";
+      url = "github:marcus/sidecar/v0.78.0";
       flake = false;
     };
 
     td = {
       url = "github:marcus/td/v0.41.0";
       flake = false;
+    };
+
+    worktrunk = {
+      url = "github:max-sixty/worktrunk";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # reposync - disabled (re-enable when needed)
