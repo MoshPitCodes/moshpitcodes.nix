@@ -1,5 +1,8 @@
 { inputs }:
 [
+  # Faugus Launcher - override to 1.16.2 (nixpkgs has 1.15.10)
+  (import ./faugus-launcher.nix { })
+
   # Sidecar - TUI companion for AI coding workflows
   (import ./sidecar.nix { inherit inputs; })
 

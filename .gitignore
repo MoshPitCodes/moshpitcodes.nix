@@ -89,6 +89,7 @@ package-lock.json
 # Keep TD and sidecar workspace state in git
 !.todos/
 !.todos/**
+.todos/agent_errors.jsonl
 .todos/command_usage.jsonl
 .todos/config.json
 .todos/issues.db
