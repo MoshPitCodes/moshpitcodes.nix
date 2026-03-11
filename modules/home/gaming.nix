@@ -8,6 +8,6 @@
 
     # Gaming utilities
     ckan # Kerbal Space Program mod manager
-    lutris # Game launcher (Wine, Proton, native Linux games)
+    faugus-launcher # Lightweight launcher for Windows games via UMU/Proton
   ];
 }
