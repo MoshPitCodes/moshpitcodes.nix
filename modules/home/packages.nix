@@ -28,6 +28,7 @@
       nss
       openssl
       mimeo
+      proton-vpn-cli
       programmer-calculator
       streamlink
       tdf
@@ -110,6 +111,7 @@
       filezilla
       gimp
       obs-studio
+      protonvpn-gui
       slack
       gnome-calculator
       mission-center
