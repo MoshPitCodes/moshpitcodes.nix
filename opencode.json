@@ -1,24 +1,16 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "anthropic/claude-sonnet-4-6",
-  "default_agent": "build",
-  "plugin": [
-    ".opencode/plugins/security.ts",
-    ".opencode/plugins/logging.ts",
-    ".opencode/plugins/notifications.ts",
-    ".opencode/plugins/post-stop-detector.ts",
-    ".opencode/plugins/td-enforcer.ts",
-    ".opencode/plugins/icm.ts"
-  ],
   "permission": {
     "*": "ask",
+    "skill": "allow",
+    "todoread": "allow",
+    "todowrite": "allow",
     "webfetch": "allow",
     "websearch": "allow",
     "read": {
       "*": "allow",
       ".env": "deny",
       ".env.*": "deny",
-      ".envrc": "deny",
       "secrets.nix": "deny",
       "*.env": "deny",
       "*.env.*": "deny",
@@ -31,25 +23,13 @@
       "*.env.example": "allow",
       "*.env.sample": "allow",
       "*.env.template": "allow",
-      "~/Music/**": "deny",
-      "~/Documents/**": "deny",
-      "~/Pictures/**": "deny",
-      "~/Videos/**": "deny",
-      "~/Downloads/**": "deny",
-      "~/Desktop/**": "deny",
       "~/.aws/**": "deny",
-      "~/.claude.json": "deny",
-      "~/.claude/**": "deny",
-      "~/.codex/**": "deny",
-      "~/.doppler/**": "deny",
-      "~/.gemini/**": "deny",
       "~/.gnupg/**": "deny",
       "~/.kube/**": "deny",
+      "/mnt/**": "deny",
       "~/.netrc": "deny",
       "~/.opencode/**": "deny",
-      "~/.ssh/**": "deny",
-      "~/.talos/**": "deny",
-      "~/.vorpal/**": "deny"
+      "~/.ssh/**": "deny"
     },
     "edit": {
       "*": "allow",
@@ -61,115 +41,208 @@
       "**/credentials*.json": "deny",
       "**/id_rsa*": "deny",
       "**/id_ed25519*": "deny",
-      "~/Music/**": "deny",
-      "~/Documents/**": "deny",
-      "~/Pictures/**": "deny",
-      "~/Videos/**": "deny",
-      "~/Downloads/**": "deny",
-      "~/Desktop/**": "deny",
-      "~/.claude.json": "deny",
-      "~/.claude/**": "deny",
-      "~/.codex/**": "deny",
-      "~/.doppler/**": "deny",
-      "~/.gemini/**": "deny",
       "~/.gnupg/**": "deny",
       "~/.kube/**": "deny",
       "~/.netrc": "deny",
       "~/.opencode/**": "deny",
-      "~/.ssh/**": "deny",
-      "~/.talos/**": "deny",
-      "~/.vorpal/**": "deny"
+      "~/.ssh/**": "deny"
     },
     "bash": {
       "*": "allow",
-      "rm -rf*": "deny",
-      "rm --recursive*": "deny",
-      "rm -r*": "deny",
+      "cd /mnt*": "deny",
+      "/mnt/*": "deny",
+      "* /mnt/*": "deny",
       "sudo *": "deny",
-      "chmod 777*": "deny",
-      "kubectl apply*": "ask",
-      "kubectl delete*": "ask",
-      "terraform apply*": "ask",
-      "terraform destroy*": "ask",
       "nixos-rebuild*": "ask",
-      "bun run*": "allow",
-      "bun test*": "allow",
-      "cargo build*": "allow",
-      "cargo check*": "allow",
-      "cargo clippy*": "allow",
-      "cargo fmt*": "allow",
-      "cargo run*": "allow",
-      "cargo outdated*": "allow",
-      "cargo search*": "allow",
-      "cargo test*": "allow",
-      "cargo tree*": "allow",
-      "cargo update*": "allow",
-      "cat*": "allow",
-      "chmod*": "allow",
-      "cue*": "allow",
-      "docker images*": "allow",
-      "docker logs*": "allow",
-      "docker ps*": "allow",
-      "find*": "allow",
-      "gh pr list*": "allow",
-      "gh pr view*": "allow",
-      "git add*": "allow",
-      "git diff*": "allow",
-      "git log*": "allow",
-      "git remote get-url*": "allow",
-      "git show*": "allow",
-      "git status*": "allow",
-      "go build*": "allow",
-      "go doc*": "allow",
-      "go list*": "allow",
-      "go mod tidy*": "allow",
-      "go test*": "allow",
-      "go version*": "allow",
-      "go vet*": "allow",
-      "gofmt*": "allow",
-      "grep*": "allow",
-      "head*": "allow",
-      "jq*": "allow",
-      "yq*": "allow",
-      "ls*": "allow",
-      "make*": "allow",
-      "pnpm run build*": "allow",
-      "pnpm run lint*": "allow",
-      "pnpm run test*": "allow",
-      "npx tsc*": "allow",
-      "rg*": "allow",
-      "sort*": "allow",
-      "staticcheck*": "allow",
-      "tail*": "allow",
-      "tar*": "allow",
-      "test*": "allow",
-      "tree*": "allow",
-      "wc*": "allow",
-      "xargs*": "allow",
-      "yarn build*": "allow",
-      "yarn lint*": "allow",
-      "yarn test*": "allow",
-      "chown*": "ask",
       "git commit*": "ask",
       "git push*": "ask",
       "gh pr create*": "ask",
       "rm*": "ask"
-    },
-    "external_directory": {
-      "/home/moshpitcodes/Development/**": "allow"
     }
   },
-  "mcp": {
-    "blender": {
-      "type": "local",
-      "command": ["uv", "run", "--directory", "/home/moshpitcodes/Development/MoshPitCodes/blender-mcp", "blender-mcp"],
-      "enabled": true
-    }
+  "skills": {
+    "paths": [
+      "./.opencode/skills"
+    ]
   },
   "watcher": {
     "ignore": [
       ".opencode/logs/**",
       ".opencode/data/**"
     ]
+  },
+  "agent": {
+    "team-lead": {
+      "description": "Orchestrates multi-agent software delivery, decomposes user requests, delegates planning to product-manager, and produces explicit handoffs with risks, dependencies, and validation gates. Use this when the user wants coordinated execution, staged delivery, or reliable outcomes instead of an ad hoc single-agent response.",
+      "mode": "all",
+      "temperature": 0.15,
+      "model": "openai/gpt-5.4",
+      "steps": 20,
+      "color": "info",
+      "prompt": "{file:./.opencode/agents/team-lead.md}",
+      "permission": {
+        "edit": "deny",
+        "skill": "allow",
+        "todoread": "allow",
+        "todowrite": "allow",
+        "bash": {
+          "*": "deny"
+        },
+        "webfetch": "allow",
+        "task": {
+          "*": "deny",
+          "product-manager": "allow",
+          "staff-engineer": "allow",
+          "senior-engineer": "allow",
+          "qa-engineer": "allow",
+          "ux-designer": "allow"
+        }
+      }
+    },
+    "product-manager": {
+      "description": "Writes implementation plans for software changes. Use this when the user asks for a plan, scoped rollout, milestones, acceptance criteria, dependency mapping, risk analysis, or an engineer-ready handoff package before coding starts.",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "model": "anthropic/claude-opus-4-6",
+      "steps": 20,
+      "color": "warning",
+      "prompt": "{file:./.opencode/agents/product-manager.md}",
+      "permission": {
+        "edit": {
+          "*": "deny",
+          "specs/**": "allow"
+        },
+        "skill": "allow",
+        "todoread": "allow",
+        "todowrite": "allow",
+        "bash": {
+          "*": "deny"
+        },
+        "webfetch": "allow",
+        "websearch": "allow",
+        "task": {
+          "*": "deny"
+        }
+      }
+    },
+    "staff-engineer": {
+      "description": "Reviews architecture and code quality for planned or implemented changes. Use this when a task needs design review, tradeoff analysis, risk assessment, code review, or a technical recommendation before or after coding.",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "model": "anthropic/claude-sonnet-4-6",
+      "steps": 20,
+      "color": "accent",
+      "prompt": "{file:./.opencode/agents/staff-engineer.md}",
+      "permission": {
+        "edit": "deny",
+        "skill": "allow",
+        "todoread": "allow",
+        "todowrite": "allow",
+        "bash": {
+          "*": "deny",
+          "git status*": "allow",
+          "git diff*": "allow",
+          "git log*": "allow"
+        },
+        "webfetch": "allow",
+        "websearch": "allow",
+        "task": {
+          "*": "deny"
+        }
+      }
+    },
+    "senior-engineer": {
+      "description": "Implements approved plans, modifies code, runs commands, and manages git-safe development workflows. Use this when work is ready to build, debug, refactor, or prepare for review based on a defined plan and acceptance criteria.",
+      "mode": "subagent",
+      "temperature": 0.15,
+      "model": "openai/gpt-5.3-codex",
+      "steps": 40,
+      "color": "success",
+      "prompt": "{file:./.opencode/agents/senior-engineer.md}",
+      "permission": {
+        "edit": "allow",
+        "skill": "allow",
+        "todoread": "allow",
+        "todowrite": "allow",
+        "bash": {
+          "*": "allow",
+          "git push*": "ask",
+          "git commit*": "ask",
+          "rm*": "ask"
+        },
+        "webfetch": "allow",
+        "websearch": "allow",
+        "task": {
+          "*": "deny"
+        }
+      }
+    },
+    "qa-engineer": {
+      "description": "Validates completed work against acceptance criteria through testing, inspection, and regression checks. Use this when implementation needs verification, bug reproduction, release confidence, or a pass/fail quality assessment with evidence.",
+      "mode": "subagent",
+      "temperature": 0.1,
+      "model": "openai/gpt-5.4",
+      "steps": 15,
+      "color": "error",
+      "prompt": "{file:./.opencode/agents/qa-engineer.md}",
+      "permission": {
+        "edit": "deny",
+        "skill": "allow",
+        "todoread": "allow",
+        "todowrite": "allow",
+        "bash": {
+          "*": "deny",
+          "git status*": "allow",
+          "git diff*": "allow",
+          "git log*": "allow",
+          "npm test*": "allow",
+          "pnpm test*": "allow",
+          "yarn test*": "allow",
+          "bun test*": "allow",
+          "pytest*": "allow",
+          "go test*": "allow",
+          "cargo test*": "allow",
+          "npm run test*": "allow",
+          "pnpm run test*": "allow",
+          "yarn run test*": "allow",
+          "bun run test*": "allow",
+          "npm run build*": "allow",
+          "pnpm run build*": "allow",
+          "yarn run build*": "allow",
+          "bun run build*": "allow"
+        },
+        "webfetch": "deny",
+        "websearch": "deny",
+        "task": {
+          "*": "deny"
+        }
+      }
+    },
+    "ux-designer": {
+      "description": "Produces UI/UX design documents in `specs/` for product and engineering handoff. Use this when a task needs user flows, wireframes, component specs, or accessibility-focused design guidance before implementation.",
+      "mode": "subagent",
+      "temperature": 0.3,
+      "model": "anthropic/claude-opus-4-6",
+      "steps": 20,
+      "color": "warning",
+      "prompt": "{file:./.opencode/agents/ux-designer.md}",
+      "permission": {
+        "edit": {
+          "*": "deny",
+          "specs/**": "allow"
+        },
+        "skill": "allow",
+        "todoread": "allow",
+        "todowrite": "allow",
+        "bash": {
+          "*": "deny"
+        },
+        "webfetch": "allow",
+        "websearch": "allow",
+        "task": {
+          "*": "deny"
+        }
+      }
+    }
   }
 }

@@ -91,5 +91,7 @@ package-lock.json
 !.todos/**
 .todos/agent_errors.jsonl
 .todos/command_usage.jsonl
+.todos/config.json
+.todos/issues.db
 !.sidecar/
 !.sidecar/**

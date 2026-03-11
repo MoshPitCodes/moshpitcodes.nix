@@ -9,6 +9,9 @@
   # TD - Task management for AI-assisted development
   (import ./td.nix { inherit inputs; })
 
+  # Terraform - pin to 1.14.7 until nixpkgs catches up
+  (import ./terraform.nix)
+
   # Worktrunk - Git worktree management for parallel AI agent workflows
   (import ./worktrunk.nix { inherit inputs; })
 
