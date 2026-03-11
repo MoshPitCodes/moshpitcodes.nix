@@ -757,16 +757,16 @@
     "td": {
       "flake": false,
       "locked": {
-        "lastModified": 1772330350,
-        "narHash": "sha256-0mj+mCYcc8i2my0FVlQSpecEsFXB5AyvjEdvSSz2bJM=",
+        "lastModified": 1773101081,
+        "narHash": "sha256-fUvEgbwN3zBb4r64GwLlUNVydVacP0wiOIBb1BuPWzQ=",
         "owner": "marcus",
         "repo": "td",
-        "rev": "7b613c64c904dfaaf755ee0695b2e510d3c88134",
+        "rev": "00a292511bd0425f0f107b039d1ab8c52c8377f8",
         "type": "github"
       },
       "original": {
         "owner": "marcus",
-        "ref": "v0.41.0",
+        "ref": "v0.42.0",
         "repo": "td",
         "type": "github"
       }
