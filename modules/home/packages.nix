@@ -63,6 +63,7 @@
       cliphist
       slurp
       grimblast
+      ksnip
       wf-recorder
 
       # Desktop utilities

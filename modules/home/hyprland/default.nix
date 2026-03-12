@@ -388,6 +388,9 @@
         "$mod, Print, exec, screenshot --save"
         "$mod SHIFT, Print, exec, screenshot --full"
 
+        # Annotate screenshot (all monitors via grim + ksnip)
+        "CTRL, Print, exec, flameshot-all-monitors"
+
         # Media keys
         ", XF86AudioMute, exec, ${pkgs.swayosd}/bin/swayosd-client --output-volume mute-toggle"
         ", XF86AudioPlay, exec, ${pkgs.playerctl}/bin/playerctl play-pause"

@@ -14,8 +14,12 @@
     # Static /etc/hosts entries
     hosts = {
       "192.168.178.50" = [
+        "adguard.home.arpa"
         "arcane.home.arpa"
+        "caddy.home.arpa"
         "grafana.home.arpa"
+        "homepage.home.arpa"
+        "pgadmin.home.arpa"
         "prometheus.home.arpa"
       ];
     };
