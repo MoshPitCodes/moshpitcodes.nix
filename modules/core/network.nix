@@ -19,6 +19,7 @@
         "caddy.home.arpa"
         "grafana.home.arpa"
         "homepage.home.arpa"
+        "pgadmin.home.arpa"
         "prometheus.home.arpa"
       ];
     };
