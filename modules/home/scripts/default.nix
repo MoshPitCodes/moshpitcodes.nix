@@ -56,6 +56,15 @@ let
     ];
     text = builtins.readFile ./scripts/screenshot.sh;
   };
+  flameshot-all-monitors = pkgs.writeShellApplication {
+    name = "flameshot-all-monitors";
+    runtimeInputs = with pkgs; [
+      grim
+      ksnip
+      coreutils
+    ];
+    text = builtins.readFile ./scripts/flameshot-all-monitors.sh;
+  };
 
   # Power menu (rofi-power-menu)
   power-menu = pkgs.writeScriptBin "power-menu" (builtins.readFile ./scripts/power-menu.sh);
@@ -102,6 +111,7 @@ in
     # Screen capture
     record
     screenshot
+    flameshot-all-monitors
 
     # Power menu
     power-menu
