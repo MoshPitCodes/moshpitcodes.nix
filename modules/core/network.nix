@@ -19,8 +19,13 @@
         "caddy.home.arpa"
         "grafana.home.arpa"
         "homepage.home.arpa"
+        "homeassistant.home.arpa"
+        "jellyfin.home.arpa"
+        "metube.home.arpa"
+        "n8n.home.arpa"
         "pgadmin.home.arpa"
         "prometheus.home.arpa"
+        "wallos.home.arpa"
       ];
     };
 
