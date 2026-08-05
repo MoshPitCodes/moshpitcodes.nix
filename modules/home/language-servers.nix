@@ -45,9 +45,9 @@ let
       jdt-language-server # Java LSP
     ]
     ++ lib.optionals languages.javascript-typescript [
-      nodePackages.typescript-language-server # tsserver
-      nodePackages.vscode-langservers-extracted # eslint
-      nodePackages."@tailwindcss/language-server" # tailwindcss
+      typescript-language-server # tsserver
+      vscode-langservers-extracted # eslint
+      tailwindcss-language-server # tailwindcss
       prettierd # Formatter daemon
     ]
     ++ lib.optionals languages.lua [
@@ -74,7 +74,7 @@ let
     ++ lib.optionals languages.shell [
       shellcheck # Shell linter
       shfmt # Shell formatter
-      nodePackages.bash-language-server # bashls
+      bash-language-server # bashls
     ]
     ++ lib.optionals languages.yaml [
       yaml-language-server # yamlls
