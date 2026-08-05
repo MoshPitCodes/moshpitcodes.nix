@@ -63,7 +63,7 @@
         nix.enable = lspLanguages.nix;
         python.enable = lspLanguages.python;
         rust.enable = lspLanguages.rust;
-        ts.enable = lspLanguages.javascript-typescript;
+        typescript.enable = lspLanguages.javascript-typescript;
         yaml.enable = lspLanguages.yaml;
         zig.enable = lspLanguages.zig;
       };
