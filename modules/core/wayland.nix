@@ -1,10 +1,9 @@
 # Wayland and Hyprland configuration
-{ pkgs, inputs, ... }:
+{ pkgs, ... }:
 {
   # Enable Hyprland
   programs.hyprland = {
     enable = true;
-    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     xwayland.enable = true;
     withUWSM = true;
   };
@@ -15,7 +14,7 @@
     waylandCompositors.hyprland = {
       prettyName = "Hyprland";
       comment = "Hyprland compositor managed by uwsm";
-      binPath = "${inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland}/bin/Hyprland";
+      binPath = "${pkgs.hyprland}/bin/Hyprland";
     };
   };
 

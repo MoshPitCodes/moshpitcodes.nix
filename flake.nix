@@ -4,11 +4,9 @@
   nixConfig = {
     extra-substituters = [
       "https://nix-community.cachix.org"
-      "https://hyprland.cachix.org"
     ];
     extra-trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-      "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="
     ];
   };
 
@@ -20,11 +18,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    hyprland = {
-      url = "github:hyprwm/Hyprland/v0.54.0";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     spicetify-nix = {
       url = "github:gerg-l/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -33,7 +26,7 @@
     nix-flatpak.url = "github:gmodena/nix-flatpak";
 
     zen-browser = {
-      url = "github:0xc000022070/zen-browser-flake/0fa995bec0e391b45b032fbd9d6e03609a30c115";
+      url = "github:0xc000022070/zen-browser-flake/945e834a12a97a5e3b08869960e35c7ccfde6f69";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
@@ -48,12 +41,12 @@
     };
 
     sidecar = {
-      url = "github:marcus/sidecar/v0.78.0";
+      url = "github:marcus/sidecar/v0.90.0";
       flake = false;
     };
 
     td = {
-      url = "github:marcus/td/v0.42.0";
+      url = "github:marcus/td/v0.54.0";
       flake = false;
     };
 
